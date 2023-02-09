@@ -21,7 +21,7 @@ public final class JDAUtilities {
         }
     }
 
-    JDAUtilities() {}
+    private JDAUtilities() {}
 
     public static Builder newInstance() {
         return new Builder();
