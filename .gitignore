@@ -9,3 +9,5 @@ gradle-app.setting
 !gradle-wrapper.jar
 .gradletasknamecache
 config
+
+application.properties
