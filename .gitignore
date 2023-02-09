@@ -11,3 +11,4 @@ gradle-app.setting
 config
 
 application.properties
+secrets.properties
