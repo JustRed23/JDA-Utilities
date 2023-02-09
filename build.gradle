@@ -1,0 +1,22 @@
+plugins {
+    id 'java-library'
+}
+
+group 'dev.JustRed23'
+version '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly 'net.dv8tion:JDA:5.0.0-beta.3'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    testImplementation 'ch.qos.logback:logback-classic:1.4.5'
+}
+
+test {
+    useJUnitPlatform()
+}
