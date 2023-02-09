@@ -5,6 +5,16 @@ plugins {
 group 'dev.JustRed23'
 version '1.0'
 
+allprojects {
+    updateVersion()
+}
+
+def updateVersion() {
+    ant.propertyfile(file: "./src/main/resources/application.properties") {
+        entry( key: "version", value: version)
+    }
+}
+
 repositories {
     mavenCentral()
 }
