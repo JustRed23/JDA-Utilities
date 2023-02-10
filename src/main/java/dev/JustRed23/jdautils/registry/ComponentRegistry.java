@@ -3,27 +3,30 @@ package dev.JustRed23.jdautils.registry;
 import dev.JustRed23.jdautils.component.Component;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public final class ComponentRegistry implements IRegistry<Class<? extends Component>> {
 
     private boolean frozen = false;
-    private final List<Class<? extends Component>> components;
+    private final Map<Class<? extends Component>, String> components;
     private final List<Component> instances = new ArrayList<>();
 
     public ComponentRegistry() {
-        this.components = new ArrayList<>();
+        this.components = new HashMap<>();
     }
 
     public void register(Class<? extends Component> object) {
         if (frozen)
             throw new IllegalStateException("Registry is frozen");
 
-        if (components.contains(object))
+        if (components.containsKey(object))
             throw new IllegalArgumentException("Component already registered");
 
-        components.add(object);
+        try {
+            components.put(object, object.getDeclaredConstructor().newInstance().getName());
+        } catch (Exception e) {
+            LoggerFactory.getLogger(ComponentRegistry.class).error("Failed to register component", e);
+        }
     }
 
     public void unregister(Class<? extends Component> object) {
@@ -47,8 +50,8 @@ public final class ComponentRegistry implements IRegistry<Class<? extends Compon
         frozen = false;
     }
 
-    public List<Class<? extends Component>> getComponents() {
-        return components;
+    public Map<Class<? extends Component>, String> getComponents() {
+        return Collections.unmodifiableMap(components);
     }
 
     public List<Component> getInstances() {

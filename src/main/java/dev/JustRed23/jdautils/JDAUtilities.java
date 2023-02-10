@@ -41,14 +41,29 @@ public final class JDAUtilities {
         return builder;
     }
 
+    public static Component createComponent(Class<? extends Component> clazz) {
+        checkInitialized();
+
+        Class<? extends Component> component = builder.componentRegistry.getComponents()
+                .keySet()
+                .stream()
+                .filter(it -> it.equals(clazz))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Component with name " + clazz.getSimpleName() + " does not exist"));
+
+        return builder.componentRegistry.create(component);
+    }
+
     public static Component createComponent(String componentName) {
         checkInitialized();
 
         Class<? extends Component> component = builder.componentRegistry.getComponents()
+                .entrySet()
                 .stream()
-                .filter(it -> it.getName().equals(componentName))
+                .filter(it -> it.getValue().equals(componentName))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Component with name " + componentName + " does not exist"));
+                .orElseThrow(() -> new IllegalArgumentException("Component with name " + componentName + " does not exist"))
+                .getKey();
 
         return builder.componentRegistry.create(component);
     }

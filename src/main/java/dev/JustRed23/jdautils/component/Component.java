@@ -25,8 +25,8 @@ public abstract class Component {
 
     protected abstract void onCreate();
     protected abstract void onRemove();
-    public abstract MessageCreateAction onSend(@NotNull MessageReceivedEvent event);
-    public abstract ReplyCallbackAction onReply(@NotNull SlashCommandInteractionEvent event);
+    protected abstract MessageCreateAction onSend(@NotNull MessageReceivedEvent event);
+    protected abstract ReplyCallbackAction onReply(@NotNull SlashCommandInteractionEvent event);
 
     public final @NotNull Component create() {
         if (isCreated())
