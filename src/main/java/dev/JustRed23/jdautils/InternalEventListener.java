@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static dev.JustRed23.jdautils.JDAUtilities.*;
 
@@ -48,8 +49,6 @@ public final class InternalEventListener extends ListenerAdapter {
         List<Component> toRemove = new ArrayList<>();
         builder.sendableComponentRegistry.getInstances()
                 .stream()
-                .filter(component -> component instanceof SendableComponent)
-                .map(component -> (SendableComponent) component)
                 .filter(SendableComponent::isSent)
                 .filter(component -> event.getGuild().equals(component.getGuild()))
                 .filter(component -> component.getMessageId() == event.getMessageIdLong())
