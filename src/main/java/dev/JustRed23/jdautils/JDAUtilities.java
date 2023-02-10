@@ -1,5 +1,6 @@
 package dev.JustRed23.jdautils;
 
+import dev.JustRed23.jdautils.component.Component;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
@@ -9,6 +10,7 @@ import java.util.Properties;
 public final class JDAUtilities {
 
     private static String version;
+    private static Builder builder;
 
     static {
         try (InputStream properties = JDAUtilities.class.getClassLoader().getResourceAsStream("application.properties")) {
@@ -23,8 +25,32 @@ public final class JDAUtilities {
 
     private JDAUtilities() {}
 
-    public static Builder newInstance() {
-        return new Builder();
+    /* INTERNAL */
+    private static void checkInitialized() {
+        if (builder == null)
+            throw new IllegalStateException("JDAUtilities has not been initialized");
+
+        if (!builder.ready)
+            throw new IllegalStateException("JDAUtilities has not been initialized, please add the listener to your JDA instance");
+    }
+    /* INTERNAL */
+
+    public static Builder getInstance() {
+        if (builder == null)
+            builder = new Builder();
+        return builder;
+    }
+
+    public static Component createComponent(String componentName) {
+        checkInitialized();
+
+        Class<? extends Component> component = builder.componentRegistry.getComponents()
+                .stream()
+                .filter(it -> it.getName().equals(componentName))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Component with name " + componentName + " does not exist"));
+
+        return builder.componentRegistry.create(component);
     }
 
     public static String getVersion() {
