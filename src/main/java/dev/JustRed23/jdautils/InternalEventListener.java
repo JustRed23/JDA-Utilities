@@ -1,5 +1,6 @@
 package dev.JustRed23.jdautils;
 
+import dev.JustRed23.jdautils.component.Component;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.StatusChangeEvent;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
@@ -9,6 +10,9 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static dev.JustRed23.jdautils.JDAUtilities.*;
 
@@ -34,5 +38,19 @@ public final class InternalEventListener extends ListenerAdapter {
             LOGGER.info("Shutting down JDA Utilities");
             builder.destroy();
         }
+    }
+
+    public void onMessageDelete(@NotNull MessageDeleteEvent event) {
+        List<Component> toRemove = new ArrayList<>();
+        builder.componentRegistry.getInstances()
+                .stream()
+                .filter(component -> component.isSent())
+                .filter(component -> component.getMessageId() == event.getMessageIdLong())
+                .forEach(component -> {
+                    component.remove();
+                    toRemove.add(component);
+                }
+        );
+        builder.componentRegistry.getInstances().removeAll(toRemove);
     }
 }
