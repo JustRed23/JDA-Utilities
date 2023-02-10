@@ -2,6 +2,7 @@ package dev.JustRed23.jdautils.registry;
 
 import dev.JustRed23.jdautils.component.Component;
 import dev.JustRed23.jdautils.component.SendableComponent;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
@@ -59,7 +60,35 @@ public final class SendableComponentRegistry implements IRegistry<Class<? extend
         return instances;
     }
 
-    public SendableComponent create(Class<? extends SendableComponent> component) {
+    @Nullable
+    public SendableComponent create(Class<? extends SendableComponent> componentClass) {
+        Class<? extends SendableComponent> component = getComponents()
+                .keySet()
+                .stream()
+                .filter(it -> it.equals(componentClass))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Component with name " + componentClass.getSimpleName() + " does not exist"));
+
+        try {
+            SendableComponent instance = component.getDeclaredConstructor().newInstance();
+            instances.add(instance);
+            return instance.create();
+        } catch (Exception e) {
+            LoggerFactory.getLogger(SendableComponentRegistry.class).error("Failed to create component", e);
+        }
+        return null;
+    }
+
+    @Nullable
+    public SendableComponent create(String componentName) {
+        Class<? extends SendableComponent> component = getComponents()
+                .entrySet()
+                .stream()
+                .filter(it -> it.getValue().equals(componentName))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Component with name " + componentName + " does not exist"))
+                .getKey();
+
         try {
             SendableComponent instance = component.getDeclaredConstructor().newInstance();
             instances.add(instance);

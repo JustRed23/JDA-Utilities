@@ -42,31 +42,14 @@ public final class JDAUtilities {
         return builder;
     }
 
-    public static SendableComponent createComponent(Class<? extends Component> clazz) {
+    public static SendableComponent createComponent(Class<? extends SendableComponent> clazz) {
         checkInitialized();
-
-        Class<? extends SendableComponent> component = builder.sendableComponentRegistry.getComponents()
-                .keySet()
-                .stream()
-                .filter(it -> it.equals(clazz))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Component with name " + clazz.getSimpleName() + " does not exist"));
-
-        return builder.sendableComponentRegistry.create(component);
+        return builder.sendableComponentRegistry.create(clazz);
     }
 
     public static SendableComponent createComponent(String componentName) {
         checkInitialized();
-
-        Class<? extends SendableComponent> component = builder.sendableComponentRegistry.getComponents()
-                .entrySet()
-                .stream()
-                .filter(it -> it.getValue().equals(componentName))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Component with name " + componentName + " does not exist"))
-                .getKey();
-
-        return builder.sendableComponentRegistry.create(component);
+        return builder.sendableComponentRegistry.create(componentName);
     }
 
     public static String getVersion() {
