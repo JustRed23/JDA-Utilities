@@ -10,7 +10,7 @@ import java.util.Properties;
 public final class JDAUtilities {
 
     private static String version;
-    private static Builder builder;
+    static Builder builder;
 
     static {
         try (InputStream properties = JDAUtilities.class.getClassLoader().getResourceAsStream("application.properties")) {

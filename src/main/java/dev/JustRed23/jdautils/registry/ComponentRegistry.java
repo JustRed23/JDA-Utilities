@@ -35,7 +35,7 @@ public final class ComponentRegistry implements IRegistry<Class<? extends Compon
     public void destroy() {
         unfreeze();
         components.clear();
-        instances.forEach(Component::removeAndGet);
+        instances.forEach(Component::remove);
         instances.clear();
     }
 
@@ -51,11 +51,15 @@ public final class ComponentRegistry implements IRegistry<Class<? extends Compon
         return components;
     }
 
+    public List<Component> getInstances() {
+        return instances;
+    }
+
     public Component create(Class<? extends Component> component) {
         try {
             Component instance = component.getDeclaredConstructor().newInstance();
             instances.add(instance);
-            return instance.createAndGet();
+            return instance.create();
         } catch (Exception e) {
             LoggerFactory.getLogger(ComponentRegistry.class).error("Failed to create component", e);
         }

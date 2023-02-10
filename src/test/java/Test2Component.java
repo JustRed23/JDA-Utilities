@@ -1,4 +1,7 @@
 import dev.JustRed23.jdautils.component.Component;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 public class Test2Component extends Component {
 
@@ -7,8 +10,12 @@ public class Test2Component extends Component {
     }
 
     @Override
-    protected void create() {}
+    protected void onCreate() {}
 
     @Override
-    protected void remove() {}
+    protected void onRemove() {}
+
+    public void send(@NotNull MessageReceivedEvent event) {}
+
+    public void reply(@NotNull SlashCommandInteractionEvent event) {}
 }

@@ -1,5 +1,9 @@
 package dev.JustRed23.jdautils.component;
 
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.UUID;
 
 public abstract class Component {
@@ -11,25 +15,30 @@ public abstract class Component {
         this.name = name;
     }
 
-    protected abstract void create();
-    protected abstract void remove();
+    protected abstract void onCreate();
+    protected abstract void onRemove();
+    public abstract void send(@NotNull MessageReceivedEvent event);
+    public abstract void reply(@NotNull SlashCommandInteractionEvent event);
 
-    public final Component createAndGet() {
-        if (uuid != null)
+    public final @NotNull Component create() {
+        if (isCreated())
             return this;
 
         uuid = UUID.randomUUID();
-        create();
+        onCreate();
         return this;
     }
 
-    public final Component removeAndGet() {
-        if (uuid == null)
-            return this;
+    public final void remove() {
+        if (!isCreated())
+            return;
 
+        onRemove();
         uuid = null;
-        remove();
-        return this;
+    }
+
+    public final boolean isCreated() {
+        return uuid != null;
     }
 
     public final UUID getUuid() {

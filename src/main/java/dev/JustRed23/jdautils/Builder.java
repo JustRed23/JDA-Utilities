@@ -26,7 +26,7 @@ public final class Builder {
     void destroy() {
         componentRegistry.destroy();
         componentRegistry = null;
-        ready = false;
+        JDAUtilities.builder = null;
     }
     /* INTERNAL */
 
