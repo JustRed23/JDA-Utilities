@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[%d{dd-MM-yyyy@HH:mm:ss}] [%boldCyan(%thread)] %boldGreen(%-15.-25logger{0}) %highlight(%-6level) %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="org.reflections.Reflections" level="off" />
+
+    <logger name="dev.JustRed23.abcm.Config" level="debug" />
+
+    <root level="info">
+        <appender-ref ref="STDOUT" />
+    </root>
+</configuration>
