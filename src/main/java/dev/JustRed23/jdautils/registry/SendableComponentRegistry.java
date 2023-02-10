@@ -1,21 +1,22 @@
 package dev.JustRed23.jdautils.registry;
 
 import dev.JustRed23.jdautils.component.Component;
+import dev.JustRed23.jdautils.component.SendableComponent;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-public final class ComponentRegistry implements IRegistry<Class<? extends Component>> {
+public final class SendableComponentRegistry implements IRegistry<Class<? extends SendableComponent>> {
 
     private boolean frozen = false;
-    private final Map<Class<? extends Component>, String> components;
-    private final List<Component> instances = new ArrayList<>();
+    private final Map<Class<? extends SendableComponent>, String> components;
+    private final List<SendableComponent> instances = new ArrayList<>();
 
-    public ComponentRegistry() {
+    public SendableComponentRegistry() {
         this.components = new HashMap<>();
     }
 
-    public void register(Class<? extends Component> object) {
+    public void register(Class<? extends SendableComponent> object) {
         if (frozen)
             throw new IllegalStateException("Registry is frozen");
 
@@ -25,11 +26,11 @@ public final class ComponentRegistry implements IRegistry<Class<? extends Compon
         try {
             components.put(object, object.getDeclaredConstructor().newInstance().getName());
         } catch (Exception e) {
-            LoggerFactory.getLogger(ComponentRegistry.class).error("Failed to register component", e);
+            LoggerFactory.getLogger(SendableComponentRegistry.class).error("Failed to register component", e);
         }
     }
 
-    public void unregister(Class<? extends Component> object) {
+    public void unregister(Class<? extends SendableComponent> object) {
         if (frozen)
             throw new IllegalStateException("Registry is frozen");
         components.remove(object);
@@ -50,21 +51,21 @@ public final class ComponentRegistry implements IRegistry<Class<? extends Compon
         frozen = false;
     }
 
-    public Map<Class<? extends Component>, String> getComponents() {
+    public Map<Class<? extends SendableComponent>, String> getComponents() {
         return Collections.unmodifiableMap(components);
     }
 
-    public List<Component> getInstances() {
+    public List<SendableComponent> getInstances() {
         return instances;
     }
 
-    public Component create(Class<? extends Component> component) {
+    public SendableComponent create(Class<? extends SendableComponent> component) {
         try {
-            Component instance = component.getDeclaredConstructor().newInstance();
+            SendableComponent instance = component.getDeclaredConstructor().newInstance();
             instances.add(instance);
             return instance.create();
         } catch (Exception e) {
-            LoggerFactory.getLogger(ComponentRegistry.class).error("Failed to create component", e);
+            LoggerFactory.getLogger(SendableComponentRegistry.class).error("Failed to create component", e);
         }
         return null;
     }

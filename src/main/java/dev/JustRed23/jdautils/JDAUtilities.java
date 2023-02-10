@@ -1,6 +1,7 @@
 package dev.JustRed23.jdautils;
 
 import dev.JustRed23.jdautils.component.Component;
+import dev.JustRed23.jdautils.component.SendableComponent;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
@@ -41,23 +42,23 @@ public final class JDAUtilities {
         return builder;
     }
 
-    public static Component createComponent(Class<? extends Component> clazz) {
+    public static SendableComponent createComponent(Class<? extends Component> clazz) {
         checkInitialized();
 
-        Class<? extends Component> component = builder.componentRegistry.getComponents()
+        Class<? extends SendableComponent> component = builder.sendableComponentRegistry.getComponents()
                 .keySet()
                 .stream()
                 .filter(it -> it.equals(clazz))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Component with name " + clazz.getSimpleName() + " does not exist"));
 
-        return builder.componentRegistry.create(component);
+        return builder.sendableComponentRegistry.create(component);
     }
 
-    public static Component createComponent(String componentName) {
+    public static SendableComponent createComponent(String componentName) {
         checkInitialized();
 
-        Class<? extends Component> component = builder.componentRegistry.getComponents()
+        Class<? extends SendableComponent> component = builder.sendableComponentRegistry.getComponents()
                 .entrySet()
                 .stream()
                 .filter(it -> it.getValue().equals(componentName))
@@ -65,7 +66,7 @@ public final class JDAUtilities {
                 .orElseThrow(() -> new IllegalArgumentException("Component with name " + componentName + " does not exist"))
                 .getKey();
 
-        return builder.componentRegistry.create(component);
+        return builder.sendableComponentRegistry.create(component);
     }
 
     public static String getVersion() {

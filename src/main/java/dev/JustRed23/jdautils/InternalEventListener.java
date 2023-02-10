@@ -1,6 +1,7 @@
 package dev.JustRed23.jdautils;
 
 import dev.JustRed23.jdautils.component.Component;
+import dev.JustRed23.jdautils.component.SendableComponent;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.StatusChangeEvent;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
@@ -45,9 +46,11 @@ public final class InternalEventListener extends ListenerAdapter {
             return;
 
         List<Component> toRemove = new ArrayList<>();
-        builder.componentRegistry.getInstances()
+        builder.sendableComponentRegistry.getInstances()
                 .stream()
-                .filter(Component::isSent)
+                .filter(component -> component instanceof SendableComponent)
+                .map(component -> (SendableComponent) component)
+                .filter(SendableComponent::isSent)
                 .filter(component -> event.getGuild().equals(component.getGuild()))
                 .filter(component -> component.getMessageId() == event.getMessageIdLong())
                 .forEach(component -> {
@@ -55,6 +58,6 @@ public final class InternalEventListener extends ListenerAdapter {
                     toRemove.add(component);
                 }
         );
-        builder.componentRegistry.getInstances().removeAll(toRemove);
+        builder.sendableComponentRegistry.getInstances().removeAll(toRemove);
     }
 }

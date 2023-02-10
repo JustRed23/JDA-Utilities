@@ -1,6 +1,7 @@
 import dev.JustRed23.jdautils.Builder;
 import dev.JustRed23.jdautils.JDAUtilities;
 import dev.JustRed23.jdautils.component.Component;
+import dev.JustRed23.jdautils.component.SendableComponent;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -75,8 +76,8 @@ class BaseTest {
 
         // Register a component
         builder.registerComponent(TestComponent.class);
-        // You cannot register Component.class as it is an abstract class
-        assertThrows(IllegalArgumentException.class, () -> builder.registerComponent(Component.class));
+        // You cannot register SendableComponent.class as it is an abstract class
+        assertThrows(IllegalArgumentException.class, () -> builder.registerComponent(SendableComponent.class));
         // You cannot register the same component twice
         assertThrows(IllegalArgumentException.class, () -> builder.registerComponent(TestComponent.class));
         // Create a new component - this should fail as the listener was not initialized

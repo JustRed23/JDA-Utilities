@@ -1,11 +1,11 @@
-import dev.JustRed23.jdautils.component.Component;
+import dev.JustRed23.jdautils.component.SendableComponent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
 import org.jetbrains.annotations.NotNull;
 
-public class TestComponent extends Component {
+public class TestComponent extends SendableComponent {
 
     public TestComponent() {
         super("TestComponent");

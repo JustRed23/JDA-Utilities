@@ -1,6 +1,6 @@
 package testapp;
 
-import dev.JustRed23.jdautils.component.Component;
+import dev.JustRed23.jdautils.component.SendableComponent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 
-public class HelloComponent extends Component {
+public class HelloComponent extends SendableComponent {
 
     private Button deleteButton;
     private EmbedBuilder builder;
