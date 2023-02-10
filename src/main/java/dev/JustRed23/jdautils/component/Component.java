@@ -1,5 +1,6 @@
 package dev.JustRed23.jdautils.component;
 
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -15,6 +16,7 @@ public abstract class Component {
 
     protected UUID uuid;
     protected final String name;
+    protected Guild guild;
     protected long messageId = -1;
 
     protected Component(String name) {
@@ -40,6 +42,7 @@ public abstract class Component {
             return;
 
         onRemove();
+        guild = null;
         messageId = -1;
         uuid = null;
     }
@@ -54,6 +57,7 @@ public abstract class Component {
             return null;
 
         Message hook = messageCreateAction.complete();
+        guild = hook.getGuild();
         messageId = hook.getIdLong();
         return hook;
     }
@@ -68,7 +72,9 @@ public abstract class Component {
             return null;
 
         InteractionHook hook = replyCallbackAction.complete();
-        messageId = hook.retrieveOriginal().complete().getIdLong();
+        Message message = hook.retrieveOriginal().complete();
+        guild = message.getGuild();
+        messageId = message.getIdLong();
         return hook;
     }
 
@@ -77,7 +83,7 @@ public abstract class Component {
     }
 
     public final boolean isSent() {
-        return messageId != -1;
+        return messageId != -1 && guild != null;
     }
 
     public final UUID getUuid() {
@@ -90,5 +96,9 @@ public abstract class Component {
 
     public final long getMessageId() {
         return messageId;
+    }
+
+    public Guild getGuild() {
+        return guild;
     }
 }

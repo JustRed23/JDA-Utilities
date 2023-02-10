@@ -41,10 +41,14 @@ public final class InternalEventListener extends ListenerAdapter {
     }
 
     public void onMessageDelete(@NotNull MessageDeleteEvent event) {
+        if (!event.isFromGuild())
+            return;
+
         List<Component> toRemove = new ArrayList<>();
         builder.componentRegistry.getInstances()
                 .stream()
-                .filter(component -> component.isSent())
+                .filter(Component::isSent)
+                .filter(component -> event.getGuild().equals(component.getGuild()))
                 .filter(component -> component.getMessageId() == event.getMessageIdLong())
                 .forEach(component -> {
                     component.remove();
