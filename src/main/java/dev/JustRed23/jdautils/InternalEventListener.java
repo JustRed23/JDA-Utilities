@@ -6,6 +6,7 @@ import dev.JustRed23.jdautils.event.WatcherManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.StatusChangeEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.EntitySelectInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
@@ -47,7 +48,11 @@ public final class InternalEventListener extends ListenerAdapter {
         WatcherManager.onEvent(event.getComponentId(), event);
     }
 
-    public void onStringSelectInteraction(StringSelectInteractionEvent event) {
+    public void onEntitySelectInteraction(@NotNull EntitySelectInteractionEvent event) {
+        WatcherManager.onEvent(event.getComponentId(), event);
+    }
+
+    public void onStringSelectInteraction(@NotNull StringSelectInteractionEvent event) {
         WatcherManager.onEvent(event.getComponentId(), event);
     }
 

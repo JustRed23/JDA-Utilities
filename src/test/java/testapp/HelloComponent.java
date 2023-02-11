@@ -7,6 +7,7 @@ import dev.JustRed23.jdautils.component.interact.SmartDropdown;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.interactions.components.selections.EntitySelectMenu;
 import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
 import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
@@ -21,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 public class HelloComponent extends SendableComponent {
 
     private SmartButton deleteButton, randomButton;
-    private SmartDropdown select;
+    private SmartDropdown select, userSelect;
     private EmbedBuilder builder;
 
     public HelloComponent() {
@@ -42,6 +43,16 @@ public class HelloComponent extends SendableComponent {
                         .addOption("Samsung Galaxy XCover 5 sim card", "samsung")
                 ).withListener(event -> event.reply("You selected: " + event.getSelectedOptions().get(0).getLabel()).setEphemeral(true).queue(ih -> ih.deleteOriginal().queueAfter(5, TimeUnit.SECONDS)));
 
+        userSelect = SmartDropdown.create(EntitySelectMenu.create("users", EntitySelectMenu.SelectTarget.USER)
+                .setPlaceholder("Select a user to mention")
+                .setMinValues(1)
+                .setMaxValues(1)
+        ).withListener(event -> {
+            String mentioned = event.getMentions().getMembers().get(0).getAsMention();
+            event.deferEdit().queue();
+            event.getChannel().sendMessage(mentioned + ", " + event.getMember().getEffectiveName() + " mentioned you!").queue(ih -> ih.delete().queueAfter(5, TimeUnit.SECONDS));
+        });
+
         builder = new EmbedBuilder();
         builder.setTitle("Hello, World!");
         builder.setDescription("This is a test component");
@@ -53,19 +64,26 @@ public class HelloComponent extends SendableComponent {
         deleteButton = null;
         randomButton = null;
         select = null;
+        userSelect = null;
         builder = null;
         LoggerFactory.getLogger(HelloComponent.class).info("Removed component: " + name);
     }
 
     protected List<Component> getChildren() {
-        return Arrays.asList(deleteButton, randomButton, select);
+        return Arrays.asList(deleteButton, randomButton, select, userSelect);
     }
 
     public MessageCreateAction onSend(@NotNull MessageReceivedEvent event) {
-        return event.getChannel().sendMessageEmbeds(builder.build()).addActionRow(select.build()).addActionRow(randomButton.build(), deleteButton.build());
+        return event.getChannel().sendMessageEmbeds(builder.build())
+                .addActionRow(select.build())
+                .addActionRow(userSelect.build())
+                .addActionRow(randomButton.build(), deleteButton.build());
     }
 
     public ReplyCallbackAction onReply(@NotNull SlashCommandInteractionEvent event) {
-        return event.replyEmbeds(builder.build()).addActionRow(select.build()).addActionRow(randomButton.build(), deleteButton.build());
+        return event.replyEmbeds(builder.build())
+                .addActionRow(select.build())
+                .addActionRow(userSelect.build())
+                .addActionRow(randomButton.build(), deleteButton.build());
     }
 }
