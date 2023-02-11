@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 public class HelloComponent extends SendableComponent {
 
-    private SmartButton deleteButton;
+    private SmartButton deleteButton, randomButton;
     private SmartDropdown select;
     private EmbedBuilder builder;
 
@@ -31,6 +31,9 @@ public class HelloComponent extends SendableComponent {
     protected void onCreate() {
         deleteButton = SmartButton.danger("Delete")
                 .withListener(event -> event.getMessage().delete().queue());
+
+        randomButton = SmartButton.primary("Random")
+                .withListener(event -> event.reply("Randomness happened!").setEphemeral(true).queue(ih -> ih.deleteOriginal().queueAfter(5, TimeUnit.SECONDS)), 15, TimeUnit.SECONDS);
 
         select = SmartDropdown.create(StringSelectMenu.create("gender")
                         .setPlaceholder("Select your gender")
@@ -48,20 +51,21 @@ public class HelloComponent extends SendableComponent {
 
     protected void onRemove() {
         deleteButton = null;
+        randomButton = null;
         select = null;
         builder = null;
         LoggerFactory.getLogger(HelloComponent.class).info("Removed component: " + name);
     }
 
     protected List<Component> getChildren() {
-        return Arrays.asList(deleteButton, select);
+        return Arrays.asList(deleteButton, randomButton, select);
     }
 
     public MessageCreateAction onSend(@NotNull MessageReceivedEvent event) {
-        return event.getChannel().sendMessageEmbeds(builder.build()).addActionRow(select.build()).addActionRow(deleteButton.build());
+        return event.getChannel().sendMessageEmbeds(builder.build()).addActionRow(select.build()).addActionRow(randomButton.build(), deleteButton.build());
     }
 
     public ReplyCallbackAction onReply(@NotNull SlashCommandInteractionEvent event) {
-        return event.replyEmbeds(builder.build()).addActionRow(select.build()).addActionRow(deleteButton.build());
+        return event.replyEmbeds(builder.build()).addActionRow(select.build()).addActionRow(randomButton.build(), deleteButton.build());
     }
 }

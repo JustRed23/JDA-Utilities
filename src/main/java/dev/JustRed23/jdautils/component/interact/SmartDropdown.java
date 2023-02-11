@@ -3,9 +3,11 @@ package dev.JustRed23.jdautils.component.interact;
 import dev.JustRed23.jdautils.component.Component;
 import dev.JustRed23.jdautils.component.NoRegistry;
 import dev.JustRed23.jdautils.event.EventWatcher;
-import dev.JustRed23.jdautils.event.WatcherManager;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
+
+import java.util.concurrent.TimeUnit;
 
 public class SmartDropdown extends Component implements NoRegistry {
 
@@ -18,7 +20,6 @@ public class SmartDropdown extends Component implements NoRegistry {
         this.builder = builder;
 
         eventWatcher = new EventWatcher(this, StringSelectInteractionEvent.class);
-        WatcherManager.addWatcher(eventWatcher);
         super.create();
     }
 
@@ -28,6 +29,11 @@ public class SmartDropdown extends Component implements NoRegistry {
 
     public SmartDropdown withListener(EventWatcher.Listener<StringSelectInteractionEvent> listener) {
         eventWatcher.setListener(listener);
+        return this;
+    }
+
+    public SmartDropdown withListener(EventWatcher.Listener<ButtonInteractionEvent> listener, int expireAfter, TimeUnit unit) {
+        eventWatcher.setListener(listener, expireAfter, unit);
         return this;
     }
 

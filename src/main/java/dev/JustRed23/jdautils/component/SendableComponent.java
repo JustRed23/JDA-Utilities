@@ -65,11 +65,10 @@ public abstract class SendableComponent extends Component {
         if (!isCreated())
             return;
 
-        super.remove();
-        if (getChildren() != null) {
+        if (getChildren() != null)
             getChildren().forEach(Component::remove);
-            getChildren().clear();
-        }
+
+        super.remove();
         guild = null;
         messageId = -1;
     }

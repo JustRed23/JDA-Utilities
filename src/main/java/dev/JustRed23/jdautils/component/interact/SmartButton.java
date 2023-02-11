@@ -3,12 +3,13 @@ package dev.JustRed23.jdautils.component.interact;
 import dev.JustRed23.jdautils.component.Component;
 import dev.JustRed23.jdautils.component.NoRegistry;
 import dev.JustRed23.jdautils.event.EventWatcher;
-import dev.JustRed23.jdautils.event.WatcherManager;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.concurrent.TimeUnit;
 
 public class SmartButton extends Component implements NoRegistry {
 
@@ -28,7 +29,6 @@ public class SmartButton extends Component implements NoRegistry {
         this.url = url;
 
         eventWatcher = new EventWatcher(this, ButtonInteractionEvent.class);
-        WatcherManager.addWatcher(eventWatcher);
     }
 
     public static SmartButton primary(@NotNull String label) {
@@ -73,6 +73,11 @@ public class SmartButton extends Component implements NoRegistry {
 
     public SmartButton withListener(EventWatcher.Listener<ButtonInteractionEvent> listener) {
         eventWatcher.setListener(listener);
+        return this;
+    }
+
+    public SmartButton withListener(EventWatcher.Listener<ButtonInteractionEvent> listener, int expireAfter, TimeUnit unit) {
+        eventWatcher.setListener(listener, expireAfter, unit);
         return this;
     }
 

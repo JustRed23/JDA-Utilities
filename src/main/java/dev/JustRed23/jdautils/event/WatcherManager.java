@@ -5,14 +5,18 @@ import net.dv8tion.jda.api.events.Event;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WatcherManager {
+public final class WatcherManager {
 
     private static final List<EventWatcher> watchers = new ArrayList<>();
 
     private WatcherManager() {}
 
-    public static void addWatcher(EventWatcher watcher) {
+    static void addWatcher(EventWatcher watcher) {
         watchers.add(watcher);
+    }
+
+    static void removeWatcher(EventWatcher watcher) {
+        watchers.remove(watcher);
     }
 
     public static void onEvent(String componentID, Event event) {
