@@ -35,7 +35,7 @@ public abstract class SmartDropdown<T extends SelectMenu> extends Component impl
         return new EntitySelect(builder);
     }
 
-    public static class StringSelect extends SmartDropdown<StringSelectMenu> {
+    public static class StringSelect extends SmartDropdown<StringSelectMenu> implements NoRegistry {
 
         private final StringSelectMenu.Builder builder;
         private final EventWatcher eventWatcher;
@@ -73,7 +73,7 @@ public abstract class SmartDropdown<T extends SelectMenu> extends Component impl
         }
     }
 
-    public static class EntitySelect extends SmartDropdown<EntitySelectMenu> {
+    public static class EntitySelect extends SmartDropdown<EntitySelectMenu> implements NoRegistry {
 
         private final EntitySelectMenu.Builder builder;
         private final EventWatcher eventWatcher;
