@@ -41,9 +41,11 @@ public abstract class Component {
 
     /**
      * Useful for identifying the component between multiple components of the same type
+     * <p><b>NOTE: </b> The identifier must be unique</p>
      * @param identifier The identifier, can be anything
      */
     public void setIdentifier(@Nullable Object identifier) {
+        ComponentIdentifier.checkUnique(identifier);
         this.identifier = identifier;
     }
 
