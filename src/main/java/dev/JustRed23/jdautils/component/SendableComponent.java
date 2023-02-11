@@ -10,6 +10,9 @@ import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+import java.util.UUID;
+
 public abstract class SendableComponent extends Component {
 
     protected Guild guild;
@@ -21,6 +24,37 @@ public abstract class SendableComponent extends Component {
 
     protected abstract MessageCreateAction onSend(@NotNull MessageReceivedEvent event);
     protected abstract ReplyCallbackAction onReply(@NotNull SlashCommandInteractionEvent event);
+    protected abstract List<Component> getChildren();
+
+    public @Nullable Component getChild(@NotNull String name) {
+        for (Component component : getChildren()) {
+            if (component.getName().equals(name))
+                return component;
+        }
+        return null;
+    }
+
+    public @Nullable Component getChild(@NotNull UUID uuid) {
+        for (Component component : getChildren()) {
+            if (component.getUuid().equals(uuid))
+                return component;
+        }
+        return null;
+    }
+
+    public @Nullable Component getChild(@NotNull String name, @NotNull Object identifier) {
+        for (Component component : getChildren()) {
+            if (component.getName().equals(name) && component.identifier != null && component.identifier.equals(identifier))
+                return component;
+        }
+        return null;
+    }
+
+    public List<Component> getChildrenFromType(@NotNull Class<? extends Component> clazz) {
+        List<Component> components = getChildren();
+        components.removeIf(component -> !component.getClass().equals(clazz));
+        return components;
+    }
 
     public final @NotNull SendableComponent create() {
         super.create();
@@ -32,6 +66,10 @@ public abstract class SendableComponent extends Component {
             return;
 
         super.remove();
+        if (getChildren() != null) {
+            getChildren().forEach(Component::remove);
+            getChildren().clear();
+        }
         guild = null;
         messageId = -1;
     }

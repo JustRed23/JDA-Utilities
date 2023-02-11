@@ -1,6 +1,7 @@
 package dev.JustRed23.jdautils.component;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -8,6 +9,7 @@ public abstract class Component {
 
     protected UUID uuid;
     protected final String name;
+    protected @Nullable Object identifier;
 
     protected Component(String name) {
         this.name = name;
@@ -35,6 +37,14 @@ public abstract class Component {
 
     public final boolean isCreated() {
         return uuid != null;
+    }
+
+    /**
+     * Useful for identifying the component between multiple components of the same type
+     * @param identifier The identifier, can be anything
+     */
+    public void setIdentifier(@Nullable Object identifier) {
+        this.identifier = identifier;
     }
 
     public final UUID getUuid() {

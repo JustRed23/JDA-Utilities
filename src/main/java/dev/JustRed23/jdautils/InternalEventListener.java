@@ -2,8 +2,11 @@ package dev.JustRed23.jdautils;
 
 import dev.JustRed23.jdautils.component.Component;
 import dev.JustRed23.jdautils.component.SendableComponent;
+import dev.JustRed23.jdautils.event.WatcherManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.StatusChangeEvent;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -38,6 +41,14 @@ public final class InternalEventListener extends ListenerAdapter {
             LOGGER.info("Shutting down JDA Utilities");
             builder.destroy();
         }
+    }
+
+    public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
+        WatcherManager.onEvent(event.getComponentId(), event);
+    }
+
+    public void onStringSelectInteraction(StringSelectInteractionEvent event) {
+        WatcherManager.onEvent(event.getComponentId(), event);
     }
 
     public void onMessageDelete(@NotNull MessageDeleteEvent event) {
