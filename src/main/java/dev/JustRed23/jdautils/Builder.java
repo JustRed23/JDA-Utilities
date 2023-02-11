@@ -1,6 +1,7 @@
 package dev.JustRed23.jdautils;
 
 import dev.JustRed23.jdautils.component.Component;
+import dev.JustRed23.jdautils.component.NoRegistry;
 import dev.JustRed23.jdautils.component.SendableComponent;
 import dev.JustRed23.jdautils.registry.SendableComponentRegistry;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -37,6 +38,9 @@ public final class Builder {
 
         if (component.equals(Component.class) || component.equals(SendableComponent.class))
             throw new IllegalArgumentException("Cannot register base component");
+
+        if (Arrays.asList(component.getInterfaces()).contains(NoRegistry.class))
+            return this;
 
         sendableComponentRegistry.register(component);
         return this;

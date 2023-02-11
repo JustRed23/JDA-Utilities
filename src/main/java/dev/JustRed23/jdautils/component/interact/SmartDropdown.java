@@ -1,16 +1,17 @@
 package dev.JustRed23.jdautils.component.interact;
 
 import dev.JustRed23.jdautils.component.Component;
+import dev.JustRed23.jdautils.component.NoRegistry;
 import dev.JustRed23.jdautils.event.EventWatcher;
 import dev.JustRed23.jdautils.event.WatcherManager;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
 
-public class SmartDropdown extends Component {
+public class SmartDropdown extends Component implements NoRegistry {
 
-    private StringSelectMenu.Builder builder;
+    private final StringSelectMenu.Builder builder;
+    private final EventWatcher eventWatcher;
     private StringSelectMenu parent;
-    private EventWatcher eventWatcher;
 
     public SmartDropdown(StringSelectMenu.Builder builder) {
         super("SmartDropdown");

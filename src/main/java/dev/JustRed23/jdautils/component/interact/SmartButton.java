@@ -1,6 +1,7 @@
 package dev.JustRed23.jdautils.component.interact;
 
 import dev.JustRed23.jdautils.component.Component;
+import dev.JustRed23.jdautils.component.NoRegistry;
 import dev.JustRed23.jdautils.event.EventWatcher;
 import dev.JustRed23.jdautils.event.WatcherManager;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
@@ -9,10 +10,10 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
 import org.jetbrains.annotations.NotNull;
 
-public class SmartButton extends Component {
+public class SmartButton extends Component implements NoRegistry {
 
     private Button parent;
-    private EventWatcher eventWatcher;
+    private final EventWatcher eventWatcher;
 
     private final String label;
     private final Emoji emoji;
@@ -94,7 +95,6 @@ public class SmartButton extends Component {
         private final Emoji emoji;
         private final ButtonStyle style;
         private String url;
-        private EventWatcher.Listener<ButtonInteractionEvent> listener;
 
         private ButtonBuilder(String label, ButtonStyle style) {
             this.label = label;
