@@ -5,6 +5,7 @@ import dev.JustRed23.jdautils.component.interact.SmartReaction;
 import net.dv8tion.jda.api.events.Event;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.react.GenericMessageReactionEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +42,7 @@ public final class WatcherManager {
                 .ifPresent(watcher -> watcher.onEvent(event));
     }
 
-    public static void onReactionEvent(GenericMessageReactionEvent event) {
+    public static void onReactionEvent(@NotNull GenericMessageReactionEvent event) {
         if (event.getUser().isBot())
             return;
 
