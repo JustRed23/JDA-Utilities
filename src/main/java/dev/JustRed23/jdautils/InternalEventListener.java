@@ -50,15 +50,15 @@ public final class InternalEventListener extends ListenerAdapter {
     }
 
     public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
-        WatcherManager.onEvent(event.getComponentId(), event);
+        WatcherManager.onInteractionEvent(event.getComponentId(), event);
     }
 
     public void onEntitySelectInteraction(@NotNull EntitySelectInteractionEvent event) {
-        WatcherManager.onEvent(event.getComponentId(), event);
+        WatcherManager.onInteractionEvent(event.getComponentId(), event);
     }
 
     public void onStringSelectInteraction(@NotNull StringSelectInteractionEvent event) {
-        WatcherManager.onEvent(event.getComponentId(), event);
+        WatcherManager.onInteractionEvent(event.getComponentId(), event);
     }
 
     public void onMessageDelete(@NotNull MessageDeleteEvent event) {

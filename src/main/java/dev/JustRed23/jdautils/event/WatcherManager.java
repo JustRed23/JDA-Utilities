@@ -31,7 +31,7 @@ public final class WatcherManager {
                 .ifPresent(watcher -> watcher.onEvent(event));
     }
 
-    public static void onEvent(String componentID, Event event) {
+    public static void onInteractionEvent(String componentID, Event event) {
         watchers.stream()
                 .filter(watcher -> watcher.getComponent().getUuid() != null)
                 .filter(watcher -> watcher.getComponent().getUuid().toString().equals(componentID))
