@@ -9,7 +9,7 @@ public abstract class Component {
 
     protected UUID uuid;
     protected final String name;
-    protected @Nullable Object identifier;
+    private @Nullable Object identifier;
 
     protected Component(String name) {
         this.name = name;
@@ -47,6 +47,10 @@ public abstract class Component {
     public void setIdentifier(@Nullable Object identifier) {
         ComponentIdentifier.checkUnique(identifier);
         this.identifier = identifier;
+    }
+
+    public @Nullable Object getIdentifier() {
+        return identifier;
     }
 
     public final UUID getUuid() {

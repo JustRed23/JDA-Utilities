@@ -44,7 +44,7 @@ public abstract class SendableComponent extends Component {
 
     public @Nullable Component getChild(@NotNull String name, @NotNull Object identifier) {
         for (Component component : getChildren()) {
-            if (component.getName().equals(name) && component.identifier != null && component.identifier.equals(identifier))
+            if (component.getName().equals(name) && component.getIdentifier() != null && component.getIdentifier().equals(identifier))
                 return component;
         }
         return null;
