@@ -1,8 +1,10 @@
 package dev.JustRed23.jdautils.event;
 
 import dev.JustRed23.jdautils.command.CommandComponent;
+import dev.JustRed23.jdautils.component.interact.SmartReaction;
 import net.dv8tion.jda.api.events.Event;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.message.react.GenericMessageReactionEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,5 +39,16 @@ public final class WatcherManager {
                 .filter(watcher -> watcher.getComponent().getUuid().toString().equals(componentID))
                 .findFirst()
                 .ifPresent(watcher -> watcher.onEvent(event));
+    }
+
+    public static void onReactionEvent(GenericMessageReactionEvent event) {
+        if (event.getUser().isBot())
+            return;
+
+        watchers.stream()
+                .filter(watcher -> watcher.getComponent() instanceof SmartReaction)
+                .filter(watcher -> watcher.getComponent().getUuid() != null)
+                .filter(watcher -> ((SmartReaction) watcher.getComponent()).getMessageId() == event.getMessageIdLong())
+                .forEach(watcher -> watcher.onEvent(event));
     }
 }

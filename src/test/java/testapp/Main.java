@@ -2,6 +2,7 @@ package testapp;
 
 import dev.JustRed23.jdautils.JDAUtilities;
 import dev.JustRed23.jdautils.command.SlashCommand;
+import dev.JustRed23.jdautils.component.interact.SmartReaction;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -53,7 +54,25 @@ public class Main extends ListenerAdapter {
                             .executes(event -> event.reply("Sub command 2").setEphemeral(true).queue())
                             .build()
                         .modifyData(data -> data.setGuildOnly(true)) // This is just to show that you can modify the data
-                        .build()
+                        .build(),
+                JDAUtilities.createSlashCommand("testemotes", "Test the emote listener")
+                        .executes(event ->
+                                SmartReaction.create("This is a test!")
+                                        .addReaction("1\uFE0F\u20E3")
+                                        .addReaction("2\uFE0F\u20E3")
+                                        .addReaction("3\uFE0F\u20E3")
+                                        .addReaction("4\uFE0F\u20E3")
+                                        .addReaction("5\uFE0F\u20E3")
+                                        .addReaction("6\uFE0F\u20E3")
+                                        .addReaction("7\uFE0F\u20E3")
+                                        .addReaction("\u274C")
+                                        .withListeners(add -> {
+                                            add.getChannel().sendMessage("You added " + add.getEmoji().getAsReactionCode()).queue();
+                                        }, remove -> {
+                                            remove.getChannel().sendMessage("You removed " + remove.getEmoji().getAsReactionCode()).queue();
+                                        })
+                                        .reply(event)
+                        ).build()
         ).queue();
     }
 

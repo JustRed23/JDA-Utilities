@@ -24,6 +24,7 @@ public abstract class SendableComponent extends Component {
 
     protected abstract MessageCreateAction onSend(@NotNull MessageReceivedEvent event);
     protected abstract ReplyCallbackAction onReply(@NotNull SlashCommandInteractionEvent event);
+    protected void onSent(@NotNull Message message) {}
     protected abstract List<Component> getChildren();
 
     public @Nullable Component getChild(@NotNull String name) {
@@ -85,6 +86,7 @@ public abstract class SendableComponent extends Component {
         Message hook = messageCreateAction.complete();
         guild = hook.getGuild();
         messageId = hook.getIdLong();
+        onSent(hook);
         return hook;
     }
 
@@ -101,6 +103,7 @@ public abstract class SendableComponent extends Component {
         Message message = hook.retrieveOriginal().complete();
         guild = message.getGuild();
         messageId = message.getIdLong();
+        onSent(message);
         return hook;
     }
 

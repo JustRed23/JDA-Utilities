@@ -10,6 +10,8 @@ import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.EntitySelectInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -59,6 +61,14 @@ public final class InternalEventListener extends ListenerAdapter {
 
     public void onStringSelectInteraction(@NotNull StringSelectInteractionEvent event) {
         WatcherManager.onInteractionEvent(event.getComponentId(), event);
+    }
+
+    public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event) {
+        WatcherManager.onReactionEvent(event);
+    }
+
+    public void onMessageReactionRemove(@NotNull MessageReactionRemoveEvent event) {
+        WatcherManager.onReactionEvent(event);
     }
 
     public void onMessageDelete(@NotNull MessageDeleteEvent event) {
