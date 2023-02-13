@@ -3,6 +3,8 @@ package dev.JustRed23.jdautils.registry;
 import dev.JustRed23.jdautils.component.Component;
 import dev.JustRed23.jdautils.component.NoRegistry;
 import dev.JustRed23.jdautils.component.SendableComponent;
+import net.dv8tion.jda.internal.utils.Checks;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +64,8 @@ public final class SendableComponentRegistry implements IRegistry<Class<? extend
     }
 
     @Nullable
-    public SendableComponent create(Class<? extends SendableComponent> componentClass) {
+    public SendableComponent create(@NotNull Class<? extends SendableComponent> componentClass) {
+        Checks.notNull(componentClass, "Component class");
         Class<? extends SendableComponent> component = getComponents()
                 .keySet()
                 .stream()
@@ -84,7 +87,8 @@ public final class SendableComponentRegistry implements IRegistry<Class<? extend
     }
 
     @Nullable
-    public SendableComponent create(String componentName) {
+    public SendableComponent create(@NotNull String componentName) {
+        Checks.notEmpty(componentName, "Component name");
         Class<? extends SendableComponent> component = getComponents()
                 .entrySet()
                 .stream()

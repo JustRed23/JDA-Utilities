@@ -45,7 +45,7 @@ public class Main extends ListenerAdapter {
                         .executes(event -> JDAUtilities.createComponent(HelloComponent.class).reply(event))
                         .build()
                         .setGuildOnly(true), // You can still modify the data after building
-                SlashCommand.slash("testsub", "A simple test command to test sub commands")
+                JDAUtilities.createSlashCommand("testsub", "A simple test command to test sub commands") // You can also use the JDAUtilities method
                         .addSubCommand("sub1", "My first sub command")
                             .executes(event -> event.reply("Sub command 1").setEphemeral(true).queue())
                             .build()

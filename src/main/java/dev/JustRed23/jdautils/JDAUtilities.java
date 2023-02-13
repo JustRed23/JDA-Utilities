@@ -1,6 +1,8 @@
 package dev.JustRed23.jdautils;
 
+import dev.JustRed23.jdautils.command.SlashCommand;
 import dev.JustRed23.jdautils.component.SendableComponent;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.LoggerFactory;
 
@@ -47,9 +49,14 @@ public final class JDAUtilities {
         return builder.sendableComponentRegistry.create(clazz);
     }
 
-    public static @Nullable SendableComponent createComponent(String componentName) {
+    public static @Nullable SendableComponent createComponent(@NotNull String componentName) {
         checkInitialized();
         return builder.sendableComponentRegistry.create(componentName);
+    }
+
+    public static @NotNull SlashCommand.SlashCommandBuilder createSlashCommand(@NotNull String name, @NotNull String description) {
+        checkInitialized();
+        return SlashCommand.slash(name, description);
     }
 
     public static String getVersion() {

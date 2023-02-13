@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
+import net.dv8tion.jda.internal.utils.Checks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -13,7 +14,9 @@ import java.util.function.Function;
 
 public final class SlashCommand {
 
-    public static SlashCommandBuilder slash(String name, String description) {
+    public static SlashCommandBuilder slash(@NotNull String name, @NotNull String description) {
+        Checks.notEmpty(name, "Name");
+        Checks.notEmpty(description, "Description");
         return new SlashCommandBuilder(name, description);
     }
 
