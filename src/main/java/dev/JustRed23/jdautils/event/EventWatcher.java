@@ -11,11 +11,17 @@ public final class EventWatcher {
     private final Class<? extends Event> eventClass;
     private Listener listener;
     private long expireTime = -1;
+    private boolean singleUse = false;
 
     public EventWatcher(Component component, Class<? extends Event> eventClass) {
         this.component = component;
         this.eventClass = eventClass;
         WatcherManager.addWatcher(this);
+    }
+
+    public EventWatcher(Component component, Class<? extends Event> eventClass, boolean singleUse) {
+        this(component, eventClass);
+        this.singleUse = singleUse;
     }
 
     public void setListener(Listener listener) {
@@ -39,8 +45,11 @@ public final class EventWatcher {
             return;
         }
 
-        if (listener != null && event.getClass().equals(eventClass))
+        if (listener != null && event.getClass().equals(eventClass)) {
             listener.onEvent(event);
+            if (singleUse)
+                destroy();
+        }
     }
 
     public Component getComponent() {
