@@ -43,7 +43,7 @@ public final class WatcherManager {
     }
 
     public static void onReactionEvent(@NotNull GenericMessageReactionEvent event) {
-        if (event.getUser().isBot())
+        if (event.retrieveUser().complete().isBot())
             return;
 
         watchers.stream()
