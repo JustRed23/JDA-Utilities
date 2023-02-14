@@ -2,17 +2,18 @@ package testapp;
 
 import dev.JustRed23.jdautils.JDAUtilities;
 import dev.JustRed23.jdautils.command.SlashCommand;
+import dev.JustRed23.jdautils.component.interact.SmartModal;
 import dev.JustRed23.jdautils.component.interact.SmartReaction;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.components.text.TextInput;
+import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
+import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.jetbrains.annotations.NotNull;
 
@@ -71,6 +72,14 @@ public class Main extends ListenerAdapter {
                                         }, remove -> {
                                             remove.getChannel().sendMessage("You removed " + remove.getEmoji().getAsReactionCode()).queue();
                                         })
+                                        .reply(event)
+                        ).build(),
+                JDAUtilities.createSlashCommand("testmodal", "Test the modal listener")
+                        .executes(event ->
+                                SmartModal.create(Modal.create("test-modal", "Welcome to my test modal!")
+                                                .addActionRow(TextInput.create("test-input", "Enter some text", TextInputStyle.SHORT).build())
+                                        )
+                                        .withListener(modalEvent -> modalEvent.reply(modalEvent.getMember().getEffectiveName() + ", you typed `" + modalEvent.getInteraction().getValue("test-input").getAsString() + "`").queue())
                                         .reply(event)
                         ).build()
         ).queue();

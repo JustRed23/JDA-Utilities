@@ -6,6 +6,8 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
+import net.dv8tion.jda.api.requests.restaction.interactions.InteractionCallbackAction;
+import net.dv8tion.jda.api.requests.restaction.interactions.ModalCallbackAction;
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,7 +25,7 @@ public abstract class SendableComponent extends Component {
     }
 
     protected abstract MessageCreateAction onSend(@NotNull MessageReceivedEvent event);
-    protected abstract ReplyCallbackAction onReply(@NotNull SlashCommandInteractionEvent event);
+    protected abstract InteractionCallbackAction onReply(@NotNull SlashCommandInteractionEvent event);
     protected void onSent(@NotNull Message message) {}
     protected abstract List<Component> getChildren();
 
@@ -94,10 +96,22 @@ public abstract class SendableComponent extends Component {
         if (!isCreated())
             return null;
 
-        ReplyCallbackAction replyCallbackAction = onReply(event);
+        InteractionCallbackAction<?> interactionCallbackAction = onReply(event);
 
-        if (replyCallbackAction == null)
+        if (interactionCallbackAction == null)
             return null;
+
+        if (interactionCallbackAction instanceof ModalCallbackAction modalAction) {
+            modalAction.queue();
+            return null;
+        }
+
+        ReplyCallbackAction replyCallbackAction;
+        try {
+            replyCallbackAction = (ReplyCallbackAction) interactionCallbackAction;
+        } catch (ClassCastException ignored) {
+            throw new IllegalArgumentException("InteractionCallbackAction must be of type ReplyCallbackAction or ModalCallbackAction");
+        }
 
         InteractionHook hook = replyCallbackAction.complete();
         Message message = hook.retrieveOriginal().complete();

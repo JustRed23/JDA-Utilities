@@ -5,6 +5,7 @@ import dev.JustRed23.jdautils.component.SendableComponent;
 import dev.JustRed23.jdautils.event.WatcherManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.StatusChangeEvent;
+import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.EntitySelectInteractionEvent;
@@ -87,5 +88,9 @@ public final class InternalEventListener extends ListenerAdapter {
                 }
         );
         builder.sendableComponentRegistry.getInstances().removeAll(toRemove);
+    }
+
+    public void onModalInteraction(@NotNull ModalInteractionEvent event) {
+        WatcherManager.onInteractionEvent(event.getModalId(), event);
     }
 }
