@@ -22,14 +22,14 @@ import java.util.concurrent.TimeUnit;
 
 public class SmartReaction extends SendableComponent implements NoRegistry {
 
-    private final List<Emoji> emojis;
+    private final List<Emoji> reactions;
     private EventWatcher onAdd, onRemove;
     private String message;
     private MessageEmbed embed;
 
     private SmartReaction() {
         super("SmartReaction");
-        emojis = new ArrayList<>();
+        reactions = new ArrayList<>();
     }
 
     @NotNull
@@ -49,12 +49,12 @@ public class SmartReaction extends SendableComponent implements NoRegistry {
     }
 
     public SmartReaction addReaction(Emoji emoji) {
-        emojis.add(emoji);
+        reactions.add(emoji);
         return this;
     }
 
     public SmartReaction addReaction(String emoji) {
-        emojis.add(Emoji.fromFormatted(emoji));
+        reactions.add(Emoji.fromFormatted(emoji));
         return this;
     }
 
@@ -62,7 +62,7 @@ public class SmartReaction extends SendableComponent implements NoRegistry {
         this.onAdd.setListener(event -> {
             MessageReactionAddEvent addEvent = (MessageReactionAddEvent) event;
             EmojiUnion emoji = addEvent.getEmoji();
-            if (emojis.contains(emoji))
+            if (getReactions().contains(emoji))
                 onAdd.onEvent(addEvent);
             else
                 addEvent.getReaction().removeReaction(addEvent.retrieveUser().complete()).queue();
@@ -70,7 +70,7 @@ public class SmartReaction extends SendableComponent implements NoRegistry {
         this.onRemove.setListener(event -> {
             MessageReactionRemoveEvent removeEvent = (MessageReactionRemoveEvent) event;
             EmojiUnion emoji = removeEvent.getEmoji();
-            if (emojis.contains(emoji))
+            if (getReactions().contains(emoji))
                 onRemove.onEvent(removeEvent);
         });
         return this;
@@ -93,7 +93,7 @@ public class SmartReaction extends SendableComponent implements NoRegistry {
     }
 
     protected MessageCreateAction onSend(@NotNull MessageReceivedEvent event) {
-        if (getEmojis().isEmpty())
+        if (getReactions().isEmpty())
             throw new IllegalStateException("No reactions added to the SmartReaction");
         if (message != null)
             return event.getChannel().sendMessage(message);
@@ -102,7 +102,7 @@ public class SmartReaction extends SendableComponent implements NoRegistry {
     }
 
     protected ReplyCallbackAction onReply(@NotNull SlashCommandInteractionEvent event) {
-        if (getEmojis().isEmpty())
+        if (getReactions().isEmpty())
             throw new IllegalStateException("No reactions added to the SmartReaction");
         if (message != null)
             return event.reply(message);
@@ -111,7 +111,7 @@ public class SmartReaction extends SendableComponent implements NoRegistry {
     }
 
     protected void onSent(@NotNull Message message) {
-        for (Emoji emoji : emojis)
+        for (Emoji emoji : reactions)
             message.addReaction(emoji).queue();
     }
 
@@ -119,7 +119,7 @@ public class SmartReaction extends SendableComponent implements NoRegistry {
         return null;
     }
 
-    public List<Emoji> getEmojis() {
-        return emojis;
+    public List<Emoji> getReactions() {
+        return reactions;
     }
 }
