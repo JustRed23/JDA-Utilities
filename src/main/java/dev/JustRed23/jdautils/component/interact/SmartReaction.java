@@ -7,6 +7,7 @@ import dev.JustRed23.jdautils.event.EventWatcher;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.dv8tion.jda.api.entities.emoji.EmojiUnion;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
@@ -58,8 +59,20 @@ public class SmartReaction extends SendableComponent implements NoRegistry {
     }
 
     public SmartReaction withListeners(EventWatcher.Listener<MessageReactionAddEvent> onAdd, EventWatcher.Listener<MessageReactionRemoveEvent> onRemove) {
-        this.onAdd.setListener(onAdd);
-        this.onRemove.setListener(onRemove);
+        this.onAdd.setListener(event -> {
+            MessageReactionAddEvent addEvent = (MessageReactionAddEvent) event;
+            EmojiUnion emoji = addEvent.getEmoji();
+            if (emojis.contains(emoji))
+                onAdd.onEvent(addEvent);
+            else
+                addEvent.getReaction().removeReaction(addEvent.retrieveUser().complete()).queue();
+        });
+        this.onRemove.setListener(event -> {
+            MessageReactionRemoveEvent removeEvent = (MessageReactionRemoveEvent) event;
+            EmojiUnion emoji = removeEvent.getEmoji();
+            if (emojis.contains(emoji))
+                onRemove.onEvent(removeEvent);
+        });
         return this;
     }
 
