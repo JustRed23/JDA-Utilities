@@ -93,6 +93,8 @@ public class SmartReaction extends SendableComponent implements NoRegistry {
     }
 
     protected MessageCreateAction onSend(@NotNull MessageReceivedEvent event) {
+        if (getEmojis().isEmpty())
+            throw new IllegalStateException("No reactions added to the SmartReaction");
         if (message != null)
             return event.getChannel().sendMessage(message);
         else
@@ -100,6 +102,8 @@ public class SmartReaction extends SendableComponent implements NoRegistry {
     }
 
     protected ReplyCallbackAction onReply(@NotNull SlashCommandInteractionEvent event) {
+        if (getEmojis().isEmpty())
+            throw new IllegalStateException("No reactions added to the SmartReaction");
         if (message != null)
             return event.reply(message);
         else
