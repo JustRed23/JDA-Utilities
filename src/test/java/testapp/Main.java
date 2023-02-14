@@ -4,6 +4,7 @@ import dev.JustRed23.jdautils.JDAUtilities;
 import dev.JustRed23.jdautils.command.SlashCommand;
 import dev.JustRed23.jdautils.component.interact.SmartModal;
 import dev.JustRed23.jdautils.component.interact.SmartReaction;
+import dev.JustRed23.jdautils.event.WatcherManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -73,7 +74,8 @@ public class Main extends ListenerAdapter {
                                             remove.getChannel().sendMessage("You removed " + remove.getEmoji().getAsReactionCode()).queue();
                                         })
                                         .reply(event)
-                        ).build(),
+                        ).build()
+                        .setGuildOnly(true),
                 JDAUtilities.createSlashCommand("testmodal", "Test the modal listener")
                         .executes(event ->
                                 SmartModal.create(Modal.create("test-modal", "Welcome to my test modal!")
@@ -82,6 +84,11 @@ public class Main extends ListenerAdapter {
                                         .withListener(modalEvent -> modalEvent.reply(modalEvent.getMember().getEffectiveName() + ", you typed `" + modalEvent.getInteraction().getValue("test-input").getAsString() + "`").queue())
                                         .reply(event)
                         ).build()
+                        .setGuildOnly(true),
+                JDAUtilities.createSlashCommand("checkwatchers", "Check which watchers are active")
+                        .executes(event -> event.reply(WatcherManager.getStatus()).queue())
+                        .build()
+                        .setGuildOnly(true)
         ).queue();
     }
 
