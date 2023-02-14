@@ -25,7 +25,7 @@ public class SmartModal extends SendableComponent implements NoRegistry {
         super("SmartModal");
         this.builder = builder;
 
-        eventWatcher = new EventWatcher(this, ModalInteractionEvent.class);
+        eventWatcher = new EventWatcher(this, ModalInteractionEvent.class, true);
     }
 
     public static SmartModal create(Modal.Builder builder) {

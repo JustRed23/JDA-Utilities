@@ -4,6 +4,7 @@ import dev.JustRed23.jdautils.component.Component;
 import dev.JustRed23.jdautils.component.SendableComponent;
 import dev.JustRed23.jdautils.event.WatcherManager;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.StatusChangeEvent;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -39,6 +40,10 @@ public final class InternalEventListener extends ListenerAdapter {
         LOGGER.info("Github: {}", getGithub());
         LOGGER.info("--------------------------------------------------");
         builder.freezeRegistries();
+    }
+
+    public void onGenericEvent(@NotNull GenericEvent event) {
+        WatcherManager.cleanup();
     }
 
     public void onStatusChange(@NotNull StatusChangeEvent event) {
@@ -88,6 +93,8 @@ public final class InternalEventListener extends ListenerAdapter {
                 }
         );
         builder.sendableComponentRegistry.getInstances().removeAll(toRemove);
+
+        WatcherManager.cleanup(event);
     }
 
     public void onModalInteraction(@NotNull ModalInteractionEvent event) {

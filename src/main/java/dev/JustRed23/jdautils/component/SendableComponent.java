@@ -19,6 +19,7 @@ public abstract class SendableComponent extends Component {
 
     protected Guild guild;
     protected long messageId = -1;
+    private boolean modal = false;
 
     protected SendableComponent(String name) {
         super(name);
@@ -103,6 +104,7 @@ public abstract class SendableComponent extends Component {
 
         if (interactionCallbackAction instanceof ModalCallbackAction modalAction) {
             modalAction.queue();
+            modal = true;
             return null;
         }
 
@@ -122,7 +124,7 @@ public abstract class SendableComponent extends Component {
     }
 
     public final boolean isSent() {
-        return messageId != -1 && guild != null;
+        return (messageId != -1 && guild != null) || modal;
     }
 
     public final long getMessageId() {
