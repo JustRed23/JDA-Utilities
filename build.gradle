@@ -22,6 +22,9 @@ repositories {
 dependencies {
     compileOnly 'net.dv8tion:JDA:5.0.0-beta.3'
 
+    implementation 'com.zaxxer:HikariCP:5.0.1'
+    implementation 'org.xerial:sqlite-jdbc:3.36.0.3'
+
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 

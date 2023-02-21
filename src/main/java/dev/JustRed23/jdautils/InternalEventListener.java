@@ -6,6 +6,8 @@ import dev.JustRed23.jdautils.event.WatcherManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.StatusChangeEvent;
+import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
+import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -34,12 +36,15 @@ public final class InternalEventListener extends ListenerAdapter {
         this.builder = builder;
     }
 
-    public void onReady(@NotNull ReadyEvent ignored) {
+    public void onReady(@NotNull ReadyEvent event) {
         LOGGER.info("--------------------------------------------------");
         LOGGER.info("JDA Utilities v{} by {}", getVersion(), getAuthor());
         LOGGER.info("Github: {}", getGithub());
         LOGGER.info("--------------------------------------------------");
         builder.freezeRegistries();
+
+        if (builder.guildSettingManager != null)
+            builder.guildSettingManager.loadGuilds(event.getJDA().getGuilds());
     }
 
     public void onGenericEvent(@NotNull GenericEvent event) {
@@ -51,6 +56,16 @@ public final class InternalEventListener extends ListenerAdapter {
             LOGGER.info("Shutting down JDA Utilities");
             builder.destroy();
         }
+    }
+
+    public void onGuildJoin(@NotNull GuildJoinEvent event) {
+        if (builder.guildSettingManager != null)
+            builder.guildSettingManager.addGuild(event.getGuild().getIdLong());
+    }
+
+    public void onGuildLeave(@NotNull GuildLeaveEvent event) {
+        if (builder.guildSettingManager != null)
+            builder.guildSettingManager.removeGuild(event.getGuild().getIdLong());
     }
 
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
