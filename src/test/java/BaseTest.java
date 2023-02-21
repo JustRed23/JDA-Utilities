@@ -2,6 +2,8 @@ import dev.JustRed23.jdautils.Builder;
 import dev.JustRed23.jdautils.JDAUtilities;
 import dev.JustRed23.jdautils.component.Component;
 import dev.JustRed23.jdautils.component.SendableComponent;
+import dev.JustRed23.jdautils.settings.DefaultGuildSettingManager;
+import dev.JustRed23.jdautils.settings.GuildSettingManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -9,15 +11,18 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.Properties;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class BaseTest {
 
@@ -105,5 +110,47 @@ class BaseTest {
 
         // Create a new component - this should fail as the builder was destroyed
         assertThrows(IllegalStateException.class, () -> JDAUtilities.createComponent("TestComponent"));
+    }
+
+    @Test
+    void testDB() throws InterruptedException {
+        Builder builder = JDAUtilities.getInstance();
+        GuildSettingManager manager = new DefaultGuildSettingManager(Collections.singletonMap("testkey", "testvalue"));
+        builder.withGuildSettingManager(manager);
+
+        JDA instance = createInstance()
+                .addEventListeners(builder.listener())
+                .build();
+
+        instance.awaitReady();
+
+        long testguild = 826438912535691295L;
+        assertTrue(manager.has(testguild, "testkey"));
+        assertTrue(manager.get(testguild, "testkey").isPresent());
+        assertEquals("testvalue", manager.get(testguild, "testkey").get().value());
+
+        manager.set(testguild, "dog", "German Shepherd");
+        assertTrue(manager.has(testguild, "dog"));
+        assertTrue(manager.get(testguild, "dog").isPresent());
+        assertEquals("German Shepherd", manager.get(testguild, "dog").get().value());
+
+        System.out.println("Delete result: " + manager.delete(testguild, "dog"));
+        assertFalse(manager.has(testguild, "dog"));
+
+        manager.set(testguild, "cat", "British Shorthair");
+        manager.set(testguild, "fish", "Goldfish");
+        manager.set(testguild, "bird", "Parrot");
+        manager.set(testguild, "snake", "Ball Python");
+
+        manager.getSettings(testguild).forEach(setting -> LoggerFactory.getLogger(BaseTest.class).info(setting.name() + " - " + setting.value()));
+
+        Thread.sleep(5000);
+
+        instance.shutdown();
+    }
+
+    @AfterEach
+    void deleteDB() {
+        new File("JDAU-guild_settings.db").delete();
     }
 }
