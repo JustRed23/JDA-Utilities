@@ -1,5 +1,4 @@
 - Add context menu support. (Commands.user and Commands.message)
-- Add guild settings manager (set prefix, set volume, etc.)
 - Add music management (track playing, track controls, etc.)
 - Add music queue management (add, remove, clear, etc.)
 - Add music search (search for a track, add it to the queue)
