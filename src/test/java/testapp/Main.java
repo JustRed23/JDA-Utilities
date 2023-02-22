@@ -1,7 +1,7 @@
 package testapp;
 
 import dev.JustRed23.jdautils.JDAUtilities;
-import dev.JustRed23.jdautils.command.SlashCommand;
+import dev.JustRed23.jdautils.command.Command;
 import dev.JustRed23.jdautils.component.interact.SmartModal;
 import dev.JustRed23.jdautils.component.interact.SmartReaction;
 import dev.JustRed23.jdautils.event.WatcherManager;
@@ -44,7 +44,7 @@ public class Main extends ListenerAdapter {
                 .build().awaitReady();
 
         instance.updateCommands().addCommands(
-                SlashCommand.slash("test", "A simple test command")
+                Command.slash("test", "A simple test command")
                         .executes(event -> JDAUtilities.createComponent(HelloComponent.class).reply(event))
                         .build()
                         .setGuildOnly(true), // You can still modify the data after building

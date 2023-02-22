@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-public final class SlashCommand {
+public final class Command {
 
     public static SlashCommandBuilder slash(@NotNull String name, @NotNull String description) {
         Checks.notEmpty(name, "Name");

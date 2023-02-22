@@ -1,6 +1,6 @@
 package dev.JustRed23.jdautils;
 
-import dev.JustRed23.jdautils.command.SlashCommand;
+import dev.JustRed23.jdautils.command.Command;
 import dev.JustRed23.jdautils.component.SendableComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -54,9 +54,9 @@ public final class JDAUtilities {
         return builder.sendableComponentRegistry.create(componentName);
     }
 
-    public static @NotNull SlashCommand.SlashCommandBuilder createSlashCommand(@NotNull String name, @NotNull String description) {
+    public static @NotNull Command.SlashCommandBuilder createSlashCommand(@NotNull String name, @NotNull String description) {
         checkInitialized();
-        return SlashCommand.slash(name, description);
+        return Command.slash(name, description);
     }
 
     public static String getVersion() {
