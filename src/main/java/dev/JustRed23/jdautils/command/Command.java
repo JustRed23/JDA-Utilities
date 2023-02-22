@@ -1,6 +1,7 @@
 package dev.JustRed23.jdautils.command;
 
 import dev.JustRed23.jdautils.event.EventWatcher;
+import dev.JustRed23.jdautils.utils.Unique;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;
@@ -23,6 +24,7 @@ public final class Command {
     public static SlashCommandBuilder slash(@NotNull String name, @NotNull String description) {
         Checks.notEmpty(name, "Name");
         Checks.notEmpty(description, "Description");
+        Unique.checkUnique("slashcommand", name, "A slash command with the name '" + name + "' already exists");
         return new SlashCommandBuilder(name, description);
     }
 
@@ -30,6 +32,7 @@ public final class Command {
     @Contract("_ -> new")
     public static MessageContextBuilder message(@NotNull String name) {
         Checks.notEmpty(name, "Name");
+        Unique.checkUnique("message context", name, "A message context command with the name '" + name + "' already exists");
         return new MessageContextBuilder(name);
     }
 
@@ -37,6 +40,7 @@ public final class Command {
     @Contract("_ -> new")
     public static UserContextBuilder user(@NotNull String name) {
         Checks.notEmpty(name, "Name");
+        Unique.checkUnique("message context", name, "A user context command with the name '" + name + "' already exists");
         return new UserContextBuilder(name);
     }
 

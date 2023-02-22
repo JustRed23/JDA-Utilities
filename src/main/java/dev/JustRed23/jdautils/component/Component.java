@@ -1,5 +1,6 @@
 package dev.JustRed23.jdautils.component;
 
+import dev.JustRed23.jdautils.utils.Unique;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,7 +46,7 @@ public abstract class Component {
      * @param identifier The identifier, can be anything
      */
     public void setIdentifier(@Nullable Object identifier) {
-        ComponentIdentifier.checkUnique(identifier);
+        Unique.checkUnique("component", identifier, "Component identifier must be unique");
         this.identifier = identifier;
     }
 
