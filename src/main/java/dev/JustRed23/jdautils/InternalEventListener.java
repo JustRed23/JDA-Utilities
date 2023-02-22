@@ -38,6 +38,7 @@ public final class InternalEventListener extends ListenerAdapter {
         this.builder = builder;
     }
 
+    //GENERIC EVENTS
     public void onReady(@NotNull ReadyEvent event) {
         LOGGER.info("--------------------------------------------------");
         LOGGER.info("JDA Utilities v{} by {}", getVersion(), getAuthor());
@@ -59,7 +60,9 @@ public final class InternalEventListener extends ListenerAdapter {
             builder.destroy();
         }
     }
+    //GENERIC EVENTS
 
+    //GUILD EVENTS
     public void onGuildJoin(@NotNull GuildJoinEvent event) {
         if (builder.guildSettingManager != null)
             builder.guildSettingManager.addGuild(event.getGuild().getIdLong());
@@ -69,11 +72,9 @@ public final class InternalEventListener extends ListenerAdapter {
         if (builder.guildSettingManager != null)
             builder.guildSettingManager.removeGuild(event.getGuild().getIdLong());
     }
+    //GUILD EVENTS
 
-    public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
-        WatcherManager.onCommandEvent(event);
-    }
-
+    //INTERACTION EVENTS
     public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
         WatcherManager.onInteractionEvent(event.getComponentId(), event);
     }
@@ -86,6 +87,14 @@ public final class InternalEventListener extends ListenerAdapter {
         WatcherManager.onInteractionEvent(event.getComponentId(), event);
     }
 
+    public void onModalInteraction(@NotNull ModalInteractionEvent event) {
+        WatcherManager.onInteractionEvent(event.getModalId(), event);
+    }
+
+    public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
+        WatcherManager.onCommandEvent(event);
+    }
+
     public void onMessageContextInteraction(@NotNull MessageContextInteractionEvent event) {
         WatcherManager.onContextEvent(event);
     }
@@ -93,7 +102,9 @@ public final class InternalEventListener extends ListenerAdapter {
     public void onUserContextInteraction(@NotNull UserContextInteractionEvent event) {
         WatcherManager.onContextEvent(event);
     }
+    //INTERACTION EVENTS
 
+    //MESSAGE EVENTS
     public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event) {
         WatcherManager.onReactionEvent(event);
     }
@@ -106,7 +117,7 @@ public final class InternalEventListener extends ListenerAdapter {
         if (!event.isFromGuild())
             return;
 
-        List<Component> toRemove = new ArrayList<>();
+        List<SendableComponent> toRemove = new ArrayList<>();
         builder.sendableComponentRegistry.getInstances()
                 .stream()
                 .filter(SendableComponent::isSent)
@@ -121,8 +132,5 @@ public final class InternalEventListener extends ListenerAdapter {
 
         WatcherManager.cleanup(event);
     }
-
-    public void onModalInteraction(@NotNull ModalInteractionEvent event) {
-        WatcherManager.onInteractionEvent(event.getModalId(), event);
-    }
+    //MESSAGE EVENTS
 }
