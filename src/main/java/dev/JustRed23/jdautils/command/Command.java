@@ -1,11 +1,15 @@
 package dev.JustRed23.jdautils.command;
 
 import dev.JustRed23.jdautils.event.EventWatcher;
+import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.internal.utils.Checks;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -14,10 +18,26 @@ import java.util.function.Function;
 
 public final class Command {
 
+    @NotNull
+    @Contract("_, _ -> new")
     public static SlashCommandBuilder slash(@NotNull String name, @NotNull String description) {
         Checks.notEmpty(name, "Name");
         Checks.notEmpty(description, "Description");
         return new SlashCommandBuilder(name, description);
+    }
+
+    @NotNull
+    @Contract("_ -> new")
+    public static MessageContextBuilder message(@NotNull String name) {
+        Checks.notEmpty(name, "Name");
+        return new MessageContextBuilder(name);
+    }
+
+    @NotNull
+    @Contract("_ -> new")
+    public static UserContextBuilder user(@NotNull String name) {
+        Checks.notEmpty(name, "Name");
+        return new UserContextBuilder(name);
     }
 
     public static class SlashCommandBuilder {
@@ -110,6 +130,58 @@ public final class Command {
                 parent.subCommandListeners.put(data.getName(), listener);
                 return parent;
             }
+        }
+    }
+
+    public static class MessageContextBuilder {
+
+        private final CommandData data;
+        private EventWatcher.Listener<MessageContextInteractionEvent> listener;
+
+        private MessageContextBuilder(String name) {
+            this.data = Commands.message(name);
+        }
+
+        public MessageContextBuilder executes(EventWatcher.Listener<MessageContextInteractionEvent> listener) {
+            this.listener = listener;
+            return this;
+        }
+
+        public MessageContextBuilder modifyData(@NotNull Function<CommandData, CommandData> function) {
+            function.apply(data);
+            return this;
+        }
+
+        public CommandData build() {
+            if (listener != null)
+                new EventWatcher(new CommandComponent(data.getName()).setContextCommand(true), MessageContextInteractionEvent.class).setListener(listener);
+            return data;
+        }
+    }
+
+    public static class UserContextBuilder {
+
+        private final CommandData data;
+        private EventWatcher.Listener<UserContextInteractionEvent> listener;
+
+        private UserContextBuilder(String name) {
+            this.data = Commands.user(name);
+        }
+
+        public UserContextBuilder executes(EventWatcher.Listener<UserContextInteractionEvent> listener) {
+            this.listener = listener;
+            return this;
+        }
+
+        public UserContextBuilder modifyData(@NotNull Function<CommandData, CommandData> function) {
+            function.apply(data);
+            return this;
+        }
+
+        public CommandData build() {
+            if (listener != null)
+                new EventWatcher(new CommandComponent(data.getName()).setContextCommand(true), UserContextInteractionEvent.class).setListener(listener);
+            return data;
         }
     }
 }

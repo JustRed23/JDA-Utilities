@@ -88,7 +88,13 @@ public class Main extends ListenerAdapter {
                 JDAUtilities.createSlashCommand("checkwatchers", "Check which watchers are active")
                         .executes(event -> event.reply(WatcherManager.getStatus()).queue())
                         .build()
-                        .setGuildOnly(true)
+                        .setGuildOnly(true),
+                JDAUtilities.createMessageContextCommand("say message")
+                        .executes(event -> event.reply(event.getTarget().getContentRaw()).queue())
+                        .build(),
+                JDAUtilities.createUserContextCommand("say user")
+                        .executes(event -> event.reply(event.getTarget().getAsTag()).queue())
+                        .build()
         ).queue();
     }
 
@@ -97,10 +103,5 @@ public class Main extends ListenerAdapter {
             JDAUtilities.createComponent(HelloComponent.class).send(event);
         if (event.getMessage().getContentRaw().equals("shutdown"))
             event.getJDA().shutdown();
-    }
-
-    public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
-        if (event.getComponentId().equals("delete"))
-            event.getMessage().delete().queue();
     }
 }

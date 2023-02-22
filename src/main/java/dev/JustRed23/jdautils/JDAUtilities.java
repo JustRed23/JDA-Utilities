@@ -59,6 +59,16 @@ public final class JDAUtilities {
         return Command.slash(name, description);
     }
 
+    public static @NotNull Command.MessageContextBuilder createMessageContextCommand(@NotNull String name) {
+        checkInitialized();
+        return Command.message(name);
+    }
+
+    public static @NotNull Command.UserContextBuilder createUserContextCommand(@NotNull String name) {
+        checkInitialized();
+        return Command.user(name);
+    }
+
     public static String getVersion() {
         return version;
     }

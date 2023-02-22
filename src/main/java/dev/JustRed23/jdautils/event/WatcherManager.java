@@ -4,6 +4,7 @@ import dev.JustRed23.jdautils.command.CommandComponent;
 import dev.JustRed23.jdautils.component.SendableComponent;
 import dev.JustRed23.jdautils.component.interact.SmartReaction;
 import net.dv8tion.jda.api.events.Event;
+import net.dv8tion.jda.api.events.interaction.command.GenericContextInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.react.GenericMessageReactionEvent;
@@ -53,6 +54,14 @@ public final class WatcherManager {
                 .ifPresent(watcher -> watcher.onEvent(event));
     }
 
+    public static void onContextEvent(GenericContextInteractionEvent<?> event) {
+        watchers.stream()
+                .filter(watcher -> watcher.getComponent() instanceof CommandComponent)
+                .filter(watcher -> watcher.getComponent().getName().equals(event.getName()))
+                .findFirst()
+                .ifPresent(watcher -> watcher.onEvent(event));
+    }
+
     public static void onInteractionEvent(String componentID, Event event) {
         watchers.stream()
                 .filter(watcher -> watcher.getComponent().getUuid() != null)
@@ -76,8 +85,8 @@ public final class WatcherManager {
         StringBuilder builder = new StringBuilder();
         builder.append("WatcherManager: ").append(watchers.size()).append(" watchers").append("\n");
         watchers.forEach(watcher -> {
-            if (watcher.getComponent() instanceof CommandComponent) {
-                builder.append(" - Slash command: ").append(watcher.getComponent().getName()).append("\n");
+            if (watcher.getComponent() instanceof CommandComponent cmd) {
+                builder.append(cmd.isContextCommand() ? " - Context command: " : " - Slash command: ").append(watcher.getComponent().getName()).append("\n");
                 return;
             }
             builder.append(" - ").append(watcher.getComponent().getName()).append("\n");

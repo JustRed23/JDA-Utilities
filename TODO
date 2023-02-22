@@ -1,4 +1,3 @@
-- Add context menu support. (Commands.user and Commands.message)
 - Add music management (track playing, track controls, etc.)
 - Add music queue management (add, remove, clear, etc.)
 - Add music search (search for a track, add it to the queue)

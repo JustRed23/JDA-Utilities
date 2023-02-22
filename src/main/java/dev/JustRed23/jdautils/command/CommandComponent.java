@@ -10,8 +10,19 @@ import dev.JustRed23.jdautils.event.EventWatcher;
  */
 public final class CommandComponent extends Component implements NoRegistry {
 
+    private boolean contextCommand;
+
     CommandComponent(String name) {
         super(name);
+    }
+
+    public CommandComponent setContextCommand(boolean contextCommand) {
+        this.contextCommand = contextCommand;
+        return this;
+    }
+
+    public boolean isContextCommand() {
+        return contextCommand;
     }
 
     protected void onCreate() {}

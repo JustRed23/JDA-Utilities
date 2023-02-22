@@ -9,7 +9,9 @@ import net.dv8tion.jda.api.events.StatusChangeEvent;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.EntitySelectInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
@@ -82,6 +84,14 @@ public final class InternalEventListener extends ListenerAdapter {
 
     public void onStringSelectInteraction(@NotNull StringSelectInteractionEvent event) {
         WatcherManager.onInteractionEvent(event.getComponentId(), event);
+    }
+
+    public void onMessageContextInteraction(@NotNull MessageContextInteractionEvent event) {
+        WatcherManager.onContextEvent(event);
+    }
+
+    public void onUserContextInteraction(@NotNull UserContextInteractionEvent event) {
+        WatcherManager.onContextEvent(event);
     }
 
     public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event) {
