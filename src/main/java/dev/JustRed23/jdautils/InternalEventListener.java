@@ -28,7 +28,7 @@ import java.util.List;
 
 import static dev.JustRed23.jdautils.JDAUtilities.*;
 
-public final class InternalEventListener extends ListenerAdapter {
+final class InternalEventListener extends ListenerAdapter {
 
     private final Logger LOGGER = LoggerFactory.getLogger(InternalEventListener.class);
     private final Builder builder;
