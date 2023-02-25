@@ -11,11 +11,48 @@ import net.dv8tion.jda.api.requests.restaction.interactions.ModalCallbackAction;
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
 public abstract class SendableComponent extends Component {
+
+    private static final List<SendableComponent> instances = new ArrayList<>();
+
+    public static @Nullable SendableComponent create(@NotNull Class<? extends SendableComponent> componentClass) {
+        if (Arrays.asList(componentClass.getInterfaces()).contains(NoRegistry.class))
+            throw new IllegalArgumentException("Component class is annotated with NoRegistry and cannot be created");
+
+        try {
+            SendableComponent component = componentClass.getDeclaredConstructor().newInstance();
+            instances.add(component);
+            return component.create();
+        } catch (Exception e) {
+            LoggerFactory.getLogger(SendableComponent.class).error("Failed to create component", e);
+        }
+        return null;
+    }
+
+    public static @Nullable SendableComponent create(@NotNull Class<? extends SendableComponent> componentClass, Object... constructorArgs) {
+        if (Arrays.asList(componentClass.getInterfaces()).contains(NoRegistry.class))
+            throw new IllegalArgumentException("Component class is annotated with NoRegistry and cannot be created");
+
+        try {
+            SendableComponent component = componentClass.getDeclaredConstructor().newInstance(constructorArgs);
+            instances.add(component);
+            return component.create();
+        } catch (Exception e) {
+            LoggerFactory.getLogger(SendableComponent.class).error("Failed to create component", e);
+        }
+        return null;
+    }
+
+    public static List<SendableComponent> getInstances() {
+        return instances;
+    }
 
     protected Guild guild;
     protected long messageId = -1;

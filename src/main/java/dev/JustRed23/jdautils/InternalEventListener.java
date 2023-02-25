@@ -43,7 +43,7 @@ public final class InternalEventListener extends ListenerAdapter {
         LOGGER.info("JDA Utilities v{} by {}", getVersion(), getAuthor());
         LOGGER.info("Github: {}", getGithub());
         LOGGER.info("--------------------------------------------------");
-        builder.freezeRegistries();
+        builder.ready = true;
 
         if (builder.guildSettingManager != null)
             builder.guildSettingManager.loadGuilds(event.getJDA().getGuilds());
@@ -117,7 +117,7 @@ public final class InternalEventListener extends ListenerAdapter {
             return;
 
         List<SendableComponent> toRemove = new ArrayList<>();
-        builder.sendableComponentRegistry.getInstances()
+        SendableComponent.getInstances()
                 .stream()
                 .filter(SendableComponent::isSent)
                 .filter(component -> event.getGuild().equals(component.getGuild()))
@@ -127,7 +127,7 @@ public final class InternalEventListener extends ListenerAdapter {
                     toRemove.add(component);
                 }
         );
-        builder.sendableComponentRegistry.getInstances().removeAll(toRemove);
+        SendableComponent.getInstances().removeAll(toRemove);
 
         WatcherManager.cleanup(event);
     }

@@ -32,9 +32,7 @@ public class Main extends ListenerAdapter {
             e.printStackTrace();
         }
 
-        ListenerAdapter listener = JDAUtilities.getInstance()
-                .registerComponent(HelloComponent.class)
-                .listener();
+        ListenerAdapter listener = JDAUtilities.getInstance().listener();
 
         JDA instance = JDABuilder.createDefault(secrets.getProperty("token"))
                 .enableIntents(GatewayIntent.MESSAGE_CONTENT)

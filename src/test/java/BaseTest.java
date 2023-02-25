@@ -79,44 +79,31 @@ class BaseTest {
         // Create a new builder
         Builder builder = JDAUtilities.getInstance();
 
-        // Register a component
-        builder.registerComponent(TestComponent.class);
-        // You cannot register SendableComponent.class as it is an abstract class
-        assertThrows(IllegalArgumentException.class, () -> builder.registerComponent(SendableComponent.class));
-        // You cannot register the same component twice
-        assertThrows(IllegalArgumentException.class, () -> builder.registerComponent(TestComponent.class));
         // Create a new component - this should fail as the listener was not initialized
-        assertThrows(IllegalStateException.class, () -> JDAUtilities.createComponent("TestComponent"));
+        assertThrows(IllegalStateException.class, () -> JDAUtilities.createComponent(TestComponent.class));
 
         JDA instance = createInstance()
                 .addEventListeners(builder.listener())
                 .build().awaitReady();
 
-        // Register a component - this should fail as the registries are frozen
-        assertThrows(IllegalStateException.class, () -> builder.registerComponent(Test2Component.class));
-
         // Create a new component
-        Component component = JDAUtilities.createComponent("TestComponent");
+        Component component = JDAUtilities.createComponent(TestComponent.class);
         assertNotNull(component);
         LoggerFactory.getLogger(BaseTest.class).info("Component: " + component.getName() + " created!");
         LoggerFactory.getLogger(BaseTest.class).info("UUID: " + component.getUuid().toString());
-
-        // Create a new component - this should fail as the component does not exist
-        assertThrows(IllegalArgumentException.class, () -> JDAUtilities.createComponent("Test2Component"));
 
         Thread.sleep(5000);
 
         instance.shutdown();
 
         // Create a new component - this should fail as the builder was destroyed
-        assertThrows(IllegalStateException.class, () -> JDAUtilities.createComponent("TestComponent"));
+        assertThrows(IllegalStateException.class, () -> JDAUtilities.createComponent(TestComponent.class));
     }
 
     @Test
     void testDB() throws InterruptedException {
-        Builder builder = JDAUtilities.getInstance();
         GuildSettingManager manager = new DefaultGuildSettingManager(Collections.singletonMap("testkey", "testvalue"));
-        builder.withGuildSettingManager(manager);
+        Builder builder = JDAUtilities.getInstance().withGuildSettingManager(manager);
 
         JDA instance = createInstance()
                 .addEventListeners(builder.listener())

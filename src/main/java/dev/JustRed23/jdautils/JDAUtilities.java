@@ -46,12 +46,12 @@ public final class JDAUtilities {
 
     public static @Nullable SendableComponent createComponent(Class<? extends SendableComponent> clazz) {
         checkInitialized();
-        return builder.sendableComponentRegistry.create(clazz);
+        return SendableComponent.create(clazz);
     }
 
-    public static @Nullable SendableComponent createComponent(@NotNull String componentName) {
+    public static @Nullable SendableComponent createComponent(Class<? extends SendableComponent> clazz, Object... constructorArgs) {
         checkInitialized();
-        return builder.sendableComponentRegistry.create(componentName);
+        return SendableComponent.create(clazz, constructorArgs);
     }
 
     public static @NotNull Command.SlashCommandBuilder createSlashCommand(@NotNull String name, @NotNull String description) {
