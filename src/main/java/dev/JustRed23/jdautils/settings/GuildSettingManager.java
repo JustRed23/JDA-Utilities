@@ -41,6 +41,16 @@ public abstract class GuildSettingManager {
     public abstract void set(long guildId, @NotNull String setting, @NotNull Object value);
 
     /**
+     * Gets the given setting, if it exists, otherwise returns the default value provided
+     * @param guildId The id of the guild
+     * @param setting The setting to get
+     * @param defaultValue The default value to return if the setting doesn't exist
+     * @return The setting, if it exists, otherwise the default value
+     */
+    @NotNull
+    public abstract Setting getOrDefault(long guildId, @NotNull String setting, @NotNull Object defaultValue);
+
+    /**
      * Gets the given setting, if it exists
      * @param guildId The id of the guild
      * @param setting The setting to get

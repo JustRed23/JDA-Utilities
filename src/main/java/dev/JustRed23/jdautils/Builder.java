@@ -1,5 +1,6 @@
 package dev.JustRed23.jdautils;
 
+import dev.JustRed23.jdautils.music.AudioManager;
 import dev.JustRed23.jdautils.settings.GuildSettingManager;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
@@ -17,6 +18,8 @@ public final class Builder {
     void destroy() {
         if (guildSettingManager != null)
             guildSettingManager.shutdown();
+
+        AudioManager.destroyAll();
 
         JDAUtilities.builder = null;
     }

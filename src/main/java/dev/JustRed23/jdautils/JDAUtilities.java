@@ -2,6 +2,9 @@ package dev.JustRed23.jdautils;
 
 import dev.JustRed23.jdautils.command.Command;
 import dev.JustRed23.jdautils.component.SendableComponent;
+import dev.JustRed23.jdautils.music.AudioManager;
+import dev.JustRed23.jdautils.settings.GuildSettingManager;
+import net.dv8tion.jda.api.entities.Guild;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.LoggerFactory;
@@ -42,6 +45,16 @@ public final class JDAUtilities {
         if (builder == null)
             builder = new Builder();
         return builder;
+    }
+
+    public static @Nullable GuildSettingManager getGuildSettingManager() {
+        checkInitialized();
+        return builder.guildSettingManager;
+    }
+
+    public static @NotNull AudioManager getGuildAudioManager(@NotNull Guild guild) {
+        checkInitialized();
+        return AudioManager.get(guild);
     }
 
     public static @Nullable SendableComponent createComponent(Class<? extends SendableComponent> clazz) {

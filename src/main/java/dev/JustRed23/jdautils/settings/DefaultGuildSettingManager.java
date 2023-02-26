@@ -73,6 +73,10 @@ public class DefaultGuildSettingManager extends GuildSettingManager {
         }
     }
 
+    public @NotNull Setting getOrDefault(long guildId, @NotNull String setting, @NotNull Object defaultValue) {
+        return get(guildId, setting).orElse(Setting.of(guildId, setting, defaultValue));
+    }
+
     @NotNull
     public Optional<Setting> get(long guildId, @NotNull String setting) {
         try (Connection con = getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM guild_" + guildId + "_settings WHERE setting = ?")) {
