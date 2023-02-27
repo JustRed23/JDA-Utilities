@@ -1,12 +1,5 @@
 - Add music search (search for a track, add it to the queue)
-    - Add the rest of the sources
-        - Soundcloud
-        - Bandcamp
-        - Vimeo
-        - Twitch
-        - Beam
-        - GetYarn
-        - Http
+    - Finish coding the sources
 - Chat filtering (filter out spam, discord invites, etc.), customisable with specific filtering rules
 - DOCUMENTATION!!!
 

@@ -10,13 +10,8 @@ import java.security.GeneralSecurityException;
  * This class is a common entry point for all search sources. You can also use the specific sources directly. <br>
  * <br>
  * Available sources: <br>
- * - {@link BandcampSource} <br>
- * - {@link BeamSource} <br>
- * - {@link GetYarnSource} <br>
- * - {@link HttpSource} <br>
  * - {@link SoundCloudSource} <br>
- * - {@link TwitchSource} <br>
- * - {@link VimeoSource} <br>
+ * - {@link SpotifySource} <br>
  * - {@link YouTubeSource} <br>
  */
 public final class Search {
@@ -33,31 +28,11 @@ public final class Search {
         Search.appName = appName;
     }
 
-    public static @NotNull BandcampSource Bandcamp() {
-        return null; //TODO
-    }
-
-    public static @NotNull BeamSource Beam() {
-        return null; //TODO
-    }
-
-    public static @NotNull GetYarnSource GetYarn() {
-        return null; //TODO
-    }
-
-    public static @NotNull HttpSource Http() {
-        return null; //TODO
-    }
-
     public static @NotNull SoundCloudSource SoundCloud(String token) throws GeneralSecurityException, IOException {
         return null; //TODO
     }
 
-    public static @NotNull TwitchSource Twitch(String token) throws GeneralSecurityException, IOException {
-        return null; //TODO
-    }
-
-    public static @NotNull VimeoSource Vimeo(String token) throws GeneralSecurityException, IOException {
+    public static @NotNull SpotifySource Spotify(String token) throws GeneralSecurityException, IOException {
         return null; //TODO
     }
 
