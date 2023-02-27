@@ -99,6 +99,11 @@ public final class AudioManager {
             }
 
             public void playlistLoaded(AudioPlaylist playlist) {
+                if (playlist.isSearchResult()) {
+                    trackLoaded(playlist.getTracks().get(0));
+                    return;
+                }
+
                 playlist.getTracks().forEach(track -> scheduler.queue(track, requester));
                 List<TrackInfo> trackInfo = playlist.getTracks().stream().map(track -> TrackInfo.of(getGuild(), track)).toList();
                 callback.onPlaylistLoaded(playlist, trackInfo, trackInfo.stream().map(TrackInfo::track).mapToLong(AudioTrack::getDuration).sum());
