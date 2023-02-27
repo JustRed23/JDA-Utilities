@@ -10,6 +10,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import dev.JustRed23.jdautils.music.effect.AbstractEffect;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.internal.utils.Checks;
 import org.jetbrains.annotations.NotNull;
@@ -66,8 +67,20 @@ public final class AudioManager {
     /**
      * Loads and plays the specified track or playlist
      * @param trackURL The url of the track or playlist to load
+     * @param requester The member that requested the track
+     * @param callback The callback to call when the track or playlist has been loaded
+     * @see TrackLoadCallback
+     */
+    public void loadAndPlay(@NotNull String trackURL, @NotNull Member requester, @NotNull TrackLoadCallback callback) {
+        loadAndPlay(trackURL, requester.getUser(), callback);
+    }
+
+    /**
+     * Loads and plays the specified track or playlist
+     * @param trackURL The url of the track or playlist to load
      * @param requester The user that requested the track
      * @param callback The callback to call when the track or playlist has been loaded
+     * @see TrackLoadCallback
      */
     public void loadAndPlay(@NotNull String trackURL, @NotNull User requester, @NotNull TrackLoadCallback callback) {
         Checks.notNull(trackURL, "Track url");
@@ -82,13 +95,13 @@ public final class AudioManager {
 
             public void trackLoaded(AudioTrack track) {
                 boolean queued = scheduler.queue(track, requester);
-                callback.onTrackLoaded(TrackInfo.of(getGuild(), track), queued);
+                callback.onTrackLoaded(TrackInfo.of(getGuild(), track), queued, track.getDuration());
             }
 
             public void playlistLoaded(AudioPlaylist playlist) {
                 playlist.getTracks().forEach(track -> scheduler.queue(track, requester));
-                List<TrackInfo> trackInfos = playlist.getTracks().stream().map(track -> TrackInfo.of(getGuild(), track)).toList();
-                callback.onPlaylistLoaded(playlist, trackInfos, trackInfos.stream().map(TrackInfo::track).mapToLong(AudioTrack::getDuration).sum());
+                List<TrackInfo> trackInfo = playlist.getTracks().stream().map(track -> TrackInfo.of(getGuild(), track)).toList();
+                callback.onPlaylistLoaded(playlist, trackInfo, trackInfo.stream().map(TrackInfo::track).mapToLong(AudioTrack::getDuration).sum());
             }
 
             public void noMatches() {

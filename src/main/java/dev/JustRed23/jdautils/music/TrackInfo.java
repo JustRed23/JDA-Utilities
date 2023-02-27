@@ -8,12 +8,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.TimeUnit;
 
-public record TrackInfo(Guild guild, AudioTrack track, String source) {
+public record TrackInfo(Guild guild, AudioTrack track, AudioSource source) {
 
     @NotNull
     @Contract("_, _ -> new")
     public static TrackInfo of(Guild guild, AudioTrack track) {
-        return new TrackInfo(guild, track, track.getSourceManager() != null ? track.getSourceManager().getSourceName() : "unknown");
+        return new TrackInfo(guild, track, track.getSourceManager() != null ? AudioSource.getByName(track.getSourceManager().getSourceName()) : AudioSource.UNKNOWN);
     }
 
     public long getTimestamp(@NotNull TimeUnit unit) {
