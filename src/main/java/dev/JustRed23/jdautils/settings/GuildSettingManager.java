@@ -29,16 +29,20 @@ public abstract class GuildSettingManager {
      * Sets the given setting to the given value
      * @param guildId The id of the guild
      * @param setting The setting to set
+     * @return SUCCESS if the setting was set or ERROR if an error occurred
+     * @see ConfigReturnValue
      */
-    public abstract void set(long guildId, @NotNull Setting setting);
+    public abstract ConfigReturnValue set(long guildId, @NotNull Setting setting);
 
     /**
      * Sets the given setting to the given value
      * @param guildId The id of the guild
      * @param setting The setting to set
      * @param value The value to set the setting to
+     * @return SUCCESS if the setting was set or ERROR if an error occurred
+     * @see ConfigReturnValue
      */
-    public abstract void set(long guildId, @NotNull String setting, @NotNull Object value);
+    public abstract ConfigReturnValue set(long guildId, @NotNull String setting, @NotNull Object value);
 
     /**
      * Gets the given setting, if it exists, otherwise returns the default value provided
@@ -73,9 +77,10 @@ public abstract class GuildSettingManager {
      * Deletes the given setting
      * @param guildId The id of the guild
      * @param setting The setting to delete
-     * @return True if the setting was deleted, false otherwise
+     * @return SUCCESS if the setting was deleted or NOT_FOUND if the setting doesn't exist
+     * @see ConfigReturnValue
      */
-    public abstract boolean delete(long guildId, @NotNull String setting);
+    public abstract ConfigReturnValue delete(long guildId, @NotNull String setting);
 
     /**
      * Gets all the settings for the given guild

@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.*;
 
+import static dev.JustRed23.jdautils.settings.ConfigReturnValue.*;
+
 public class DefaultGuildSettingManager extends GuildSettingManager {
 
     private HikariDataSource dataSource;
@@ -48,20 +50,20 @@ public class DefaultGuildSettingManager extends GuildSettingManager {
         return dataSource.getConnection();
     }
 
-    public void set(long guildId, @NotNull Setting setting) {
-        set(guildId, setting.name(), setting.value());
+    public ConfigReturnValue set(long guildId, @NotNull Setting setting) {
+        return set(guildId, setting.name(), setting.value());
     }
 
-    public void set(long guildId, @NotNull String setting, @NotNull Object value) {
+    public ConfigReturnValue set(long guildId, @NotNull String setting, @NotNull Object value) {
         if (has(guildId, setting)) {
             try (Connection con = getConnection(); PreparedStatement statement = con.prepareStatement("UPDATE guild_" + guildId + "_settings SET value = ? WHERE setting = ?")) {
                 statement.setObject(1, value);
                 statement.setString(2, setting);
                 statement.execute();
             } catch (SQLException e) {
-                throw new RuntimeException("Could not set setting in database", e);
+                return ERROR.setException(e);
             }
-            return;
+            return SUCCESS;
         }
 
         try (Connection con = getConnection(); PreparedStatement statement = con.prepareStatement("INSERT INTO guild_" + guildId + "_settings (setting, value) VALUES (?, ?)")) {
@@ -69,8 +71,9 @@ public class DefaultGuildSettingManager extends GuildSettingManager {
             statement.setObject(2, value);
             statement.execute();
         } catch (SQLException e) {
-            throw new RuntimeException("Could not set setting in database", e);
+            return ERROR.setException(e);
         }
+        return SUCCESS;
     }
 
     public @NotNull Setting getOrDefault(long guildId, @NotNull String setting, @NotNull Object defaultValue) {
@@ -101,12 +104,12 @@ public class DefaultGuildSettingManager extends GuildSettingManager {
         }
     }
 
-    public boolean delete(long guildId, @NotNull String setting) {
+    public ConfigReturnValue delete(long guildId, @NotNull String setting) {
         try (Connection con = getConnection(); PreparedStatement statement = con.prepareStatement("DELETE FROM guild_" + guildId + "_settings WHERE setting = ?")) {
             statement.setString(1, setting);
-            return statement.executeUpdate() > 0;
+            return statement.executeUpdate() > 0 ? SUCCESS : NOT_FOUND;
         } catch (SQLException e) {
-            throw new RuntimeException("Could not delete setting from database", e);
+            return ERROR.setException(e);
         }
     }
 

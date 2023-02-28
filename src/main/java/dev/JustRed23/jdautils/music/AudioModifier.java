@@ -3,6 +3,7 @@ package dev.JustRed23.jdautils.music;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import dev.JustRed23.jdautils.JDAUtilities;
 import dev.JustRed23.jdautils.music.effect.AbstractEffect;
+import dev.JustRed23.jdautils.settings.ConfigReturnValue;
 import net.dv8tion.jda.api.entities.Guild;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,11 +20,21 @@ public final class AudioModifier {
         setVolume(getGuildDefaultVolume());
     }
 
-    public void setVolume(int volume) {
-        if (JDAUtilities.getGuildSettingManager() != null)
-            JDAUtilities.getGuildSettingManager().set(guildId, "audioplayer-volume", volume);
+    /**
+     * Sets the volume of the player, can be between 0 and 100
+     * @param volume The volume to set
+     * @return The result of the operation, can be SUCCESS, ERROR or INVALID_VALUE
+     */
+    public ConfigReturnValue setVolume(int volume) {
+        if (volume <= 0 || volume > 100)
+            return ConfigReturnValue.INVALID_VALUE;
 
         player.setVolume(volume);
+
+        if (JDAUtilities.getGuildSettingManager() != null)
+            return JDAUtilities.getGuildSettingManager().set(guildId, "audioplayer-volume", volume);
+        else
+            return ConfigReturnValue.SUCCESS;
     }
 
     public int getVolume() {
