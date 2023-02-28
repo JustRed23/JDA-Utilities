@@ -121,7 +121,7 @@ class BaseTest {
         assertTrue(manager.get(testguild, "dog").isPresent());
         assertEquals("German Shepherd", manager.get(testguild, "dog").get().value());
 
-        System.out.println("Delete result: " + manager.delete(testguild, "dog"));
+        System.out.println("Delete result: " + manager.delete(testguild, "dog").name());
         assertFalse(manager.has(testguild, "dog"));
 
         manager.set(testguild, "cat", "British Shorthair");
