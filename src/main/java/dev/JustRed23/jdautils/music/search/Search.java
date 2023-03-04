@@ -1,7 +1,9 @@
 package dev.JustRed23.jdautils.music.search;
 
 import dev.JustRed23.jdautils.JDAUtilities;
+import org.apache.hc.core5.http.ParseException;
 import org.jetbrains.annotations.NotNull;
+import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -27,8 +29,8 @@ public final class Search {
         Search.appName = appName;
     }
 
-    public static @NotNull SpotifySource Spotify(String token) throws GeneralSecurityException, IOException {
-        return null; //TODO
+    public static @NotNull SpotifySource Spotify(String clientId, String clientSecret) throws IOException, ParseException, SpotifyWebApiException {
+        return SpotifySource.login(clientId, clientSecret);
     }
 
     public static @NotNull YouTubeSource YouTube(String token) throws GeneralSecurityException, IOException {

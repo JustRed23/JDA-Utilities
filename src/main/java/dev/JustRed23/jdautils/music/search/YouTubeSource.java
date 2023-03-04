@@ -48,13 +48,30 @@ public class YouTubeSource {
         this.token = token;
     }
 
+    /**
+     * Search for a video on YouTube, returns the first 5 results
+     * @param query The query to search for
+     * @return A list of search results, limited to 5
+     * @throws IOException If the request fails
+     */
     public List<SearchResult> search(String query) throws IOException {
+        return search(query, 5);
+    }
+
+    /**
+     * Search for a video on YouTube, returns the first x results
+     * @param query The query to search for
+     * @param limit The amount of results to return
+     * @return A list of search results, limited to x
+     * @throws IOException If the request fails
+     */
+    public List<SearchResult> search(String query, long limit) throws IOException {
         List<SearchResult> results = youtube.search()
                 .list(Collections.singletonList("id,snippet"))
                 .setQ(query)
-                .setMaxResults(5L)
+                .setMaxResults(limit)
                 .setType(Collections.singletonList("video"))
-                .setFields("items(id/kind,id/videoId,snippet/title,snippet/thumbnails/default/url)")
+                .setFields("items(id(kind,videoId),snippet(title,channelId,channelTitle,thumbnails/default/url))")
                 .setKey(token)
                 .execute()
                 .getItems();
@@ -62,6 +79,12 @@ public class YouTubeSource {
         return results.isEmpty() ? null : results;
     }
 
+    /**
+     * Get the details of (multiple) videos
+     * @param videoIDs The video ID(s) to get the details of
+     * @return A list of video details
+     * @throws IOException If the request fails
+     */
     public List<VideoContentDetails> getVideoDetails(String... videoIDs) throws IOException {
         List<Video> details = youtube.videos()
                 .list(Collections.singletonList("contentDetails"))

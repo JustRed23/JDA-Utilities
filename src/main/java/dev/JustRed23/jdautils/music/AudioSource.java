@@ -3,7 +3,6 @@ package dev.JustRed23.jdautils.music;
 import org.jetbrains.annotations.Nullable;
 
 public enum AudioSource {
-    SOUNDCLOUD("soundcloud", "https://soundcloud.com/"),
     SPOTIFY("spotify", "https://spotify.com/"),
     YOUTUBE("youtube", "https://youtube.com/"),
     UNKNOWN("unknown");
