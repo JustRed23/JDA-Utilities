@@ -1,6 +1,8 @@
 package dev.JustRed23.jdautils.component;
 
+import dev.JustRed23.jdautils.JDAUtilities;
+
 /**
- * This interface is used to mark a class as not registrable by any {@link dev.JustRed23.jdautils.registry.IRegistry}
+ * This interface is used to prevent a class from getting created with {@link JDAUtilities#createComponent}
  */
 public interface NoRegistry {}
