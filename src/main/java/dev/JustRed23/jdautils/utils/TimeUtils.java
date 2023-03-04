@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
-public class TimeUtils {
+public final class TimeUtils {
 
     private TimeUtils() {}
 
@@ -87,8 +87,8 @@ public class TimeUtils {
     }
 
     /**
-     * Converts a youtube time to a string
-     * @param ytTime The time in youtube format
+     * Converts a YouTube time to a string
+     * @param ytTime The time in YouTube format
      * @return The time in string format
      * @see <a href="https://developers.google.com/youtube/v3/docs/videos#contentDetails.duration">Youtube time format</a>
      * @see #millisToTime(long)

@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-public class SpotifySource {
+public final class SpotifySource {
 
     public static @NotNull SpotifySource login(@NotNull String clientId, @NotNull String clientSecret) throws IOException, ParseException, SpotifyWebApiException {
         return new SpotifySource(clientId, clientSecret);

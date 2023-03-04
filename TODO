@@ -1,4 +1,5 @@
 - Test music system
 - Chat filtering (filter out spam, discord invites, etc.), customisable with specific filtering rules
 - DOCUMENTATION!!!
+    - Most classes are documented now, still need to document the component and command packages
 

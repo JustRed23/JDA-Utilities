@@ -1,7 +1,9 @@
 package dev.JustRed23.jdautils;
 
 import dev.JustRed23.jdautils.music.AudioManager;
+import dev.JustRed23.jdautils.settings.DefaultGuildSettingManager;
 import dev.JustRed23.jdautils.settings.GuildSettingManager;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public final class Builder {
@@ -25,6 +27,11 @@ public final class Builder {
     }
     /* INTERNAL */
 
+    /**
+     * Sets the guild setting manager, if you do not want to create your own you can create a new {@link DefaultGuildSettingManager} instance
+     * @param guildSettingManager The guild setting manager to use
+     * @throws IllegalStateException If JDA Utilities has already been initialized
+     */
     public Builder withGuildSettingManager(GuildSettingManager guildSettingManager) {
         if (ready)
             throw new IllegalStateException("JDA Utilities is already ready, you must call this method before JDA initialization");
@@ -33,6 +40,10 @@ public final class Builder {
         return this;
     }
 
+    /**
+     * Gets the internal event listener, you need to add this to your JDA instance
+     * @see JDA#addEventListener(Object...)
+     */
     public ListenerAdapter listener() {
         return adapter;
     }

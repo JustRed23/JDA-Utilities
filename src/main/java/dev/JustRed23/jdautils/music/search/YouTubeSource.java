@@ -15,7 +15,7 @@ import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.List;
 
-public class YouTubeSource {
+public final class YouTubeSource {
 
     @Contract(pure = true)
     public static @NotNull String getThumbnail(String videoID) {
@@ -46,6 +46,10 @@ public class YouTubeSource {
     private YouTubeSource(String token) throws GeneralSecurityException, IOException {
         this.builder = new YouTube.Builder(GoogleNetHttpTransport.newTrustedTransport(), GsonFactory.getDefaultInstance(), null);
         this.token = token;
+    }
+
+    public @NotNull YouTube getApi() {
+        return youtube;
     }
 
     /**

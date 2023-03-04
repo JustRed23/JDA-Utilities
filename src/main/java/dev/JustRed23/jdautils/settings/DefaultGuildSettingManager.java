@@ -11,7 +11,11 @@ import java.util.*;
 
 import static dev.JustRed23.jdautils.settings.ConfigReturnValue.*;
 
-public class DefaultGuildSettingManager extends GuildSettingManager {
+/**
+ * This is the default implementation of the {@link GuildSettingManager} interface.<br>
+ * It uses a SQLite database to store the settings. The database is created in the same directory as the jar file and is called "JDAU-guild_settings.db".
+ */
+public final class DefaultGuildSettingManager extends GuildSettingManager {
 
     private HikariDataSource dataSource;
 
