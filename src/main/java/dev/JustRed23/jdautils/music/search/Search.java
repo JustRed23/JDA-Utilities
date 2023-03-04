@@ -10,7 +10,6 @@ import java.security.GeneralSecurityException;
  * This class is a common entry point for all search sources. You can also use the specific sources directly. <br>
  * <br>
  * Available sources: <br>
- * - {@link SoundCloudSource} <br>
  * - {@link SpotifySource} <br>
  * - {@link YouTubeSource} <br>
  */
@@ -26,10 +25,6 @@ public final class Search {
      */
     public static void setAppName(String appName) {
         Search.appName = appName;
-    }
-
-    public static @NotNull SoundCloudSource SoundCloud(String token) throws GeneralSecurityException, IOException {
-        return null; //TODO
     }
 
     public static @NotNull SpotifySource Spotify(String token) throws GeneralSecurityException, IOException {
