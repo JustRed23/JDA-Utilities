@@ -5,10 +5,7 @@ import dev.JustRed23.jdautils.utils.Unique;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.interactions.commands.build.Commands;
-import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
-import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
+import net.dv8tion.jda.api.interactions.commands.build.*;
 import net.dv8tion.jda.internal.utils.Checks;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -56,7 +53,10 @@ public final class Command {
         }
 
         public SlashCommandBuilder addOption(@NotNull CommandOption option) {
-            data.addOption(option.type(), option.name(), option.description(), option.required(), option.autocomplete());
+            OptionData optionData = new OptionData(option.type(), option.name(), option.description(), option.required(), option.autocomplete());
+            for (net.dv8tion.jda.api.interactions.commands.Command.Choice choice : option.choices())
+                optionData.addChoice(choice.getName(), choice.getAsString());
+            data.addOptions(optionData);
             return this;
         }
 

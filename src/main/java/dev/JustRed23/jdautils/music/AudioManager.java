@@ -12,6 +12,7 @@ import dev.JustRed23.jdautils.music.effect.AbstractEffect;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.internal.utils.Checks;
 import org.jetbrains.annotations.NotNull;
 
@@ -62,6 +63,28 @@ public final class AudioManager {
         this.controls = new TrackControls(scheduler, audioModifier);
 
         guild.getAudioManager().setSendingHandler(new JDASendHandler(player));
+    }
+
+    /**
+     * Makes the bot join the specified voice channel
+     * @param channel The voice channel to join, must not be null
+     */
+    public void join(@NotNull VoiceChannel channel) {
+        guild.getAudioManager().openAudioConnection(channel);
+    }
+
+    /**
+     * Makes the bot leave the voice channel
+     */
+    public void disconnect() {
+        if (controls == null)
+            throw new IllegalStateException("Audio manager has been destroyed");
+
+        if (guild.getAudioManager().getConnectedChannel() == null)
+            return;
+
+        getControls().stopAndClear();
+        scheduler.getGuild().getAudioManager().closeAudioConnection();
     }
 
     /**
@@ -126,6 +149,7 @@ public final class AudioManager {
         if (controls == null)
             return;
 
+        disconnect();
         controls.shutdown();
 
         controls = null;

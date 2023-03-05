@@ -15,13 +15,9 @@ import java.util.List;
 
 public final class NightcoreEffect extends AbstractEffect {
 
-    public NightcoreEffect(AudioPlayer player) {
-        super(player);
-    }
-
     @NotNull
     @Unmodifiable
-    List<AudioFilter> getEffect(AudioTrack track, @NotNull AudioDataFormat format, UniversalPcmAudioFilter output) {
+    List<AudioFilter> getEffect(AudioPlayer player, AudioTrack track, @NotNull AudioDataFormat format, UniversalPcmAudioFilter output) {
         TimescalePcmAudioFilter timescale = new TimescalePcmAudioFilter(output, format.channelCount, format.sampleRate);
         timescale.setSpeed(1.3);
         timescale.setPitch(1.25);

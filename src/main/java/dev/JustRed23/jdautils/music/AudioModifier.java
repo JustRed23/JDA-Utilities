@@ -60,10 +60,10 @@ public final class AudioModifier {
         AbstractEffect previousEffect = getEnabledEffect();
 
         if (previousEffect != null)
-            previousEffect.disable();
+            previousEffect.disable(player);
 
         this.effect = effect;
-        effect.enable();
+        effect.enable(player);
 
         return previousEffect;
     }
@@ -73,7 +73,7 @@ public final class AudioModifier {
      */
     public void disableEffect() {
         if (effect != null) {
-            effect.disable();
+            effect.disable(player);
             effect = null;
         }
     }

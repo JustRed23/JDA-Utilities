@@ -17,14 +17,13 @@ public final class SpeedEffect extends AbstractEffect {
 
     private final float speed;
 
-    public SpeedEffect(AudioPlayer player, float speed) {
-        super(player);
+    public SpeedEffect(float speed) {
         this.speed = speed;
     }
 
     @NotNull
     @Unmodifiable
-    List<AudioFilter> getEffect(AudioTrack track, AudioDataFormat format, UniversalPcmAudioFilter output) {
+    List<AudioFilter> getEffect(AudioPlayer player, AudioTrack track, AudioDataFormat format, UniversalPcmAudioFilter output) {
         if (speed <= 0 || speed == 1)
             return Collections.emptyList();
 

@@ -19,14 +19,13 @@ public final class BassboostEffect extends AbstractEffect {
 
     private final float multiplier;
 
-    public BassboostEffect(AudioPlayer player, float multiplier) {
-        super(player);
+    public BassboostEffect(float multiplier) {
         this.multiplier = multiplier;
     }
 
     @NotNull
     @Unmodifiable
-    List<AudioFilter> getEffect(AudioTrack track, AudioDataFormat format, UniversalPcmAudioFilter output) {
+    List<AudioFilter> getEffect(AudioPlayer player, AudioTrack track, AudioDataFormat format, UniversalPcmAudioFilter output) {
         if (multiplier == 1)
             return Collections.emptyList();
         else {

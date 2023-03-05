@@ -13,7 +13,6 @@ public final class TrackControls {
     }
 
     void shutdown() {
-        disconnect();
         scheduler.shutdown();
     }
 
@@ -67,10 +66,5 @@ public final class TrackControls {
         scheduler.prev.clear();
         scheduler.looping = false;
         stop();
-    }
-
-    public void disconnect() {
-        stopAndClear();
-        scheduler.getGuild().getAudioManager().closeAudioConnection();
     }
 }

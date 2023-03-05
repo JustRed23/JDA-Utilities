@@ -12,21 +12,15 @@ import java.util.List;
 
 public abstract class AbstractEffect {
 
-    private final AudioPlayer player;
-
-    protected AbstractEffect(AudioPlayer player) {
-        this.player = player;
-    }
-
     @NotNull
     @Unmodifiable
-    abstract List<AudioFilter> getEffect(AudioTrack track, AudioDataFormat format, UniversalPcmAudioFilter output);
+    abstract List<AudioFilter> getEffect(AudioPlayer player, AudioTrack track, AudioDataFormat format, UniversalPcmAudioFilter output);
 
-    public final void enable() {
-        player.setFilterFactory(this::getEffect);
+    public final void enable(@NotNull AudioPlayer player) {
+        player.setFilterFactory((track, format, output) -> getEffect(player, track, format, output));
     }
 
-    public final void disable() {
+    public final void disable(@NotNull AudioPlayer player) {
         player.setFilterFactory(null);
     }
 
