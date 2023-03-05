@@ -15,7 +15,7 @@ class CommandTest {
 
         assertNotNull(basic);
 
-        SlashCommandData subCommand = Command.slash("test", "a simple test command")
+        SlashCommandData subCommand = Command.slash("test2", "a simple test command")
                 .addSubCommand("sub", "a sub command")
                     .executes(event -> event.reply("sub command executed").queue())
                     .build()
@@ -27,7 +27,7 @@ class CommandTest {
         assertNotNull(subCommand);
 
         assertThrows(IllegalStateException.class, () ->
-                Command.slash("test", "a simple test command")
+                Command.slash("test3", "a simple test command")
                     .addSubCommand("sub", "a sub command")
                         .executes(event -> event.reply("sub command executed").queue())
                         .build()
