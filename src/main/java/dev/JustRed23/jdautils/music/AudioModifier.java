@@ -56,11 +56,9 @@ public final class AudioModifier {
      * @param effect The effect to enable
      * @return The previous effect or null if there was no previous effect
      */
-    public @Nullable AbstractEffect enableEffect(AbstractEffect effect) {
+    public @Nullable AbstractEffect enableEffect(@NotNull AbstractEffect effect) {
         AbstractEffect previousEffect = getEnabledEffect();
-
-        if (previousEffect != null)
-            previousEffect.disable(player);
+        disableEffect();
 
         this.effect = effect;
         effect.enable(player);

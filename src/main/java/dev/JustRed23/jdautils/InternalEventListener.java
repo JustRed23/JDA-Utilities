@@ -43,7 +43,7 @@ final class InternalEventListener extends ListenerAdapter {
         LOGGER.info("JDA Utilities v{} by {}", getVersion(), getAuthor());
         LOGGER.info("Github: {}", getGithub());
         LOGGER.info("--------------------------------------------------");
-        builder.ready = true;
+        builder.ready();
 
         if (builder.guildSettingManager != null)
             builder.guildSettingManager.loadGuilds(event.getJDA().getGuilds());

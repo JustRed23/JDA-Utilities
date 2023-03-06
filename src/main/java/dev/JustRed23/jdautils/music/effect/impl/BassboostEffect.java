@@ -1,4 +1,4 @@
-package dev.JustRed23.jdautils.music.effect;
+package dev.JustRed23.jdautils.music.effect.impl;
 
 import com.sedmelluq.discord.lavaplayer.filter.AudioFilter;
 import com.sedmelluq.discord.lavaplayer.filter.UniversalPcmAudioFilter;
@@ -6,6 +6,7 @@ import com.sedmelluq.discord.lavaplayer.filter.equalizer.EqualizerFactory;
 import com.sedmelluq.discord.lavaplayer.format.AudioDataFormat;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import dev.JustRed23.jdautils.music.effect.AbstractEffect;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
@@ -17,15 +18,19 @@ public final class BassboostEffect extends AbstractEffect {
 
     private final float[] freqGain = {-0.05f, 0.07f, 0.16f, 0.03f, -0.05f, -0.11f};
 
-    private final float multiplier;
+    private float multiplier = 1;
 
-    public BassboostEffect(float multiplier) {
-        this.multiplier = multiplier;
+    public AbstractEffect setValue(Object value) {
+        if (value instanceof Float)
+            multiplier = (float) value;
+        else
+            throw new IllegalArgumentException("Value must be a float");
+        return this;
     }
 
     @NotNull
     @Unmodifiable
-    List<AudioFilter> getEffect(AudioPlayer player, AudioTrack track, AudioDataFormat format, UniversalPcmAudioFilter output) {
+    protected List<AudioFilter> getEffect(AudioPlayer player, AudioTrack track, AudioDataFormat format, UniversalPcmAudioFilter output) {
         if (multiplier == 1)
             return Collections.emptyList();
         else {

@@ -6,9 +6,6 @@ import dev.JustRed23.jdautils.command.CommandOption;
 import dev.JustRed23.jdautils.music.TrackInfo;
 import dev.JustRed23.jdautils.music.TrackLoadCallback;
 import dev.JustRed23.jdautils.music.effect.AbstractEffect;
-import dev.JustRed23.jdautils.music.effect.BassboostEffect;
-import dev.JustRed23.jdautils.music.effect.NightcoreEffect;
-import dev.JustRed23.jdautils.music.effect.SpeedEffect;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -106,22 +103,17 @@ public class MusicMain {
                                 .addOption(new CommandOption(OptionType.NUMBER, "value", "The value of the effect", true))
                                 .executes(event -> {
                                     String effect = event.getOption("effect").getAsString();
-                                    float value = (float) event.getOption("value").getAsDouble();
+                                    float value = event.getOption("value") != null ? (float) event.getOption("value").getAsDouble() : 0F;
 
-                                    AbstractEffect theEffect = null;
-                                    switch (effect) {
-                                        case "bassboost":
-                                            theEffect = new BassboostEffect(value);
-                                            break;
-                                        case "nightcore":
-                                            theEffect = new NightcoreEffect();
-                                            break;
-                                        case "speed":
-                                            theEffect = new SpeedEffect(value);
-                                            break;
+                                    if (value <= 0) {
+                                        JDAUtilities.getGuildAudioManager(event.getGuild()).getAudioModifier().disableEffect();
+                                        event.reply("Removed all effects").queue();
+                                        return;
                                     }
 
-                                    JDAUtilities.getGuildAudioManager(event.getGuild()).getAudioModifier().enableEffect(theEffect);
+                                    AbstractEffect theEffect = AbstractEffect.getEffect(effect);
+
+                                    JDAUtilities.getGuildAudioManager(event.getGuild()).getAudioModifier().enableEffect(theEffect.setValue(value));
                                     event.reply("Added effect " + effect + " with value " + value).queue();
                                 })
                                 .build(),

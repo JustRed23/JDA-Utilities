@@ -1,10 +1,12 @@
 package dev.JustRed23.jdautils;
 
 import dev.JustRed23.jdautils.music.AudioManager;
+import dev.JustRed23.jdautils.music.effect.AbstractEffect;
 import dev.JustRed23.jdautils.settings.DefaultGuildSettingManager;
 import dev.JustRed23.jdautils.settings.GuildSettingManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.reflections.Reflections;
 
 public final class Builder {
 
@@ -17,6 +19,19 @@ public final class Builder {
     }
 
     /* INTERNAL */
+    void ready() {
+        Reflections reflections = new Reflections(AbstractEffect.class.getPackageName() + ".impl");
+        reflections.getSubTypesOf(AbstractEffect.class).forEach(clazz -> {
+            try {
+                clazz.getDeclaredConstructor().newInstance();
+            } catch (Exception e) {
+                throw new RuntimeException("An error occurred while trying to register default effects", e);
+            }
+        });
+
+        ready = true;
+    }
+
     void destroy() {
         if (guildSettingManager != null)
             guildSettingManager.shutdown();

@@ -84,6 +84,7 @@ public final class AudioManager {
             return;
 
         getControls().stopAndClear();
+        getAudioModifier().disableEffect();
         scheduler.getGuild().getAudioManager().closeAudioConnection();
     }
 

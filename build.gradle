@@ -25,6 +25,8 @@ dependencies {
 
     implementation 'org.jetbrains:annotations:24.0.0'
 
+    implementation 'org.reflections:reflections:0.10.2'
+
     implementation 'com.zaxxer:HikariCP:5.0.1'
     implementation 'org.xerial:sqlite-jdbc:3.40.1.0'
 
