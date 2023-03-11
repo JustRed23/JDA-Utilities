@@ -2,6 +2,7 @@ package dev.JustRed23.jdautils;
 
 import dev.JustRed23.jdautils.command.Command;
 import dev.JustRed23.jdautils.component.SendableComponent;
+import dev.JustRed23.jdautils.message.MessageFilter;
 import dev.JustRed23.jdautils.music.AudioManager;
 import dev.JustRed23.jdautils.settings.GuildSettingManager;
 import net.dv8tion.jda.api.entities.Guild;
@@ -72,6 +73,17 @@ public final class JDAUtilities {
     public static @Nullable GuildSettingManager getGuildSettingManager() {
         checkInitialized();
         return builder.guildSettingManager;
+    }
+
+    /**
+     * Gets the guild filter manager, this is used to get and set guild filters
+     * @param guild The guild to get the filter manager for
+     * @return The filter manager for the specified guild
+     * @see MessageFilter#get(Guild)
+     */
+    public static @NotNull MessageFilter getGuildFilterManager(@NotNull Guild guild) {
+        checkInitialized();
+        return MessageFilter.get(guild);
     }
 
     /**

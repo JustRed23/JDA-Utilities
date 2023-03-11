@@ -2,6 +2,7 @@ package dev.JustRed23.jdautils.event;
 
 import dev.JustRed23.jdautils.component.Component;
 import net.dv8tion.jda.api.events.Event;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.TimeUnit;
 
@@ -16,7 +17,6 @@ public final class EventWatcher {
     public EventWatcher(Component component, Class<? extends Event> eventClass) {
         this.component = component;
         this.eventClass = eventClass;
-        WatcherManager.addWatcher(this);
     }
 
     public EventWatcher(Component component, Class<? extends Event> eventClass, boolean singleUse) {
@@ -26,11 +26,12 @@ public final class EventWatcher {
 
     public void setListener(Listener listener) {
         this.listener = listener;
+        WatcherManager.addWatcher(this);
     }
 
-    public void setListener(Listener listener, int expireAfter, TimeUnit unit) {
-        this.listener = listener;
+    public void setListener(Listener listener, int expireAfter, @NotNull TimeUnit unit) {
         this.expireTime = System.currentTimeMillis() + unit.toMillis(expireAfter);
+        this.setListener(listener);
     }
 
     public void destroy() {

@@ -3,15 +3,20 @@ package dev.JustRed23.jdautils.event;
 import dev.JustRed23.jdautils.command.CommandComponent;
 import dev.JustRed23.jdautils.component.SendableComponent;
 import dev.JustRed23.jdautils.component.interact.SmartReaction;
+import dev.JustRed23.jdautils.event.custom.MessageFilterEvent;
+import dev.JustRed23.jdautils.message.Filter;
+import dev.JustRed23.jdautils.message.MessageComponent;
 import net.dv8tion.jda.api.events.Event;
 import net.dv8tion.jda.api.events.interaction.command.GenericContextInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.GenericMessageReactionEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public final class WatcherManager {
 
@@ -20,7 +25,8 @@ public final class WatcherManager {
     private WatcherManager() {}
 
     static void addWatcher(EventWatcher watcher) {
-        watchers.add(watcher);
+        if (!watchers.contains(watcher))
+            watchers.add(watcher);
     }
 
     static void removeWatcher(EventWatcher watcher) {
@@ -44,7 +50,23 @@ public final class WatcherManager {
         cleanup();
     }
 
-    public static void onCommandEvent(SlashCommandInteractionEvent event) {
+    public static void onMessageEvent(@NotNull MessageReceivedEvent event) {
+        watchers.stream()
+                .filter(watcher -> watcher.getComponent() instanceof MessageComponent)
+                .filter(watcher -> ((MessageComponent) watcher.getComponent()).conditionsMet(event))
+                .forEach(watcher -> watcher.onEvent(event));
+    }
+
+    public static void onFilterTrigger(@NotNull List<Filter> triggeredFilters, MessageReceivedEvent event) {
+        for (Filter triggeredFilter : triggeredFilters) {
+            watchers.stream()
+                    .filter(watcher -> watcher.getComponent() instanceof MessageComponent)
+                    .filter(watcher -> Objects.equals(((MessageComponent) watcher.getComponent()).getFilterName(), triggeredFilter.getName()))
+                    .forEach(watcher -> watcher.onEvent(MessageFilterEvent.of(triggeredFilter, event)));
+        }
+    }
+
+    public static void onCommandEvent(@NotNull SlashCommandInteractionEvent event) {
         String command = event.getName() + (event.getSubcommandName() != null ? " " + event.getSubcommandName() : "");
 
         watchers.stream()
@@ -89,6 +111,14 @@ public final class WatcherManager {
                 builder.append(cmd.isContextCommand() ? " - Context command: " : " - Slash command: ").append(watcher.getComponent().getName()).append("\n");
                 return;
             }
+
+            if (watcher.getComponent() instanceof MessageComponent msg) {
+                builder.append(" - Message listener").append("\n");
+                if (msg.getFilterName() != null)
+                    builder.append("   - Filter: ").append(msg.getFilterName()).append("\n");
+                return;
+            }
+
             builder.append(" - ").append(watcher.getComponent().getName()).append("\n");
             if (watcher.getComponent().getIdentifier() != null)
                 builder.append("   - IDENTIFIER: ").append(watcher.getComponent().getIdentifier()).append("\n");

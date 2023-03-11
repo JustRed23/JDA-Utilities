@@ -2,7 +2,10 @@ package dev.JustRed23.jdautils;
 
 import dev.JustRed23.jdautils.component.SendableComponent;
 import dev.JustRed23.jdautils.event.WatcherManager;
+import dev.JustRed23.jdautils.message.Filter;
+import dev.JustRed23.jdautils.message.MessageFilter;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.MessageType;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.StatusChangeEvent;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
@@ -15,6 +18,7 @@ import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.EntitySelectInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
@@ -104,6 +108,22 @@ final class InternalEventListener extends ListenerAdapter {
     //INTERACTION EVENTS
 
     //MESSAGE EVENTS
+    public void onMessageReceived(@NotNull MessageReceivedEvent event) {
+        if (event.getAuthor().isBot() || event.isWebhookMessage())
+            return;
+
+        List<Filter> triggeredFilters = MessageFilter.broadcastEvent(event);
+
+        if (!triggeredFilters.isEmpty()){
+            WatcherManager.onFilterTrigger(triggeredFilters, event);
+            if (!event.getMessage().getType().isSystem())
+                event.getMessage().delete().queue();
+            return;
+        }
+
+        WatcherManager.onMessageEvent(event);
+    }
+
     public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event) {
         WatcherManager.onReactionEvent(event);
     }

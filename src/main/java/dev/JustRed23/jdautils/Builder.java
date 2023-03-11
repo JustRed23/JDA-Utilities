@@ -1,5 +1,6 @@
 package dev.JustRed23.jdautils;
 
+import dev.JustRed23.jdautils.message.MessageFilter;
 import dev.JustRed23.jdautils.music.AudioManager;
 import dev.JustRed23.jdautils.music.effect.AbstractEffect;
 import dev.JustRed23.jdautils.settings.DefaultGuildSettingManager;
@@ -37,6 +38,7 @@ public final class Builder {
             guildSettingManager.shutdown();
 
         AudioManager.destroyAll();
+        MessageFilter.destroyAll();
 
         JDAUtilities.builder = null;
     }
