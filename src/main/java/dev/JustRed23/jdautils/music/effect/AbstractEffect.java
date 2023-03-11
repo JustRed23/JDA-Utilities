@@ -25,10 +25,14 @@ public abstract class AbstractEffect {
     }
 
     public static void enableEffect(@NotNull String name) {
+        if (!EFFECTS.containsKey(name) || !DISABLED_EFFECTS.contains(name))
+            return;
         DISABLED_EFFECTS.remove(name);
     }
 
     public static void disableEffect(@NotNull String name) {
+        if (!EFFECTS.containsKey(name) || DISABLED_EFFECTS.contains(name))
+            return;
         DISABLED_EFFECTS.add(name);
     }
 
