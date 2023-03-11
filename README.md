@@ -19,7 +19,7 @@ Some utility classes to help with making a Discord Bot with [JDA](https://github
 
 ## TODO
 - [ ]  Add more documentation
-- [ ]  Add a chat filtering system
+- [X]  Add a chat filtering system
     - filter out spam, discord invites, etc.
     - customisable with specific filtering rules
 
