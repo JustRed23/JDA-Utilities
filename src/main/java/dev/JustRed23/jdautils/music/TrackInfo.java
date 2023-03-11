@@ -13,7 +13,7 @@ public record TrackInfo(Guild guild, AudioTrack track, AudioSource source) {
     @NotNull
     @Contract("_, _ -> new")
     public static TrackInfo of(Guild guild, AudioTrack track) {
-        return new TrackInfo(guild, track, track.getSourceManager() != null ? AudioSource.getByName(track.getSourceManager().getSourceName()) : AudioSource.UNKNOWN);
+        return new TrackInfo(guild, track, track.getSourceManager() != null ? AudioSource.getByName(track.getSourceManager().getSourceName()) : AudioSource.UNKNOWN.withName("unknown"));
     }
 
     public long getTimestamp(@NotNull TimeUnit unit) {

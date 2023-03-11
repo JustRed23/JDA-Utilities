@@ -17,16 +17,16 @@ public final class TrackControls {
     }
 
     public void pause() {
-        scheduler.player.setPaused(true);
+        scheduler.getPlayer().setPaused(true);
     }
 
     public void resume() {
-        scheduler.player.setPaused(false);
+        scheduler.getPlayer().setPaused(false);
     }
 
     public void restart() {
         if (scheduler.getPlayingTrack() != null)
-            scheduler.player.getPlayingTrack().setPosition(0);
+            scheduler.getPlayingTrack().setPosition(0);
     }
 
     @Nullable
@@ -41,7 +41,7 @@ public final class TrackControls {
             return null;
         }
 
-        scheduler.player.startTrack(scheduler.queue.poll(), false);
+        scheduler.getPlayer().startTrack(scheduler.queue.poll(), false);
         return scheduler.getPlayingTrackInfo();
     }
 
@@ -50,12 +50,12 @@ public final class TrackControls {
         if (scheduler.prev.isEmpty())
             return null;
 
-        scheduler.player.startTrack(scheduler.prev.poll(), false);
+        scheduler.getPlayer().startTrack(scheduler.prev.poll(), false);
         return scheduler.getPlayingTrackInfo();
     }
 
     public void stop() {
-        scheduler.player.stopTrack();
+        scheduler.getPlayer().stopTrack();
         if (scheduler.isPaused())
             resume();
         modifier.disableEffect();

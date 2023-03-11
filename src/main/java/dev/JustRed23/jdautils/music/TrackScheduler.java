@@ -18,7 +18,7 @@ import java.util.List;
 public final class TrackScheduler extends AudioEventAdapter {
 
     private final Guild guild;
-    AudioPlayer player;
+    private AudioPlayer player;
 
     final LinkedList<AudioTrack>
             queue = new LinkedList<>(),
@@ -120,5 +120,9 @@ public final class TrackScheduler extends AudioEventAdapter {
 
     public Guild getGuild() {
         return guild;
+    }
+
+    public AudioPlayer getPlayer() {
+        return player;
     }
 }

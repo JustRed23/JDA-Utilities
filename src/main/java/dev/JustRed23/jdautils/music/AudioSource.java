@@ -7,7 +7,7 @@ public enum AudioSource {
     YOUTUBE("youtube", "https://youtube.com/"),
     UNKNOWN("unknown");
 
-    private final String name;
+    private String name;
     private String url;
 
     AudioSource(String name, String url) {
@@ -23,6 +23,11 @@ public enum AudioSource {
         return name;
     }
 
+    public AudioSource withName(String name) {
+        this.name = name;
+        return this;
+    }
+
     public @Nullable String getUrl() {
         return url;
     }
@@ -30,13 +35,14 @@ public enum AudioSource {
     /**
      * Get the AudioSource by name
      * @param name The name of the AudioSource
-     * @return The AudioSource, if not found it will return {@link #UNKNOWN}
+     * @return The AudioSource, if not found it will return {@link #UNKNOWN} with the name set to the given name
+     * @see #getName()
      */
     public static AudioSource getByName(String name) {
         for (AudioSource source : values()) {
             if (source.getName().equalsIgnoreCase(name))
                 return source;
         }
-        return UNKNOWN;
+        return UNKNOWN.withName(name);
     }
 }
