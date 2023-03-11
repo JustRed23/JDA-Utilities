@@ -2,10 +2,13 @@ package dev.JustRed23.jdautils;
 
 import dev.JustRed23.jdautils.command.Command;
 import dev.JustRed23.jdautils.component.SendableComponent;
+import dev.JustRed23.jdautils.event.EventWatcher;
+import dev.JustRed23.jdautils.message.MessageComponent;
 import dev.JustRed23.jdautils.message.MessageFilter;
 import dev.JustRed23.jdautils.music.AudioManager;
 import dev.JustRed23.jdautils.settings.GuildSettingManager;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.function.Function;
 
 /**
  * This is the main class of JDAUtilities, this is used to initialize JDAUtilities and get some useful methods
@@ -84,6 +88,29 @@ public final class JDAUtilities {
     public static @NotNull MessageFilter getGuildFilterManager(@NotNull Guild guild) {
         checkInitialized();
         return MessageFilter.get(guild);
+    }
+
+    /**
+     * Adds a listener to the guild message listener, this fires when a message is received in the specified guild
+     * @param guild The guild to listen for messages in
+     * @param listener The listener to add
+     * @return The event watcher that you can use to remove the listener
+     */
+    public static @NotNull EventWatcher addGuildMessageListener(Guild guild, EventWatcher.Listener<MessageReceivedEvent> listener) {
+        return addMessageListener(listener, event -> event.getGuild().equals(guild));
+    }
+
+    /**
+     * Adds a listener to the message listener, this fires when a message is received in any guild
+     * @param listener The listener to add
+     * @param condition The condition to check before the listener is called
+     * @return The event watcher that you can use to remove the listener
+     */
+    public static @NotNull EventWatcher addMessageListener(EventWatcher.Listener<MessageReceivedEvent> listener, Function<MessageReceivedEvent, Boolean> condition) {
+        checkInitialized();
+        EventWatcher watcher = new EventWatcher(new MessageComponent(listener).withCondition(condition), MessageReceivedEvent.class);
+        watcher.setListener(listener);
+        return watcher;
     }
 
     /**

@@ -34,6 +34,10 @@ public final class EventWatcher {
         this.setListener(listener);
     }
 
+    public Listener getListener() {
+        return listener;
+    }
+
     public void destroy() {
         listener = null;
         expireTime = -1;

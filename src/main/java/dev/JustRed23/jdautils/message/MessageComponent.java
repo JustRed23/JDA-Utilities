@@ -16,22 +16,37 @@ import java.util.function.Function;
  */
 public final class MessageComponent extends Component implements NoRegistry {
 
-    private final Function<MessageReceivedEvent, Boolean> condition;
+    private EventWatcher.Listener listener;
     private Filter filter;
+    private Function<MessageReceivedEvent, Boolean> condition = event -> true;
 
-    MessageComponent(Function<MessageReceivedEvent, Boolean> condition) {
+    public MessageComponent(EventWatcher.Listener listener) {
         super("MessageComponent");
-        this.condition = condition;
+        this.listener = listener;
     }
 
     public MessageComponent(Filter filter) {
         super("MessageComponent");
         this.filter = filter;
-        this.condition = event -> true;
     }
 
-    public boolean conditionsMet(MessageReceivedEvent event) {
+    public MessageComponent withCondition(Function<MessageReceivedEvent, Boolean> condition) {
+        this.condition = condition;
+        return this;
+    }
+
+    public boolean conditionsMet(EventWatcher watcher, MessageReceivedEvent event) {
+        if (isListener())
+            return watcher.getListener().equals(listener) && condition.apply(event);
         return condition.apply(event);
+    }
+
+    public boolean isListener() {
+        return listener != null;
+    }
+
+    public @Nullable EventWatcher.Listener getListener() {
+        return listener;
     }
 
     public boolean isFilter() {

@@ -2,13 +2,11 @@ package dev.JustRed23.jdautils.message;
 
 import dev.JustRed23.jdautils.event.custom.MessageFilterEvent;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.MessageType;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.internal.utils.Checks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -55,14 +53,13 @@ public class MessageFilter {
 
     private final Guild guild;
     private final List<Filter> messageFilters = new ArrayList<>();
-    private final List<Filter> triggeredFilters = new ArrayList<>();
 
     private MessageFilter(@NotNull Guild guild) {
         this.guild = guild;
     }
 
-    private List<Filter> onMessageReceived(@NotNull MessageReceivedEvent event) {
-        triggeredFilters.clear();
+    private @NotNull List<Filter> onMessageReceived(@NotNull MessageReceivedEvent event) {
+        List<Filter> triggeredFilters = new ArrayList<>();
         messageFilters.forEach(filter -> {
             if (filter.onMessageReceived(MessageFilterEvent.of(filter, event)) && !triggeredFilters.contains(filter))
                 triggeredFilters.add(filter);

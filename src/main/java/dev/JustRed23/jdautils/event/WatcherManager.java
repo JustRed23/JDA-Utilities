@@ -53,7 +53,7 @@ public final class WatcherManager {
     public static void onMessageEvent(@NotNull MessageReceivedEvent event) {
         watchers.stream()
                 .filter(watcher -> watcher.getComponent() instanceof MessageComponent)
-                .filter(watcher -> ((MessageComponent) watcher.getComponent()).conditionsMet(event))
+                .filter(watcher -> ((MessageComponent) watcher.getComponent()).conditionsMet(watcher, event))
                 .forEach(watcher -> watcher.onEvent(event));
     }
 
@@ -61,6 +61,7 @@ public final class WatcherManager {
         for (Filter triggeredFilter : triggeredFilters) {
             watchers.stream()
                     .filter(watcher -> watcher.getComponent() instanceof MessageComponent)
+                    .filter(watcher -> ((MessageComponent) watcher.getComponent()).isFilter())
                     .filter(watcher -> Objects.equals(((MessageComponent) watcher.getComponent()).getFilterName(), triggeredFilter.getName()))
                     .forEach(watcher -> watcher.onEvent(MessageFilterEvent.of(triggeredFilter, event)));
         }

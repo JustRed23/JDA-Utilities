@@ -77,8 +77,20 @@ public class SmartReaction extends SendableComponent implements NoRegistry {
     }
 
     public SmartReaction withListeners(EventWatcher.Listener<MessageReactionAddEvent> onAdd, EventWatcher.Listener<MessageReactionRemoveEvent> onRemove, int expireAfter, TimeUnit unit) {
-        this.onAdd.setListener(onAdd, expireAfter, unit);
-        this.onRemove.setListener(onRemove, expireAfter, unit);
+        this.onAdd.setListener(event -> {
+            MessageReactionAddEvent addEvent = (MessageReactionAddEvent) event;
+            EmojiUnion emoji = addEvent.getEmoji();
+            if (getReactions().contains(emoji))
+                onAdd.onEvent(addEvent);
+            else
+                addEvent.getReaction().removeReaction(addEvent.retrieveUser().complete()).queue();
+        }, expireAfter, unit);
+        this.onRemove.setListener(event -> {
+            MessageReactionRemoveEvent removeEvent = (MessageReactionRemoveEvent) event;
+            EmojiUnion emoji = removeEvent.getEmoji();
+            if (getReactions().contains(emoji))
+                onRemove.onEvent(removeEvent);
+        }, expireAfter, unit);
         return this;
     }
 

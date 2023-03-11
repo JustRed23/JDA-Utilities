@@ -34,14 +34,14 @@ public class HelloComponent extends SendableComponent {
                 .withListener(event -> event.getMessage().delete().queue());
 
         randomButton = SmartButton.primary("Random")
-                .withListener(event -> event.reply("Randomness happened!").setEphemeral(true).queue(ih -> ih.deleteOriginal().queueAfter(5, TimeUnit.SECONDS)), 15, TimeUnit.SECONDS);
+                .withListener(event -> event.reply("Randomness happened!").setEphemeral(true).map(ih -> ih.deleteOriginal().queueAfter(5, TimeUnit.SECONDS)).queue(), 15, TimeUnit.SECONDS);
 
         select = SmartDropdown.create(StringSelectMenu.create("gender")
                         .setPlaceholder("Select your gender")
                         .addOption("Male", "male")
                         .addOption("Female", "female")
                         .addOption("Samsung Galaxy XCover 5 sim card", "samsung")
-                ).withListener(event -> event.reply("You selected: " + event.getSelectedOptions().get(0).getLabel()).setEphemeral(true).queue(ih -> ih.deleteOriginal().queueAfter(5, TimeUnit.SECONDS)));
+                ).withListener(event -> event.reply("You selected: " + event.getSelectedOptions().get(0).getLabel()).setEphemeral(true).map(ih -> ih.deleteOriginal().queueAfter(5, TimeUnit.SECONDS)).queue());
 
         userSelect = SmartDropdown.create(EntitySelectMenu.create("users", EntitySelectMenu.SelectTarget.USER)
                 .setPlaceholder("Select a user to mention")
@@ -50,7 +50,7 @@ public class HelloComponent extends SendableComponent {
         ).withListener(event -> {
             String mentioned = event.getMentions().getMembers().get(0).getAsMention();
             event.deferEdit().queue();
-            event.getChannel().sendMessage(mentioned + ", " + event.getMember().getEffectiveName() + " mentioned you!").queue(ih -> ih.delete().queueAfter(5, TimeUnit.SECONDS));
+            event.getChannel().sendMessage(mentioned + ", " + event.getMember().getEffectiveName() + " mentioned you!").map(ih -> ih.delete().queueAfter(5, TimeUnit.SECONDS)).queue();
         });
 
         builder = new EmbedBuilder();

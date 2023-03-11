@@ -27,6 +27,9 @@ public class MessageFilterEvent extends MessageReceivedEvent {
         return getMessage().getContentRaw();
     }
 
+    /**
+     * @return true if the message is from AutoMod
+     */
     public boolean isFromAutoMod() {
         return isFromType(MessageType.AUTO_MODERATION_ACTION);
     }

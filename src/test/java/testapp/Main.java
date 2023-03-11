@@ -5,10 +5,12 @@ import dev.JustRed23.jdautils.command.Command;
 import dev.JustRed23.jdautils.component.interact.SmartModal;
 import dev.JustRed23.jdautils.component.interact.SmartReaction;
 import dev.JustRed23.jdautils.event.WatcherManager;
+import dev.JustRed23.jdautils.message.Filter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -19,9 +21,17 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.InputStream;
+import java.util.Objects;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
-public class Main extends ListenerAdapter {
+public class Main {
+
+    private static final Filter FILTER = new SimpleMessageFilter().withListener(event -> {
+        event.getGuildChannel().sendMessage("Woah! Slow down with the curses")
+                .map(reply -> reply.delete().queueAfter(5, TimeUnit.SECONDS))
+                .queue();
+    });
 
     public static void main(String[] args) throws InterruptedException {
         Properties secrets = null;
@@ -38,7 +48,7 @@ public class Main extends ListenerAdapter {
                 .enableIntents(GatewayIntent.MESSAGE_CONTENT)
                 .setActivity(Activity.playing("with cats"))
                 .setStatus(OnlineStatus.IDLE)
-                .addEventListeners(listener, new Main())
+                .addEventListeners(listener)
                 .build().awaitReady();
 
         instance.updateCommands().addCommands(
@@ -94,12 +104,12 @@ public class Main extends ListenerAdapter {
                         .executes(event -> event.reply(event.getTarget().getAsTag()).queue())
                         .build()
         ).queue();
-    }
 
-    public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-        if (event.getMessage().getContentRaw().equals("test"))
-            JDAUtilities.createComponent(HelloComponent.class).send(event);
-        if (event.getMessage().getContentRaw().equals("shutdown"))
-            event.getJDA().shutdown();
+        Guild testguild = Objects.requireNonNull(instance.getGuildById(secrets.getProperty("test-guild")));
+
+        JDAUtilities.getGuildFilterManager(testguild)
+                .addFilter(FILTER);
+
+        JDAUtilities.addGuildMessageListener(testguild, event -> System.out.println(event.getAuthor().getAsTag() + " > " + event.getMessage().getContentRaw()));
     }
 }

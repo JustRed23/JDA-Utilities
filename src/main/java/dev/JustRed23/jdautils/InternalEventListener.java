@@ -112,13 +112,15 @@ final class InternalEventListener extends ListenerAdapter {
         if (event.getAuthor().isBot() || event.isWebhookMessage())
             return;
 
-        List<Filter> triggeredFilters = MessageFilter.broadcastEvent(event);
+        if (event.isFromGuild()) { //Fire the filter only if the message is from a guild
+            List<Filter> triggeredFilters = MessageFilter.broadcastEvent(event);
 
-        if (!triggeredFilters.isEmpty()){
-            WatcherManager.onFilterTrigger(triggeredFilters, event);
-            if (!event.getMessage().getType().isSystem())
-                event.getMessage().delete().queue();
-            return;
+            if (!triggeredFilters.isEmpty()){
+                WatcherManager.onFilterTrigger(triggeredFilters, event);
+                if (!event.getMessage().getType().isSystem())
+                    event.getMessage().delete().queue();
+                return;
+            }
         }
 
         WatcherManager.onMessageEvent(event);
