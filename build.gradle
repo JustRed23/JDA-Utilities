@@ -3,7 +3,6 @@ plugins {
 }
 
 group 'dev.JustRed23'
-version '1.0.1'
 
 repositories {
     mavenCentral()

@@ -12,11 +12,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
 import java.util.function.Function;
 
 /**
@@ -34,19 +30,8 @@ import java.util.function.Function;
  */
 public final class JDAUtilities {
 
-    private static String version;
+    private static final String version = "1.0.2";
     static Builder builder;
-
-    static {
-        try (InputStream properties = JDAUtilities.class.getClassLoader().getResourceAsStream("application.properties")) {
-            Properties prop = new Properties();
-            prop.load(properties);
-            version = prop.getProperty("version");
-        } catch (IOException e) {
-            LoggerFactory.getLogger(JDAUtilities.class).error("Failed to load application.properties", e);
-            version = "unknown";
-        }
-    }
 
     private JDAUtilities() {}
 
