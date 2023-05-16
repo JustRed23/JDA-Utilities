@@ -10,5 +10,4 @@ gradle-app.setting
 .gradletasknamecache
 config
 
-application.properties
 secrets.properties
