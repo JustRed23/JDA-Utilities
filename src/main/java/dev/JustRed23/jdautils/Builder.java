@@ -16,6 +16,7 @@ public final class Builder {
     GuildSettingManager guildSettingManager;
 
     Builder() {
+        org.sqlite.JDBC.isValidURL(org.sqlite.JDBC.PREFIX); //Call a static JDBC method, this forces the JDBC driver to be loaded
         adapter = new InternalEventListener(this);
     }
 
