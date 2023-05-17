@@ -1,6 +1,5 @@
 package dev.JustRed23.jdautils.utils;
 
-import dev.JustRed23.jdautils.JDAUtilities;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
