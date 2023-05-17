@@ -115,7 +115,7 @@ public abstract class SendableComponent extends Component {
     }
 
     public final @Nullable Message send(@NotNull MessageReceivedEvent event) {
-        if (!isCreated())
+        if (!isCreated() || isSent())
             return null;
 
         MessageCreateAction messageCreateAction = onSend(event);
@@ -131,7 +131,7 @@ public abstract class SendableComponent extends Component {
     }
 
     public final @Nullable InteractionHook reply(@NotNull SlashCommandInteractionEvent event) {
-        if (!isCreated())
+        if (!isCreated() || isSent())
             return null;
 
         InteractionCallbackAction<?> interactionCallbackAction = onReply(event);
@@ -158,6 +158,14 @@ public abstract class SendableComponent extends Component {
         messageId = message.getIdLong();
         onSent(message);
         return hook;
+    }
+
+    public final void restore(@NotNull Message message) {
+        if (!isCreated())
+            return;
+
+        guild = message.getGuild();
+        messageId = message.getIdLong();
     }
 
     public final boolean isSent() {
