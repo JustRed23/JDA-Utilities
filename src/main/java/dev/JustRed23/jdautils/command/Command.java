@@ -5,16 +5,21 @@ import dev.JustRed23.jdautils.utils.Unique;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;
+import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.interactions.commands.build.*;
 import net.dv8tion.jda.internal.utils.Checks;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 public final class Command {
+
+    public static final List<CommandData> globalCommands = new ArrayList<>();
 
     @NotNull
     @Contract("_, _ -> new")
@@ -41,7 +46,25 @@ public final class Command {
         return new UserContextBuilder(name);
     }
 
-    public static class SlashCommandBuilder {
+    interface Buildable<T extends CommandData> {
+        /**
+         * Builds and creates an event watcher for the command, and returns the command data.<br>
+         * <b>You will still need to register the command with JDA</b>
+         * @return the slash command data
+         */
+        T build();
+
+        /**
+         * Builds the slash command and automatically registers it with JDA.<br>
+         * <b>Make sure to call this before actually starting a JDA instance, as commands will be registered in the {@link ReadyEvent}</b>
+         */
+        default void buildAndRegister() {
+            T data = build();
+            globalCommands.add(data);
+        }
+    }
+
+    public static class SlashCommandBuilder implements Buildable<SlashCommandData> {
 
         private final SlashCommandData data;
         private EventWatcher.Listener<SlashCommandInteractionEvent> listener;
@@ -137,7 +160,7 @@ public final class Command {
         }
     }
 
-    public static class MessageContextBuilder {
+    public static class MessageContextBuilder implements Buildable<CommandData> {
 
         private final CommandData data;
         private EventWatcher.Listener<MessageContextInteractionEvent> listener;
@@ -163,7 +186,7 @@ public final class Command {
         }
     }
 
-    public static class UserContextBuilder {
+    public static class UserContextBuilder implements Buildable<CommandData> {
 
         private final CommandData data;
         private EventWatcher.Listener<UserContextInteractionEvent> listener;

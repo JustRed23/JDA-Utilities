@@ -1,11 +1,11 @@
 package dev.JustRed23.jdautils;
 
+import dev.JustRed23.jdautils.command.Command;
 import dev.JustRed23.jdautils.component.SendableComponent;
 import dev.JustRed23.jdautils.event.WatcherManager;
 import dev.JustRed23.jdautils.message.Filter;
 import dev.JustRed23.jdautils.message.MessageFilter;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.MessageType;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.StatusChangeEvent;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
@@ -51,6 +51,12 @@ final class InternalEventListener extends ListenerAdapter {
 
         if (builder.guildSettingManager != null)
             builder.guildSettingManager.loadGuilds(event.getJDA().getGuilds());
+
+        event.getJDA()
+                .updateCommands()
+                .addCommands(Command.globalCommands)
+                .queue(success -> LOGGER.info("Successfully registered {} global command(s)", Command.globalCommands.size()),
+                        failure -> LOGGER.error("Failed to register global command(s): {}", failure.getMessage()));
     }
 
     public void onGenericEvent(@NotNull GenericEvent event) {
