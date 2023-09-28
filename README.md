@@ -1,7 +1,7 @@
 
 # JDA-Utilities
 
-Some utility classes to help with making a Discord Bot with [JDA](https://github.com/DV8FromTheWorld/JDA)
+Some utility classes to help with making a Discord Bot with [JDA](https://github.com/discord-jda/JDA)
 
 ## Features
  One class for everything: **JDAUtilities.class**. It includes:
