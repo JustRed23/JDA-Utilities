@@ -1,4 +1,3 @@
-import dev.JustRed23.jdautils.Builder;
 import dev.JustRed23.jdautils.JDAUtilities;
 import dev.JustRed23.jdautils.command.Command;
 import net.dv8tion.jda.api.JDA;
