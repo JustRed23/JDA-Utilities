@@ -70,6 +70,3 @@ After that you can freely use all methods in the JDAUtilities class
 ## Examples
 Examples are located in src/test/java
 
-## License
-[MIT](https://choosealicense.com/licenses/mit/)
-
