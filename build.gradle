@@ -10,28 +10,28 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'net.dv8tion:JDA:5.0.0-beta.9'
+    compileOnly 'net.dv8tion:JDA:5.0.0-beta.13'
 
     implementation 'org.jetbrains:annotations:24.0.0'
 
     implementation 'org.reflections:reflections:0.10.2'
 
     implementation 'com.zaxxer:HikariCP:5.0.1'
-    implementation 'org.xerial:sqlite-jdbc:3.40.1.0'
+    implementation 'org.xerial:sqlite-jdbc:3.43.0.0'
 
     implementation 'org.yaml:snakeyaml:2.0'
 
-    api 'com.github.walkyst:lavaplayer-fork:1.4.0'
+    api 'dev.arbjerg:lavaplayer:2.0.2'
     api 'com.github.JustRed23:lavadsp:0.7.7-1'
 
     //search sources
-    api 'com.google.apis:google-api-services-youtube:v3-rev20220719-1.32.1'
+    api 'com.google.apis:google-api-services-youtube:v3-rev20230904-2.0.0'
     api 'se.michaelthelin.spotify:spotify-web-api-java:8.0.0'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
 
-    testImplementation 'net.dv8tion:JDA:5.0.0-beta.9'
+    testImplementation 'net.dv8tion:JDA:5.0.0-beta.13'
     testImplementation 'ch.qos.logback:logback-classic:1.4.5'
 }
 
