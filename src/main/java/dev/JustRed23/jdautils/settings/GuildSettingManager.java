@@ -11,6 +11,7 @@ import java.util.Optional;
 public abstract class GuildSettingManager {
 
     private final Map<String, Object> defaults;
+    private final boolean ready;
 
     protected GuildSettingManager() {
         this(Collections.emptyMap());
@@ -23,7 +24,18 @@ public abstract class GuildSettingManager {
      */
     protected GuildSettingManager(@NotNull Map<String, Object> globalDefaults) {
         this.defaults = globalDefaults;
+        try {
+            initialize();
+            ready = true;
+        } catch (Exception e) {
+            throw new RuntimeException("Could not create database", e);
+        }
     }
+
+    /**
+     * Used to initialize the setting manager, this is called in the constructor
+     */
+    protected abstract void initialize() throws Exception;
 
     /**
      * Sets the given setting to the given value
@@ -137,5 +149,13 @@ public abstract class GuildSettingManager {
             delete(guildId, setting.name());
 
         clear(guildId);
+    }
+
+    /**
+     * Signals that the setting manager is ready to be used
+     * @return True if the setting manager is ready, false otherwise
+     */
+    public boolean isReady() {
+        return ready;
     }
 }

@@ -25,14 +25,9 @@ public final class DefaultGuildSettingManager extends GuildSettingManager {
 
     public DefaultGuildSettingManager(Map<String, Object> globalDefaults) {
         super(globalDefaults);
-        try {
-            createDB();
-        } catch (IOException e) {
-            throw new RuntimeException("Could not create database", e);
-        }
     }
 
-    private void createDB() throws IOException {
+    protected void initialize() throws IOException {
         String dbName = "JDAU-guild_settings.db";
         File db = new File(dbName);
         if (!db.exists())
@@ -55,10 +50,12 @@ public final class DefaultGuildSettingManager extends GuildSettingManager {
     }
 
     public ConfigReturnValue set(long guildId, @NotNull Setting setting) {
+        if (!isReady()) return ConfigReturnValue.NOT_READY;
         return set(guildId, setting.name(), setting.value());
     }
 
     public ConfigReturnValue set(long guildId, @NotNull String setting, @NotNull Object value) {
+        if (!isReady()) return ConfigReturnValue.NOT_READY;
         if (has(guildId, setting)) {
             try (Connection con = getConnection(); PreparedStatement statement = con.prepareStatement("UPDATE guild_" + guildId + "_settings SET value = ? WHERE setting = ?")) {
                 statement.setObject(1, value);
@@ -86,6 +83,7 @@ public final class DefaultGuildSettingManager extends GuildSettingManager {
 
     @NotNull
     public Optional<Setting> get(long guildId, @NotNull String setting) {
+        if (!isReady()) return Optional.empty();
         try (Connection con = getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM guild_" + guildId + "_settings WHERE setting = ?")) {
             statement.setString(1, setting);
 
@@ -99,6 +97,7 @@ public final class DefaultGuildSettingManager extends GuildSettingManager {
     }
 
     public boolean has(long guildId, @NotNull String setting) {
+        if (!isReady()) return false;
         try (Connection con = getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM guild_" + guildId + "_settings WHERE setting = ?")) {
             statement.setString(1, setting);
             ResultSet resultSet = statement.executeQuery();
@@ -109,6 +108,7 @@ public final class DefaultGuildSettingManager extends GuildSettingManager {
     }
 
     public ConfigReturnValue delete(long guildId, @NotNull String setting) {
+        if (!isReady()) return ConfigReturnValue.NOT_READY;
         try (Connection con = getConnection(); PreparedStatement statement = con.prepareStatement("DELETE FROM guild_" + guildId + "_settings WHERE setting = ?")) {
             statement.setString(1, setting);
             return statement.executeUpdate() > 0 ? SUCCESS : NOT_FOUND;
@@ -119,6 +119,7 @@ public final class DefaultGuildSettingManager extends GuildSettingManager {
 
     @NotNull
     public List<Setting> getSettings(long guildId) {
+        if (!isReady()) return Collections.emptyList();
         try (Connection con = getConnection(); Statement statement = con.createStatement()) {
             ResultSet resultSet = statement.executeQuery("SELECT * FROM guild_" + guildId + "_settings");
             List<Setting> settings = new ArrayList<>(statement.getFetchSize());
@@ -131,6 +132,7 @@ public final class DefaultGuildSettingManager extends GuildSettingManager {
     }
 
     protected void create(long guildId) {
+        if (!isReady()) return;
         try (Connection con = getConnection(); Statement statement = con.createStatement()) {
             statement.execute("CREATE TABLE IF NOT EXISTS guild_" + guildId + "_settings (" +
                     "setting VARCHAR(255) NOT NULL," +
@@ -142,6 +144,7 @@ public final class DefaultGuildSettingManager extends GuildSettingManager {
     }
 
     protected void clear(long guildId) {
+        if (!isReady()) return;
         try (Connection con = getConnection(); Statement statement = con.createStatement()) {
             statement.execute("DROP TABLE IF EXISTS guild_" + guildId + "_settings");
         } catch (SQLException e) {

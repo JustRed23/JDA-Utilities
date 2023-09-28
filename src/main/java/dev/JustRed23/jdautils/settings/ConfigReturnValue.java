@@ -1,9 +1,22 @@
 package dev.JustRed23.jdautils.settings;
 
 public enum ConfigReturnValue {
+    /**
+     * Signals that an SQL related error occurred, see {@link #getException()} for more information
+     */
     ERROR,
+    /**
+     * Signals that the provided value was outside the scope / not valid
+     */
     INVALID_VALUE,
+    /**
+     * Signals that the requested setting was not found
+     */
     NOT_FOUND,
+    /**
+     * Signals that the current settings manager was not ready to handle the request
+     */
+    NOT_READY,
     SUCCESS;
 
     private Exception exception;
