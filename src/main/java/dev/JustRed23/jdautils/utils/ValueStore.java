@@ -12,6 +12,9 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * A simple key-value store that saves to a YAML file
+ */
 public final class ValueStore {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ValueStore.class);
@@ -21,8 +24,31 @@ public final class ValueStore {
 
     private Map<String, String> values = new ConcurrentHashMap<>();
 
+    /**
+     * Loads or creates a new ValueStore from the given file name (without the .yml extension)
+     * @param fileName the file name, without the extension
+     * @return a ValueStore instance
+     */
     public static @NotNull ValueStore loadOrCreate(String fileName) {
-        File file = new File(fileName + ".yml");
+        return loadOrCreate(fileName, null);
+    }
+
+    /**
+     * Loads or creates a new ValueStore from the given file name (without the .yml extension) and directory
+     * @param fileName the file name, without the extension
+     * @param parentDir the parent directory of the file, or null if the file should be saved in the current working directory
+     * @return a ValueStore instance
+     */
+    public static @NotNull ValueStore loadOrCreate(String fileName, File parentDir) {
+        if (fileName.endsWith(".yml"))
+            fileName = fileName.substring(0, fileName.length() - 4);
+
+        File file;
+
+        if (parentDir != null) {
+            parentDir.mkdirs();
+            file = new File(parentDir, fileName + ".yml");
+        } else file = new File(fileName + ".yml");
 
         ValueStore store = new ValueStore(fileName);
 
@@ -51,6 +77,9 @@ public final class ValueStore {
         return values.get(key);
     }
 
+    /**
+     * Saves the current values to the file
+     */
     public void save() {
         synchronized (writeLock) {
             try (FileWriter wr = new FileWriter(fileName + ".yml")) {
@@ -61,6 +90,9 @@ public final class ValueStore {
         }
     }
 
+    /**
+     * Prints all values to the console
+     */
     public void print() {
         LOGGER.info("Values in {}:", fileName);
         values.forEach((key, value) -> LOGGER.info("{}: {}", key, value));

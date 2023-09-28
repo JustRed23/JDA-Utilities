@@ -18,7 +18,7 @@ Some utility classes to help with making a Discord Bot with [JDA](https://github
 - Guild settings manager: a locally stored database used for getting and setting custom settings
 
 ## TODO
-- [ ]  Add more documentation
+- [X]  Add more documentation
 - [X]  Add a chat filtering system
     - filter out spam, discord invites, etc.
     - customisable with specific filtering rules
