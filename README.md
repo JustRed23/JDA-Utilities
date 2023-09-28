@@ -16,14 +16,12 @@ Some utility classes to help with making a Discord Bot with [JDA](https://github
         - Currently includes SmartButton, SmartDropdown, SmartModal and SmartReaction
         - These components have an event listener assigned to it, to subscribe to these events use `withListener`. No need to listen for them on your own event listener!
 - Guild settings manager: a locally stored database used for getting and setting custom settings
+- Chat filters: filter out spam, discord invites, etc.
+    - Customisable with specific filtering rules. See `JDAUtilities.getGuildFilterManager(Guild guild)`
 
 ## TODO
-- [X]  Add more documentation
-- [X]  Add a chat filtering system
-    - filter out spam, discord invites, etc.
-    - customisable with specific filtering rules
-
-    More suggestions welcome!
+- There is currently nothing planned.
+  - More suggestions welcome!
 
 ## Installation
 Latest version (replace **@TAG@** with this):
