@@ -4,6 +4,7 @@ import dev.JustRed23.jdautils.event.custom.MessageFilterEvent;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.internal.utils.Checks;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ public class MessageFilter {
      * @param event The event to broadcast, must not be null
      * @return A list of all filters that triggered
      */
+    @ApiStatus.Internal
     public static @NotNull List<Filter> broadcastEvent(@NotNull MessageReceivedEvent event) {
         Checks.notNull(event, "Event");
 

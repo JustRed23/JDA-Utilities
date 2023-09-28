@@ -4,6 +4,7 @@ import dev.JustRed23.jdautils.component.Component;
 import dev.JustRed23.jdautils.component.NoRegistry;
 import dev.JustRed23.jdautils.event.EventWatcher;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,6 +15,7 @@ import java.util.function.Function;
  * <b>Internal use only</b><br>
  * Used to register message events to an {@link EventWatcher}
  */
+@ApiStatus.Internal
 public final class MessageComponent extends Component implements NoRegistry {
 
     private EventWatcher.Listener listener;

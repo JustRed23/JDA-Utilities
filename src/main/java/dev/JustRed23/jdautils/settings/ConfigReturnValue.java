@@ -1,5 +1,7 @@
 package dev.JustRed23.jdautils.settings;
 
+import org.jetbrains.annotations.ApiStatus;
+
 public enum ConfigReturnValue {
     /**
      * Signals that an SQL related error occurred, see {@link #getException()} for more information
@@ -21,6 +23,7 @@ public enum ConfigReturnValue {
 
     private Exception exception;
 
+    @ApiStatus.Internal
     public ConfigReturnValue setException(Exception exception) {
         if (this != ERROR)
             throw new IllegalStateException("Cannot set exception when return value is not ERROR");
