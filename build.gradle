@@ -19,7 +19,7 @@ dependencies {
     implementation 'com.zaxxer:HikariCP:5.0.1'
     implementation 'org.xerial:sqlite-jdbc:3.43.0.0'
 
-    implementation 'org.yaml:snakeyaml:2.0'
+    implementation 'org.yaml:snakeyaml:2.2'
 
     api 'dev.arbjerg:lavaplayer:2.0.2'
     api 'com.github.JustRed23:lavadsp:0.7.7-1'
