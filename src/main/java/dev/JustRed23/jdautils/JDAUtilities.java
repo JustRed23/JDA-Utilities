@@ -163,6 +163,9 @@ public final class JDAUtilities {
         return Command.user(name);
     }
 
+    /**
+     * @return The effective avatar url of the bot
+     */
     public static String getBotIconUrl() {
         checkInitialized();
         return builder.cachedBotIconUrl;
