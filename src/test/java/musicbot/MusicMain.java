@@ -6,6 +6,7 @@ import dev.JustRed23.jdautils.command.CommandOption;
 import dev.JustRed23.jdautils.music.TrackInfo;
 import dev.JustRed23.jdautils.music.TrackLoadCallback;
 import dev.JustRed23.jdautils.music.effect.AbstractEffect;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -36,7 +37,7 @@ public class MusicMain {
                 .enableIntents(GatewayIntent.MESSAGE_CONTENT)
                 .setActivity(Activity.playing("with cats"))
                 .setStatus(OnlineStatus.IDLE)
-                .addEventListeners(listener, new Main())
+                .addEventListeners(listener)
                 .build().awaitReady();
 
         instance.updateCommands()
@@ -127,6 +128,16 @@ public class MusicMain {
                                 .executes(event -> {
                                     JDAUtilities.getGuildAudioManager(event.getGuild()).disconnect();
                                     event.reply("Disconnected from voice channel").queue();
+                                })
+                                .build(),
+                        JDAUtilities.createSlashCommand("queue", "Shows the current song queue")
+                                .executes(event -> {
+                                    EmbedBuilder builder = new EmbedBuilder();
+                                    builder.setTitle("Queue");
+                                    JDAUtilities.getGuildAudioManager(event.getGuild()).getScheduler().getQueue().forEach(track -> {
+                                        builder.addField("", track.getInfo().title + " by " + track.getInfo().author, false);
+                                    });
+                                    event.replyEmbeds(builder.build()).queue();
                                 })
                                 .build()
                 )
