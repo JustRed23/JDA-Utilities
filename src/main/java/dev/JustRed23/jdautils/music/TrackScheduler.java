@@ -6,6 +6,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.internal.utils.Checks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,6 +28,7 @@ public final class TrackScheduler extends AudioEventAdapter {
     private final List<AudioEventAdapter> listeners = new ArrayList<>();
 
     boolean looping = false;
+    boolean showTrackInChannelStatus = true;
 
     TrackScheduler(@NotNull AudioPlayer player, @NotNull Guild guild) {
         this.player = player;
@@ -36,6 +38,7 @@ public final class TrackScheduler extends AudioEventAdapter {
     }
 
     void shutdown() {
+        setChannelStatus(null);
         listeners.forEach(player::removeListener);
         player.removeListener(this);
         player.destroy();
@@ -43,7 +46,28 @@ public final class TrackScheduler extends AudioEventAdapter {
     }
 
     @Override
+    public void onTrackStart(AudioPlayer player, AudioTrack track) {
+        String emoji = isPaused() ? Emoji.fromUnicode("⏸️").getFormatted() : Emoji.fromUnicode("▶️").getFormatted();
+        setChannelStatus(emoji + " " + track.getInfo().title);
+    }
+
+    @Override
+    public void onPlayerPause(AudioPlayer player) {
+        if (getPlayingTrack() != null)
+            setChannelStatus(Emoji.fromUnicode("⏸️").getFormatted() + " " + getPlayingTrack().getInfo().title);
+        else setChannelStatus(null);
+    }
+
+    @Override
+    public void onPlayerResume(AudioPlayer player) {
+        if (getPlayingTrack() != null)
+            setChannelStatus(Emoji.fromUnicode("▶️").getFormatted() + " " + getPlayingTrack().getInfo().title);
+        else setChannelStatus(null);
+    }
+
+    @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, @NotNull AudioTrackEndReason endReason) {
+        setChannelStatus(null);
         if (endReason.mayStartNext) {
             if (looping) {
                 player.startTrack(track.makeClone(), false);
@@ -54,6 +78,15 @@ public final class TrackScheduler extends AudioEventAdapter {
             if (!queue.isEmpty())
                 player.startTrack(queue.poll(), false);
         }
+    }
+
+    private void setChannelStatus(@Nullable String status) {
+        if (!showTrackInChannelStatus) return;
+        //TODO: Waiting for JDA PR https://github.com/discord-jda/JDA/pull/2532
+        //TODO: There is probably going to be a character limit, make sure we dont go over it
+        /*final AudioChannelUnion connectedChannel = guild.getAudioManager().getConnectedChannel();
+        if (connectedChannel != null && connectedChannel.getType().isAudio())
+            connectedChannel.asVoiceChannel().setStatus(status).queue();*/
     }
 
     /**
@@ -90,6 +123,14 @@ public final class TrackScheduler extends AudioEventAdapter {
 
         listeners.add(listener);
         player.addListener(listener);
+    }
+
+    /**
+     * Whether to show the current track in the channel status
+     * @param showTrackInChannelStatus True if the track should be shown, false otherwise
+     */
+    public void setShowTrackInChannelStatus(boolean showTrackInChannelStatus) {
+        this.showTrackInChannelStatus = showTrackInChannelStatus;
     }
 
     public @Nullable AudioTrack getPlayingTrack() {
