@@ -140,7 +140,6 @@ public final class JDAUtilities {
      * @see Command#slash(String, String)
      */
     public static @NotNull Command.SlashCommandBuilder createSlashCommand(@NotNull String name, @NotNull String description) {
-        checkInitialized();
         return Command.slash(name, description);
     }
 
@@ -151,7 +150,6 @@ public final class JDAUtilities {
      * @see Command#message(String)
      */
     public static @NotNull Command.MessageContextBuilder createMessageContextCommand(@NotNull String name) {
-        checkInitialized();
         return Command.message(name);
     }
 
@@ -162,7 +160,6 @@ public final class JDAUtilities {
      * @see Command#user(String)
      */
     public static @NotNull Command.UserContextBuilder createUserContextCommand(@NotNull String name) {
-        checkInitialized();
         return Command.user(name);
     }
 
