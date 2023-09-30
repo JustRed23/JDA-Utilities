@@ -47,6 +47,7 @@ final class InternalEventListener extends ListenerAdapter {
         LOGGER.info("JDA Utilities v{} by {}", getVersion(), getAuthor());
         LOGGER.info("Github: {}", getGithub());
         LOGGER.info("--------------------------------------------------");
+        builder.cachedBotIconUrl = event.getJDA().getSelfUser().getEffectiveAvatarUrl(); //Cache the bot's avatar url
         builder.ready();
 
         if (builder.guildSettingManager != null)

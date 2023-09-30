@@ -163,6 +163,11 @@ public final class JDAUtilities {
         return Command.user(name);
     }
 
+    public static String getBotIconUrl() {
+        checkInitialized();
+        return builder.cachedBotIconUrl;
+    }
+
     public static String getVersion() {
         return version;
     }

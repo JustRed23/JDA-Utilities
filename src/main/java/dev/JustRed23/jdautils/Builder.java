@@ -15,6 +15,8 @@ public final class Builder {
     private final ListenerAdapter adapter;
     GuildSettingManager guildSettingManager;
 
+    String cachedBotIconUrl;
+
     Builder() {
         org.sqlite.JDBC.isValidURL(org.sqlite.JDBC.PREFIX); //Call a static JDBC method, this forces the JDBC driver to be loaded
         adapter = new InternalEventListener(this);
