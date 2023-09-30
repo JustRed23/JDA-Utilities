@@ -110,6 +110,6 @@ public class Main {
         JDAUtilities.getGuildFilterManager(testguild)
                 .addFilter(FILTER);
 
-        JDAUtilities.addGuildMessageListener(testguild, event -> System.out.println(event.getAuthor().getAsTag() + " > " + event.getMessage().getContentRaw()));
+        JDAUtilities.addGuildMessageListener(testguild, event -> System.out.println(event.getAuthor().getName() + " > " + event.getMessage().getContentRaw()));
     }
 }
