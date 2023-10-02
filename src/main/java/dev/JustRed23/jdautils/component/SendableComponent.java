@@ -36,12 +36,12 @@ public abstract class SendableComponent extends Component {
         return null;
     }
 
-    public static @Nullable SendableComponent create(@NotNull Class<? extends SendableComponent> componentClass, Object... constructorArgs) {
+    public static @Nullable SendableComponent create(@NotNull Class<? extends SendableComponent> componentClass, Class<?>[] paramTypes, Object... constructorArgs) {
         if (Arrays.asList(componentClass.getInterfaces()).contains(NoRegistry.class))
             throw new IllegalArgumentException("Component class is annotated with NoRegistry and cannot be created");
 
         try {
-            SendableComponent component = componentClass.getDeclaredConstructor().newInstance(constructorArgs);
+            SendableComponent component = componentClass.getConstructor(paramTypes).newInstance(constructorArgs);
             instances.add(component);
             return component.create();
         } catch (Exception e) {

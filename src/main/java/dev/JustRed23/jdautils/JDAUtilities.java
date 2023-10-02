@@ -123,13 +123,16 @@ public final class JDAUtilities {
     /**
      * Creates a new sendable component
      * @param clazz The class to create the component from
+     * @param paramTypes The types of the arguments to pass to the constructor
      * @param constructorArgs The arguments to pass to the constructor
      * @return An instance of the specified class, used to send components
-     * @see SendableComponent#create(Class, Object...)
+     * @see SendableComponent#create(Class, Class[], Object...)
      */
-    public static @Nullable SendableComponent createComponent(Class<? extends SendableComponent> clazz, Object... constructorArgs) {
+    public static @Nullable SendableComponent createComponent(Class<? extends SendableComponent> clazz, Class<?>[] paramTypes, Object... constructorArgs) {
         checkInitialized();
-        return SendableComponent.create(clazz, constructorArgs);
+        if (paramTypes.length != constructorArgs.length)
+            throw new IllegalArgumentException("The amount of parameter types does not match the amount of constructor arguments");
+        return SendableComponent.create(clazz, paramTypes, constructorArgs);
     }
 
     /**
