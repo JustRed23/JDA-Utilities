@@ -18,6 +18,10 @@ import java.util.List;
 
 public final class TrackScheduler extends AudioEventAdapter {
 
+    private final String
+            PLAY = Emoji.fromUnicode("▶️").getFormatted() + " ",
+            PAUSE = Emoji.fromUnicode("⏸️").getFormatted() + " ";
+
     private final Guild guild;
     private AudioPlayer player;
 
@@ -47,21 +51,21 @@ public final class TrackScheduler extends AudioEventAdapter {
 
     @Override
     public void onTrackStart(AudioPlayer player, AudioTrack track) {
-        String emoji = isPaused() ? Emoji.fromUnicode("⏸️").getFormatted() : Emoji.fromUnicode("▶️").getFormatted();
-        setChannelStatus(emoji + " " + track.getInfo().title);
+        String emoji = isPaused() ? PAUSE : PLAY;
+        setChannelStatus(emoji + track.getInfo().title);
     }
 
     @Override
     public void onPlayerPause(AudioPlayer player) {
         if (getPlayingTrack() != null)
-            setChannelStatus(Emoji.fromUnicode("⏸️").getFormatted() + " " + getPlayingTrack().getInfo().title);
+            setChannelStatus(PAUSE + getPlayingTrack().getInfo().title);
         else setChannelStatus(null);
     }
 
     @Override
     public void onPlayerResume(AudioPlayer player) {
         if (getPlayingTrack() != null)
-            setChannelStatus(Emoji.fromUnicode("▶️").getFormatted() + " " + getPlayingTrack().getInfo().title);
+            setChannelStatus(PLAY + getPlayingTrack().getInfo().title);
         else setChannelStatus(null);
     }
 
