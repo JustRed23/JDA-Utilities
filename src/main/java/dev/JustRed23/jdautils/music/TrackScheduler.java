@@ -4,6 +4,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
+import dev.JustRed23.jdautils.JDAUtilities;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
@@ -39,6 +40,9 @@ public final class TrackScheduler extends AudioEventAdapter {
         this.guild = guild;
 
         player.addListener(this);
+
+        if (JDAUtilities.getGuildSettingManager() != null)
+            setShowTrackInChannelStatus(JDAUtilities.getGuildSettingManager().getOrDefault(guild.getIdLong(), "audioplayer-show-track-in-channel-status", true).booleanValue());
     }
 
     void shutdown() {
@@ -135,6 +139,8 @@ public final class TrackScheduler extends AudioEventAdapter {
      */
     public void setShowTrackInChannelStatus(boolean showTrackInChannelStatus) {
         this.showTrackInChannelStatus = showTrackInChannelStatus;
+        if (JDAUtilities.getGuildSettingManager() != null)
+            JDAUtilities.getGuildSettingManager().set(guild.getIdLong(), "audioplayer-show-track-in-channel-status", showTrackInChannelStatus);
     }
 
     public @Nullable AudioTrack getPlayingTrack() {
