@@ -45,7 +45,7 @@ class CommandHelpTest {
                     final OptionMapping command = event.getOption("command");
                     EmbedBuilder embedToSend = (command == null ? CommandHelp.getAllCommands() : CommandHelp.getCommandHelp(command.getAsString()));
 
-                    if (!embedToSend.isEmpty())
+                    if (!embedToSend.getFields().isEmpty())
                         event.replyEmbeds(embedToSend.build()).queue();
                     else
                         event.reply("No command found with that name").setEphemeral(true)
