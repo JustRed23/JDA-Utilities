@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
+import net.dv8tion.jda.api.requests.restaction.WebhookMessageEditAction;
 import net.dv8tion.jda.api.requests.restaction.interactions.InteractionCallbackAction;
 import net.dv8tion.jda.api.requests.restaction.interactions.ModalCallbackAction;
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
@@ -64,6 +65,7 @@ public abstract class SendableComponent extends Component {
 
     protected abstract MessageCreateAction onSend(@NotNull MessageReceivedEvent event);
     protected abstract InteractionCallbackAction onReply(@NotNull SlashCommandInteractionEvent event);
+    protected WebhookMessageEditAction<Message> onEdit(@NotNull InteractionHook hook) { return null; }
     protected void onSent(@NotNull Message message) {}
     protected abstract List<Component> getChildren();
 
@@ -158,6 +160,22 @@ public abstract class SendableComponent extends Component {
         messageId = message.getIdLong();
         onSent(message);
         return hook;
+    }
+
+    public final void edit(@NotNull InteractionHook hook) {
+        if (!isCreated() || isSent())
+            return;
+
+        WebhookMessageEditAction<Message> editAction = onEdit(hook);
+
+        if (editAction == null)
+            return;
+
+        Message message = editAction.complete();
+        guild = message.getGuild();
+        messageId = message.getIdLong();
+        onSent(message);
+        getChildren().stream().filter(SendableComponent.class::isInstance).forEach(component -> ((SendableComponent) component).onSent(message));
     }
 
     public final void restore(@NotNull Message message) {
