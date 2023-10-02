@@ -20,8 +20,8 @@ import java.util.List;
 public final class TrackScheduler extends AudioEventAdapter {
 
     private final String
-            PLAY = Emoji.fromUnicode("▶️").getFormatted() + " ",
-            PAUSE = Emoji.fromUnicode("⏸️").getFormatted() + " ";
+            PLAY = Emoji.fromUnicode("\u25B6\uFE0F").getFormatted() + " ",
+            PAUSE = Emoji.fromUnicode("\u23F8\uFE0F").getFormatted() + " ";
 
     private final Guild guild;
     private AudioPlayer player;
