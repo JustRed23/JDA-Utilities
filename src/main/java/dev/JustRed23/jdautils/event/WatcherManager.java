@@ -21,6 +21,7 @@ import java.util.Objects;
 public final class WatcherManager {
 
     private static final List<EventWatcher> watchers = new ArrayList<>();
+    private static final List<EventWatcher> pendingRemoval = new ArrayList<>();
 
     private WatcherManager() {}
 
@@ -30,12 +31,15 @@ public final class WatcherManager {
     }
 
     static void removeWatcher(EventWatcher watcher) {
-        watchers.remove(watcher);
+        pendingRemoval.add(watcher);
     }
 
     public static void cleanup() {
         List<EventWatcher> toRemove = new ArrayList<>(watchers.stream().filter(EventWatcher::expired).toList());
         toRemove.forEach(EventWatcher::destroy);
+
+        watchers.removeAll(pendingRemoval);
+        pendingRemoval.clear();
     }
 
     public static void cleanup(MessageDeleteEvent event) {
