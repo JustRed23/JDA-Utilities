@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 public class SmartButton extends Component implements NoRegistry {
 
     private Button parent;
-    private final EventWatcher eventWatcher;
+    private final EventWatcher<ButtonInteractionEvent> eventWatcher;
 
     private final String label;
     private final Emoji emoji;
@@ -28,7 +28,7 @@ public class SmartButton extends Component implements NoRegistry {
         this.style = style;
         this.url = url;
 
-        eventWatcher = new EventWatcher(this, ButtonInteractionEvent.class);
+        eventWatcher = new EventWatcher<>(this, ButtonInteractionEvent.class);
     }
 
     public static SmartButton primary(@NotNull String label) {

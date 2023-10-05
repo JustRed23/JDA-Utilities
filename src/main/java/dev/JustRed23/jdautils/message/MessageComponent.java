@@ -17,11 +17,10 @@ import java.util.function.Function;
 @ApiStatus.Internal
 public final class MessageComponent extends Component implements NoRegistry {
 
-    private EventWatcher.Listener listener;
+    private EventWatcher.Listener<MessageReceivedEvent> listener;
     private Filter filter;
-    private Function<MessageReceivedEvent, Boolean> condition = event -> true;
 
-    public MessageComponent(EventWatcher.Listener listener) {
+    public MessageComponent(EventWatcher.Listener<MessageReceivedEvent> listener) {
         super("MessageComponent");
         this.listener = listener;
     }
@@ -31,22 +30,11 @@ public final class MessageComponent extends Component implements NoRegistry {
         this.filter = filter;
     }
 
-    public MessageComponent withCondition(Function<MessageReceivedEvent, Boolean> condition) {
-        this.condition = condition;
-        return this;
-    }
-
-    public boolean conditionsMet(EventWatcher watcher, MessageReceivedEvent event) {
-        if (isListener())
-            return watcher.getListener().equals(listener) && condition.apply(event);
-        return condition.apply(event);
-    }
-
     public boolean isListener() {
         return listener != null;
     }
 
-    public @Nullable EventWatcher.Listener getListener() {
+    public @Nullable EventWatcher.Listener<MessageReceivedEvent> getListener() {
         return listener;
     }
 

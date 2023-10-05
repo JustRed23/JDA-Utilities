@@ -23,7 +23,8 @@ import java.util.concurrent.TimeUnit;
 public class SmartReaction extends SendableComponent implements NoRegistry {
 
     private final List<Emoji> reactions;
-    private EventWatcher onAdd, onRemove;
+    private EventWatcher<MessageReactionAddEvent> onAdd;
+    private EventWatcher<MessageReactionRemoveEvent> onRemove;
     private String message;
     private MessageEmbed embed;
 
@@ -60,43 +61,39 @@ public class SmartReaction extends SendableComponent implements NoRegistry {
 
     public SmartReaction withListeners(EventWatcher.Listener<MessageReactionAddEvent> onAdd, EventWatcher.Listener<MessageReactionRemoveEvent> onRemove) {
         this.onAdd.setListener(event -> {
-            MessageReactionAddEvent addEvent = (MessageReactionAddEvent) event;
-            EmojiUnion emoji = addEvent.getEmoji();
+            EmojiUnion emoji = event.getEmoji();
             if (getReactions().contains(emoji))
-                onAdd.onEvent(addEvent);
+                onAdd.onEvent(event);
             else
-                addEvent.getReaction().removeReaction(addEvent.retrieveUser().complete()).queue();
+                event.getReaction().removeReaction(event.retrieveUser().complete()).queue();
         });
         this.onRemove.setListener(event -> {
-            MessageReactionRemoveEvent removeEvent = (MessageReactionRemoveEvent) event;
-            EmojiUnion emoji = removeEvent.getEmoji();
+            EmojiUnion emoji = event.getEmoji();
             if (getReactions().contains(emoji))
-                onRemove.onEvent(removeEvent);
+                onRemove.onEvent(event);
         });
         return this;
     }
 
     public SmartReaction withListeners(EventWatcher.Listener<MessageReactionAddEvent> onAdd, EventWatcher.Listener<MessageReactionRemoveEvent> onRemove, int expireAfter, TimeUnit unit) {
         this.onAdd.setListener(event -> {
-            MessageReactionAddEvent addEvent = (MessageReactionAddEvent) event;
-            EmojiUnion emoji = addEvent.getEmoji();
+            EmojiUnion emoji = event.getEmoji();
             if (getReactions().contains(emoji))
-                onAdd.onEvent(addEvent);
+                onAdd.onEvent(event);
             else
-                addEvent.getReaction().removeReaction(addEvent.retrieveUser().complete()).queue();
+                event.getReaction().removeReaction(event.retrieveUser().complete()).queue();
         }, expireAfter, unit);
         this.onRemove.setListener(event -> {
-            MessageReactionRemoveEvent removeEvent = (MessageReactionRemoveEvent) event;
-            EmojiUnion emoji = removeEvent.getEmoji();
+            EmojiUnion emoji = event.getEmoji();
             if (getReactions().contains(emoji))
-                onRemove.onEvent(removeEvent);
+                onRemove.onEvent(event);
         }, expireAfter, unit);
         return this;
     }
 
     protected void onCreate() {
-        onAdd = new EventWatcher(this, MessageReactionAddEvent.class);
-        onRemove = new EventWatcher(this, MessageReactionRemoveEvent.class);
+        onAdd = new EventWatcher<>(this, MessageReactionAddEvent.class);
+        onRemove = new EventWatcher<>(this, MessageReactionRemoveEvent.class);
     }
 
     protected void onRemove() {

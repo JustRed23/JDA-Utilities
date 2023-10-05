@@ -81,7 +81,7 @@ public final class JDAUtilities {
      * @param listener The listener to add
      * @return The event watcher that you can use to remove the listener
      */
-    public static @NotNull EventWatcher addGuildMessageListener(Guild guild, EventWatcher.Listener<MessageReceivedEvent> listener) {
+    public static @NotNull EventWatcher<MessageReceivedEvent> addGuildMessageListener(Guild guild, EventWatcher.Listener<MessageReceivedEvent> listener) {
         return addMessageListener(listener, event -> event.getGuild().equals(guild));
     }
 
@@ -91,11 +91,11 @@ public final class JDAUtilities {
      * @param condition The condition to check before the listener is called
      * @return The event watcher that you can use to remove the listener
      */
-    public static @NotNull EventWatcher addMessageListener(EventWatcher.Listener<MessageReceivedEvent> listener, Function<MessageReceivedEvent, Boolean> condition) {
+    public static @NotNull EventWatcher<MessageReceivedEvent> addMessageListener(EventWatcher.Listener<MessageReceivedEvent> listener, Function<MessageReceivedEvent, Boolean> condition) {
         checkInitialized();
-        EventWatcher watcher = new EventWatcher(new MessageComponent(listener).withCondition(condition), MessageReceivedEvent.class);
-        watcher.setListener(listener);
-        return watcher;
+        return new EventWatcher<>(new MessageComponent(listener), MessageReceivedEvent.class)
+                .setListener(listener)
+                .addCondition(condition);
     }
 
     /**
@@ -147,7 +147,7 @@ public final class JDAUtilities {
     }
 
     /**
-     * Creates a new message context command, these are commands that you can execute when a user right clicks on a message
+     * Creates a new message context command, these are commands that you can execute when a user right-clicks on a message
      * @param name The name of the command
      * @return A builder to create the command
      * @see Command#message(String)

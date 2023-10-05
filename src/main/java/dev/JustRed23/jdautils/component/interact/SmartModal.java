@@ -18,14 +18,14 @@ import java.util.concurrent.TimeUnit;
 public class SmartModal extends SendableComponent implements NoRegistry {
 
     private final Modal.Builder builder;
+    private final EventWatcher<ModalInteractionEvent> eventWatcher;
     private Modal parent;
-    private EventWatcher eventWatcher;
 
     protected SmartModal(Modal.Builder builder) {
         super("SmartModal");
         this.builder = builder;
 
-        eventWatcher = new EventWatcher(this, ModalInteractionEvent.class, true);
+        eventWatcher = new EventWatcher<>(this, ModalInteractionEvent.class, true);
     }
 
     public static SmartModal create(Modal.Builder builder) {

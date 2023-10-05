@@ -46,7 +46,9 @@ public final class ValueStore {
         File file;
 
         if (parentDir != null) {
-            parentDir.mkdirs();
+            if (parentDir.mkdirs())
+                throw new IllegalStateException("Failed to create parent directory");
+
             file = new File(parentDir, fileName + ".yml");
         } else file = new File(fileName + ".yml");
 

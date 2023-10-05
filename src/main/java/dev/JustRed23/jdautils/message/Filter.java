@@ -9,14 +9,14 @@ public abstract class Filter {
 
     private final String name;
     private final String description;
-    private final EventWatcher watcher;
+    private final EventWatcher<MessageFilterEvent> watcher;
 
     protected Filter(String name, String description) {
         Unique.checkUnique("filter-name", name, "Filter name is not unique");
         this.name = name;
         this.description = description;
 
-        watcher = new EventWatcher(new MessageComponent(this), MessageFilterEvent.class);
+        watcher = new EventWatcher<>(new MessageComponent(this), MessageFilterEvent.class);
     }
 
     /**

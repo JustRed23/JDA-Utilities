@@ -57,7 +57,6 @@ public final class WatcherManager {
     public static void onMessageEvent(@NotNull MessageReceivedEvent event) {
         watchers.stream()
                 .filter(watcher -> watcher.getComponent() instanceof MessageComponent)
-                .filter(watcher -> ((MessageComponent) watcher.getComponent()).conditionsMet(watcher, event))
                 .forEach(watcher -> watcher.onEvent(event));
     }
 

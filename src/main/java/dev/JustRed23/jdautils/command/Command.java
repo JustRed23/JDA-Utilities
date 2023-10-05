@@ -11,10 +11,7 @@ import net.dv8tion.jda.internal.utils.Checks;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 public final class Command {
@@ -67,8 +64,10 @@ public final class Command {
     public static class SlashCommandBuilder implements Buildable<SlashCommandData> {
 
         private final SlashCommandData data;
-        private EventWatcher.Listener<SlashCommandInteractionEvent> listener;
         private final Map<String, EventWatcher.Listener<SlashCommandInteractionEvent>> subCommandListeners = new HashMap<>();
+        private final Map<String, List<Function<SlashCommandInteractionEvent, Boolean>>> subCommandConditions = new HashMap<>();
+        private final List<Function<SlashCommandInteractionEvent, Boolean>> conditions = new ArrayList<>();
+        private EventWatcher.Listener<SlashCommandInteractionEvent> listener;
         private boolean containsSubCommands;
 
         private SlashCommandBuilder(String name, String description) {
@@ -96,6 +95,13 @@ public final class Command {
             return this;
         }
 
+        public SlashCommandBuilder addCondition(Function<SlashCommandInteractionEvent, Boolean> condition) {
+            if (containsSubCommands)
+                throw new IllegalStateException("Cannot add a condition to a slash command that contains sub commands");
+            this.conditions.add(condition);
+            return this;
+        }
+
         public SubCommandBuilder addSubCommand(String name, String description) {
             if (listener != null)
                 throw new IllegalStateException("Cannot add a sub command to a slash command that contains a listener");
@@ -109,11 +115,15 @@ public final class Command {
         }
 
         public SlashCommandData build() {
-            if (listener != null)
-                new EventWatcher(new CommandComponent(data.getName()), SlashCommandInteractionEvent.class).setListener(listener);
-            else {
+            if (!containsSubCommands && listener != null) {
+                new EventWatcher<>(new CommandComponent(data.getName()), SlashCommandInteractionEvent.class)
+                        .setListener(listener)
+                        .addConditions(conditions);
+            } else {
                 for (Map.Entry<String, EventWatcher.Listener<SlashCommandInteractionEvent>> entry : subCommandListeners.entrySet())
-                    new EventWatcher(new CommandComponent(data.getName() + " " + entry.getKey()), SlashCommandInteractionEvent.class).setListener(entry.getValue());
+                    new EventWatcher<>(new CommandComponent(data.getName() + " " + entry.getKey()), SlashCommandInteractionEvent.class)
+                            .setListener(entry.getValue())
+                            .addConditions(subCommandConditions.getOrDefault(entry.getKey(), Collections.emptyList()));
             }
             return data;
         }
@@ -122,6 +132,7 @@ public final class Command {
 
             private final SlashCommandBuilder parent;
             private final SubcommandData data;
+            private final List<Function<SlashCommandInteractionEvent, Boolean>> conditions = new ArrayList<>();
             private EventWatcher.Listener<SlashCommandInteractionEvent> listener;
 
             private SubCommandBuilder(SlashCommandBuilder parent, String name, String description) {
@@ -147,6 +158,11 @@ public final class Command {
                 return this;
             }
 
+            public SubCommandBuilder addCondition(Function<SlashCommandInteractionEvent, Boolean> condition) {
+                this.conditions.add(condition);
+                return this;
+            }
+
             public SubCommandBuilder modifyData(@NotNull Function<SubcommandData, SubcommandData> function) {
                 function.apply(data);
                 return this;
@@ -154,7 +170,12 @@ public final class Command {
 
             public SlashCommandBuilder build() {
                 parent.data.addSubcommands(data);
-                parent.subCommandListeners.put(data.getName(), listener);
+                if (listener != null) {
+                    parent.subCommandListeners.put(data.getName(), listener);
+
+                    if (!conditions.isEmpty())
+                        parent.subCommandConditions.put(data.getName(), conditions);
+                }
                 return parent;
             }
         }
@@ -163,6 +184,7 @@ public final class Command {
     public static class MessageContextBuilder implements Buildable<CommandData> {
 
         private final CommandData data;
+        private final List<Function<MessageContextInteractionEvent, Boolean>> conditions = new ArrayList<>();
         private EventWatcher.Listener<MessageContextInteractionEvent> listener;
 
         private MessageContextBuilder(String name) {
@@ -174,14 +196,22 @@ public final class Command {
             return this;
         }
 
+        public MessageContextBuilder addCondition(Function<MessageContextInteractionEvent, Boolean> condition) {
+            this.conditions.add(condition);
+            return this;
+        }
+
         public MessageContextBuilder modifyData(@NotNull Function<CommandData, CommandData> function) {
             function.apply(data);
             return this;
         }
 
         public CommandData build() {
-            if (listener != null)
-                new EventWatcher(new CommandComponent(data.getName()).setContextCommand(true), MessageContextInteractionEvent.class).setListener(listener);
+            if (listener != null) {
+                new EventWatcher<>(new CommandComponent(data.getName()).setContextCommand(true), MessageContextInteractionEvent.class)
+                        .setListener(listener)
+                        .addConditions(conditions);
+            }
             return data;
         }
     }
@@ -189,6 +219,7 @@ public final class Command {
     public static class UserContextBuilder implements Buildable<CommandData> {
 
         private final CommandData data;
+        private final List<Function<UserContextInteractionEvent, Boolean>> conditions = new ArrayList<>();
         private EventWatcher.Listener<UserContextInteractionEvent> listener;
 
         private UserContextBuilder(String name) {
@@ -200,14 +231,22 @@ public final class Command {
             return this;
         }
 
+        public UserContextBuilder addCondition(Function<UserContextInteractionEvent, Boolean> condition) {
+            this.conditions.add(condition);
+            return this;
+        }
+
         public UserContextBuilder modifyData(@NotNull Function<CommandData, CommandData> function) {
             function.apply(data);
             return this;
         }
 
         public CommandData build() {
-            if (listener != null)
-                new EventWatcher(new CommandComponent(data.getName()).setContextCommand(true), UserContextInteractionEvent.class).setListener(listener);
+            if (listener != null) {
+                new EventWatcher<>(new CommandComponent(data.getName()).setContextCommand(true), UserContextInteractionEvent.class)
+                        .setListener(listener)
+                        .addConditions(conditions);
+            }
             return data;
         }
     }

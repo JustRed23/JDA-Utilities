@@ -38,14 +38,14 @@ public abstract class SmartDropdown<T extends SelectMenu> extends Component impl
     public static class StringSelect extends SmartDropdown<StringSelectMenu> implements NoRegistry {
 
         private final StringSelectMenu.Builder builder;
-        private final EventWatcher eventWatcher;
+        private final EventWatcher<StringSelectInteractionEvent> eventWatcher;
         private StringSelectMenu parent;
 
         private StringSelect(StringSelectMenu.Builder builder) {
             super("SmartStringDropdown");
             this.builder = builder;
 
-            eventWatcher = new EventWatcher(this, StringSelectInteractionEvent.class);
+            eventWatcher = new EventWatcher<>(this, StringSelectInteractionEvent.class);
             super.create();
         }
 
@@ -76,14 +76,14 @@ public abstract class SmartDropdown<T extends SelectMenu> extends Component impl
     public static class EntitySelect extends SmartDropdown<EntitySelectMenu> implements NoRegistry {
 
         private final EntitySelectMenu.Builder builder;
-        private final EventWatcher eventWatcher;
+        private final EventWatcher<EntitySelectInteractionEvent> eventWatcher;
         private EntitySelectMenu parent;
 
         private EntitySelect(EntitySelectMenu.Builder builder) {
             super("SmartEntityDropdown");
             this.builder = builder;
 
-            eventWatcher = new EventWatcher(this, EntitySelectInteractionEvent.class);
+            eventWatcher = new EventWatcher<>(this, EntitySelectInteractionEvent.class);
             super.create();
         }
 
