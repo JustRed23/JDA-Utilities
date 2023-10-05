@@ -18,25 +18,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@SuppressWarnings("rawtypes")
 public final class WatcherManager {
 
-    private static final List<EventWatcher> watchers = new ArrayList<>();
-    private static final List<EventWatcher> pendingRemoval = new ArrayList<>();
+    private static final List<EventWatcher<? extends Event>> watchers = new ArrayList<>();
+    private static final List<EventWatcher<? extends Event>> pendingRemoval = new ArrayList<>();
 
     private WatcherManager() {}
 
-    static void addWatcher(EventWatcher watcher) {
+    static void addWatcher(EventWatcher<? extends Event> watcher) {
         if (!watchers.contains(watcher))
             watchers.add(watcher);
     }
 
-    static void removeWatcher(EventWatcher watcher) {
+    static void removeWatcher(EventWatcher<? extends Event> watcher) {
         pendingRemoval.add(watcher);
     }
 
     public static void cleanup() {
-        List<EventWatcher> toRemove = new ArrayList<>(watchers.stream().filter(EventWatcher::expired).toList());
+        List<EventWatcher<? extends Event>> toRemove = new ArrayList<>(watchers.stream().filter(EventWatcher::expired).toList());
         toRemove.forEach(EventWatcher::destroy);
 
         watchers.removeAll(pendingRemoval);
