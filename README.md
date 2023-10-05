@@ -13,7 +13,7 @@ Some utility classes to help with making a Discord Bot with [JDA](https://github
 - Component system: makes it easier for you to make and edit messages
     - Create a component by extending **SendableComponent.class**. Add your components (buttons, embeds etc.) to this class and send them as one message using `JDAUtilities.createComponent(MyClass.class).send` or `JDAUtilities.createComponent(MyClass.class).reply` depending on your event
     - Smart components: components that can directly interact with the event provided
-        - Currently includes SmartButton, SmartDropdown, SmartModal and SmartReaction
+        - Currently, includes SmartButton, SmartDropdown, SmartModal and SmartReaction
         - These components have an event listener assigned to it, to subscribe to these events use `withListener`. No need to listen for them on your own event listener!
 - Guild settings manager: a locally stored database used for getting and setting custom settings
 - Chat filters: filter out spam, discord invites, etc.

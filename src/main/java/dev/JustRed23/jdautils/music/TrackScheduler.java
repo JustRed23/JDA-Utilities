@@ -88,10 +88,11 @@ public final class TrackScheduler extends AudioEventAdapter {
         }
     }
 
+    @SuppressWarnings("all")
     private void setChannelStatus(@Nullable String status) {
         if (!showTrackInChannelStatus) return;
         //TODO: Waiting for JDA PR https://github.com/discord-jda/JDA/pull/2532
-        //TODO: There is probably going to be a character limit, make sure we dont go over it
+        //TODO: There is probably going to be a character limit, make sure we don't go over it
         /*final AudioChannelUnion connectedChannel = guild.getAudioManager().getConnectedChannel();
         if (connectedChannel != null && connectedChannel.getType().isAudio())
             connectedChannel.asVoiceChannel().setStatus(status).queue();*/

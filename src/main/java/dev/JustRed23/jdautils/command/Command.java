@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.function.Function;
 
+@SuppressWarnings("unused")
 public final class Command {
 
     public static final List<CommandData> globalCommands = new ArrayList<>();

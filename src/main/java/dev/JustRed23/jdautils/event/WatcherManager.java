@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@SuppressWarnings("rawtypes")
 public final class WatcherManager {
 
     private static final List<EventWatcher> watchers = new ArrayList<>();
