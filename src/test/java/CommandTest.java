@@ -3,6 +3,7 @@ import dev.JustRed23.jdautils.command.Command;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
@@ -76,6 +77,59 @@ class CommandTest {
                 .build().awaitReady();
 
         Thread.sleep(5000);
+
+        instance.shutdown();
+    }
+
+    @Test
+    void testCommandConditions() throws InterruptedException {
+        JDAUtilities.createSlashCommand("some-admin-command", "An admin command that does admin stuff")
+                .addCondition(event -> {
+                    if (!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
+                        event.reply("You do not have permission to use this command!").setEphemeral(true).queue();
+                        return false;
+                    }
+
+                    return true;
+                })
+                .executes(event -> event.reply("Admin command executed!").queue())
+                .buildAndRegister();
+
+        JDAUtilities.createUserContextCommand("another-admin-command")
+                .addCondition(event -> {
+                    if (!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
+                        event.reply("You do not have permission to use this command!").setEphemeral(true).queue();
+                        return false;
+                    }
+
+                    return true;
+                })
+                .executes(event -> event.reply("Admin user command executed!").queue())
+                .buildAndRegister();
+
+        JDAUtilities.createMessageContextCommand("yet-another-admin-command")
+                .addCondition(event -> {
+                    if (!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
+                        event.reply("You do not have permission to use this command!").setEphemeral(true).queue();
+                        return false;
+                    }
+
+                    return true;
+                })
+                .executes(event -> event.reply("Admin message command executed!").queue())
+                .buildAndRegister();
+
+        // Create a new JDA instance with the builder
+        ListenerAdapter listener = JDAUtilities.getInstance().listener();
+
+        JDA instance = JDABuilder.createDefault(secrets.getProperty("token"))
+                .enableIntents(GatewayIntent.MESSAGE_CONTENT)
+                .setActivity(Activity.playing("with cats"))
+                .setStatus(OnlineStatus.IDLE)
+                .addEventListeners(listener)
+                .build().awaitReady();
+
+        Thread.sleep(20_000);
 
         instance.shutdown();
     }
