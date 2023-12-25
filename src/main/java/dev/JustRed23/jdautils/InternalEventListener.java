@@ -88,6 +88,9 @@ final class InternalEventListener extends ListenerAdapter {
     public void onGuildLeave(@NotNull GuildLeaveEvent event) {
         if (builder.guildSettingManager != null)
             builder.guildSettingManager.removeGuild(event.getGuild().getIdLong());
+
+        if (AudioManager.has(event.getGuild()))
+            AudioManager.get(event.getGuild()).destroy();
     }
 
     public void onGuildVoiceUpdate(@NotNull GuildVoiceUpdateEvent event) {
