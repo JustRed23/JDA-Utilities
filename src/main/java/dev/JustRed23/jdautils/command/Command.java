@@ -7,8 +7,10 @@ import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionE
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
+import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.build.*;
 import net.dv8tion.jda.internal.utils.Checks;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,11 +47,11 @@ public final class Command {
         return new UserContextBuilder(name);
     }
 
-    interface Buildable<T extends CommandData> {
+    interface Buildable<R, T extends CommandData> extends GlobalModifiers<R, T> {
         /**
          * Builds and creates an event watcher for the command, and returns the command data.<br>
          * <b>You will still need to register the command with JDA</b>
-         * @return the slash command data
+         * @return the command data
          */
         T build();
 
@@ -66,7 +68,28 @@ public final class Command {
         }
     }
 
-    public static class SlashCommandBuilder implements Buildable<SlashCommandData> {
+    @SuppressWarnings("unchecked")
+    interface GlobalModifiers<R, T extends CommandData> {
+        @ApiStatus.Internal
+        T getData();
+
+        default R modifyData(@NotNull Function<T, T> function) {
+            function.apply(getData());
+            return (R) this;
+        }
+
+        default R setDefaultPermissions(DefaultMemberPermissions defaultPermissions) {
+            getData().setDefaultPermissions(defaultPermissions);
+            return (R) this;
+        }
+
+        default R setNSFW(boolean nsfw) {
+            getData().setNSFW(nsfw);
+            return (R) this;
+        }
+    }
+
+    public static class SlashCommandBuilder implements Buildable<SlashCommandBuilder, SlashCommandData> {
 
         private final SlashCommandData data;
         private final Map<String, EventWatcher.Listener<SlashCommandInteractionEvent>> subCommandListeners = new HashMap<>();
@@ -83,7 +106,7 @@ public final class Command {
             OptionData optionData = new OptionData(option.type(), option.name(), option.description(), option.required(), option.autocomplete());
             for (net.dv8tion.jda.api.interactions.commands.Command.Choice choice : option.choices())
                 optionData.addChoice(choice.getName(), choice.getAsString());
-            data.addOptions(optionData);
+            getData().addOptions(optionData);
             return this;
         }
 
@@ -114,23 +137,22 @@ public final class Command {
             return new SubCommandBuilder(this, name, description);
         }
 
-        public SlashCommandBuilder modifyData(@NotNull Function<SlashCommandData, SlashCommandData> function) {
-            function.apply(data);
-            return this;
+        public SlashCommandData getData() {
+            return data;
         }
 
         public SlashCommandData build() {
             if (!containsSubCommands && listener != null) {
-                new EventWatcher<>(new CommandComponent(data.getName()), SlashCommandInteractionEvent.class)
+                new EventWatcher<>(new CommandComponent(getData().getName()), SlashCommandInteractionEvent.class)
                         .setListener(listener)
                         .addConditions(conditions);
             } else {
                 for (Map.Entry<String, EventWatcher.Listener<SlashCommandInteractionEvent>> entry : subCommandListeners.entrySet())
-                    new EventWatcher<>(new CommandComponent(data.getName() + " " + entry.getKey()), SlashCommandInteractionEvent.class)
+                    new EventWatcher<>(new CommandComponent(getData().getName() + " " + entry.getKey()), SlashCommandInteractionEvent.class)
                             .setListener(entry.getValue())
                             .addConditions(subCommandConditions.getOrDefault(entry.getKey(), Collections.emptyList()));
             }
-            return data;
+            return getData();
         }
 
         public static class SubCommandBuilder {
@@ -174,7 +196,7 @@ public final class Command {
             }
 
             public SlashCommandBuilder build() {
-                parent.data.addSubcommands(data);
+                parent.getData().addSubcommands(data);
                 if (listener != null) {
                     parent.subCommandListeners.put(data.getName(), listener);
 
@@ -186,7 +208,7 @@ public final class Command {
         }
     }
 
-    public static class MessageContextBuilder implements Buildable<CommandData> {
+    public static class MessageContextBuilder implements Buildable<MessageContextBuilder, CommandData> {
 
         private final CommandData data;
         private final List<Function<MessageContextInteractionEvent, Boolean>> conditions = new ArrayList<>();
@@ -206,22 +228,21 @@ public final class Command {
             return this;
         }
 
-        public MessageContextBuilder modifyData(@NotNull Function<CommandData, CommandData> function) {
-            function.apply(data);
-            return this;
+        public CommandData getData() {
+            return data;
         }
 
         public CommandData build() {
             if (listener != null) {
-                new EventWatcher<>(new CommandComponent(data.getName()).setContextCommand(true), MessageContextInteractionEvent.class)
+                new EventWatcher<>(new CommandComponent(getData().getName()).setContextCommand(true), MessageContextInteractionEvent.class)
                         .setListener(listener)
                         .addConditions(conditions);
             }
-            return data;
+            return getData();
         }
     }
 
-    public static class UserContextBuilder implements Buildable<CommandData> {
+    public static class UserContextBuilder implements Buildable<UserContextBuilder, CommandData> {
 
         private final CommandData data;
         private final List<Function<UserContextInteractionEvent, Boolean>> conditions = new ArrayList<>();
@@ -241,18 +262,17 @@ public final class Command {
             return this;
         }
 
-        public UserContextBuilder modifyData(@NotNull Function<CommandData, CommandData> function) {
-            function.apply(data);
-            return this;
+        public CommandData getData() {
+            return data;
         }
 
         public CommandData build() {
             if (listener != null) {
-                new EventWatcher<>(new CommandComponent(data.getName()).setContextCommand(true), UserContextInteractionEvent.class)
+                new EventWatcher<>(new CommandComponent(getData().getName()).setContextCommand(true), UserContextInteractionEvent.class)
                         .setListener(listener)
                         .addConditions(conditions);
             }
-            return data;
+            return getData();
         }
     }
 }
