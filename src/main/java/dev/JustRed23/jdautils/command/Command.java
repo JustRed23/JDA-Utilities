@@ -1,5 +1,6 @@
 package dev.JustRed23.jdautils.command;
 
+import dev.JustRed23.jdautils.JDAUtilities;
 import dev.JustRed23.jdautils.event.EventWatcher;
 import dev.JustRed23.jdautils.utils.Unique;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
@@ -53,10 +54,13 @@ public final class Command {
         T build();
 
         /**
-         * Builds the slash command and automatically registers it with JDA.<br>
+         * Builds the command and automatically registers it with JDA.<br>
          * <b>Make sure to call this before actually starting a JDA instance, as commands will be registered in the {@link ReadyEvent}</b>
          */
         default void buildAndRegister() {
+            if (JDAUtilities.getInstance().isReady())
+                throw new IllegalStateException("Cannot register commands after JDA has been started, please register commands before starting JDA");
+
             T data = build();
             globalCommands.add(data);
         }

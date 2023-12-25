@@ -67,4 +67,12 @@ public final class Builder {
     public ListenerAdapter listener() {
         return adapter;
     }
+
+    /**
+     * Indicates that JDA has finished loading and JDA Utilities is ready to be used
+     * @return Whether JDA Utilities is ready
+     */
+    public boolean isReady() {
+        return ready;
+    }
 }
