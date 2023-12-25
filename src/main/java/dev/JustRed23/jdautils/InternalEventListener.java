@@ -5,11 +5,13 @@ import dev.JustRed23.jdautils.component.SendableComponent;
 import dev.JustRed23.jdautils.event.WatcherManager;
 import dev.JustRed23.jdautils.message.Filter;
 import dev.JustRed23.jdautils.message.MessageFilter;
+import dev.JustRed23.jdautils.music.AudioManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.StatusChangeEvent;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -21,6 +23,7 @@ import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
+import net.dv8tion.jda.api.events.self.SelfUpdateAvatarEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -70,6 +73,10 @@ final class InternalEventListener extends ListenerAdapter {
             builder.destroy();
         }
     }
+
+    public void onSelfUpdateAvatar(@NotNull SelfUpdateAvatarEvent event) {
+        builder.cachedBotIconUrl = event.getNewAvatarUrl();
+    }
     //GENERIC EVENTS
 
     //GUILD EVENTS
@@ -81,6 +88,15 @@ final class InternalEventListener extends ListenerAdapter {
     public void onGuildLeave(@NotNull GuildLeaveEvent event) {
         if (builder.guildSettingManager != null)
             builder.guildSettingManager.removeGuild(event.getGuild().getIdLong());
+    }
+
+    public void onGuildVoiceUpdate(@NotNull GuildVoiceUpdateEvent event) {
+        boolean isBotAffected = event.getEntity().equals(event.getGuild().getSelfMember());
+
+        if (isBotAffected && AudioManager.has(event.getGuild())) {
+            if (event.getChannelJoined() == null) //Bot left and was not moved
+                AudioManager.get(event.getGuild()).disconnect();
+        }
     }
     //GUILD EVENTS
 

@@ -42,6 +42,16 @@ public final class AudioManager {
     }
 
     /**
+     * Checks if the specified guild has an active audio manager
+     * @param guild The guild to check, must not be null
+     * @return True if the guild has an active audio manager, false otherwise
+     */
+    public static boolean has(@NotNull Guild guild) {
+        Checks.notNull(guild, "Guild");
+        return managers.containsKey(guild.getIdLong());
+    }
+
+    /**
      * Destroys all active audio managers
      */
     public static void destroyAll() {
@@ -80,12 +90,11 @@ public final class AudioManager {
         if (controls == null)
             throw new IllegalStateException("Audio manager has been destroyed");
 
-        if (guild.getAudioManager().getConnectedChannel() == null)
-            return;
-
         getControls().stopAndClear();
         getAudioModifier().disableEffect();
-        scheduler.getGuild().getAudioManager().closeAudioConnection();
+
+        if (guild.getAudioManager().getConnectedChannel() != null)
+            scheduler.getGuild().getAudioManager().closeAudioConnection();
     }
 
     /**
