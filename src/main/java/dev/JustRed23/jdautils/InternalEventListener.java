@@ -7,8 +7,10 @@ import dev.JustRed23.jdautils.message.Filter;
 import dev.JustRed23.jdautils.message.MessageFilter;
 import dev.JustRed23.jdautils.music.AudioManager;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.StatusChangeEvent;
+import net.dv8tion.jda.api.events.channel.update.ChannelUpdateVoiceStatusEvent;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
@@ -101,6 +103,22 @@ final class InternalEventListener extends ListenerAdapter {
                 AudioManager.get(event.getGuild()).disconnect();
         }
     }
+
+    public void onChannelUpdateVoiceStatus(@NotNull ChannelUpdateVoiceStatusEvent event) {
+        if (!event.getChannel().getType().isAudio() || !AudioManager.has(event.getGuild())) return;
+        final VoiceChannel connectedChannel = event.getChannel().asVoiceChannel();
+
+        final AudioManager audioManager = AudioManager.get(event.getGuild());
+        if (!audioManager.isConnected() || audioManager.getScheduler().isStatusChangedManually()) return;
+
+        if (audioManager.getConnectedChannel().equals(connectedChannel)) {
+            if (audioManager.getScheduler().isCurrentStatus(event.getNewValue()))
+                return;
+
+            audioManager.getScheduler().channelStatusChangedManually();
+        }
+    }
+
     //GUILD EVENTS
 
     //INTERACTION EVENTS

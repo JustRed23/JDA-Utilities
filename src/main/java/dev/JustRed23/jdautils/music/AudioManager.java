@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
+import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
 import net.dv8tion.jda.internal.utils.Checks;
 import org.jetbrains.annotations.NotNull;
 
@@ -93,7 +94,7 @@ public final class AudioManager {
         getControls().stopAndClear();
         getAudioModifier().disableEffect();
 
-        if (guild.getAudioManager().getConnectedChannel() != null)
+        if (isConnected())
             scheduler.getGuild().getAudioManager().closeAudioConnection();
     }
 
@@ -200,6 +201,14 @@ public final class AudioManager {
         if (audioModifier == null)
             throw new IllegalStateException("AudioManager has been destroyed");
         return audioModifier;
+    }
+
+    public AudioChannelUnion getConnectedChannel() {
+        return guild.getAudioManager().getConnectedChannel();
+    }
+
+    public boolean isConnected() {
+        return getConnectedChannel() != null;
     }
 
     public Guild getGuild() {

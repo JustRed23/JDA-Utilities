@@ -7,15 +7,15 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import dev.JustRed23.jdautils.JDAUtilities;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
+import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.internal.utils.Checks;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public final class TrackScheduler extends AudioEventAdapter {
 
@@ -34,6 +34,8 @@ public final class TrackScheduler extends AudioEventAdapter {
 
     boolean looping = false;
     boolean showTrackInChannelStatus = true;
+    boolean manualStateChange = false;
+    public String currentStatus;
 
     TrackScheduler(@NotNull AudioPlayer player, @NotNull Guild guild) {
         this.player = player;
@@ -88,14 +90,21 @@ public final class TrackScheduler extends AudioEventAdapter {
         }
     }
 
-    @SuppressWarnings("all")
-    private void setChannelStatus(@Nullable String status) {
-        if (!showTrackInChannelStatus) return;
-        //TODO: Waiting for JDA PR https://github.com/discord-jda/JDA/pull/2532
-        //TODO: There is probably going to be a character limit, make sure we don't go over it
-        /*final AudioChannelUnion connectedChannel = guild.getAudioManager().getConnectedChannel();
-        if (connectedChannel != null && connectedChannel.getType().isAudio())
-            connectedChannel.asVoiceChannel().setStatus(status).queue();*/
+    void setChannelStatus(@Nullable String status) {
+        if (!AudioManager.get(getGuild()).isConnected()) return;
+        if (!showTrackInChannelStatus || manualStateChange) return;
+
+        final AudioChannelUnion connectedChannel = guild.getAudioManager().getConnectedChannel();
+        if (connectedChannel != null && connectedChannel.getType().isAudio()) {
+            final VoiceChannel voiceChannel = connectedChannel.asVoiceChannel();
+
+            String newStatus = status == null ? "" : status;
+            if (voiceChannel.MAX_STATUS_LENGTH <= newStatus.length())
+                newStatus = newStatus.substring(0, voiceChannel.MAX_STATUS_LENGTH - 4) + "...";
+
+            currentStatus = newStatus;
+            voiceChannel.modifyStatus(newStatus).queue();
+        }
     }
 
     /**
@@ -142,6 +151,38 @@ public final class TrackScheduler extends AudioEventAdapter {
         this.showTrackInChannelStatus = showTrackInChannelStatus;
         if (JDAUtilities.getGuildSettingManager() != null)
             JDAUtilities.getGuildSettingManager().set(guild.getIdLong(), "audioplayer-show-track-in-channel-status", showTrackInChannelStatus);
+    }
+
+    /**
+     * Indicates that a user has manually changed the channel status, we will now stop changing it to the next song until the player is stopped
+     */
+    @ApiStatus.Internal
+    public void channelStatusChangedManually() {
+        manualStateChange = true;
+    }
+
+    /**
+     * Checks if the current channel status is the same as the given status
+     * @param status The status to check
+     * @return True if the channel status is the same as the given status, false otherwise
+     */
+    @ApiStatus.Internal
+    public boolean isCurrentStatus(@Nullable String status) {
+        if (currentStatus == null && status == null)
+            return true;
+
+        if (status == null || status.isEmpty() || !status.contains(" "))
+            return false;
+
+        return currentStatus != null && currentStatus.endsWith(status.substring(status.indexOf(" ")));
+    }
+
+    /**
+     * Indicates that a user has manually changed the channel status
+     * @return True if the channel status was changed manually, false otherwise
+     */
+    public boolean isStatusChangedManually() {
+        return manualStateChange;
     }
 
     public @Nullable AudioTrack getPlayingTrack() {
