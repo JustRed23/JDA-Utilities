@@ -66,7 +66,6 @@ public final class TrackControls {
         scheduler.prev.clear();
         scheduler.looping = false;
         scheduler.manualStateChange = false;
-        scheduler.currentStatus = null;
         scheduler.setChannelStatus(null);
         stop();
     }

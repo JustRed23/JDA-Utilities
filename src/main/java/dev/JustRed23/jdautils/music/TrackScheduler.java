@@ -35,7 +35,6 @@ public final class TrackScheduler extends AudioEventAdapter {
     boolean looping = false;
     boolean showTrackInChannelStatus = true;
     boolean manualStateChange = false;
-    public String currentStatus;
 
     TrackScheduler(@NotNull AudioPlayer player, @NotNull Guild guild) {
         this.player = player;
@@ -102,7 +101,6 @@ public final class TrackScheduler extends AudioEventAdapter {
             if (voiceChannel.MAX_STATUS_LENGTH <= newStatus.length())
                 newStatus = newStatus.substring(0, voiceChannel.MAX_STATUS_LENGTH - 4) + "...";
 
-            currentStatus = newStatus;
             voiceChannel.modifyStatus(newStatus).queue();
         }
     }
@@ -159,22 +157,6 @@ public final class TrackScheduler extends AudioEventAdapter {
     @ApiStatus.Internal
     public void channelStatusChangedManually() {
         manualStateChange = true;
-    }
-
-    /**
-     * Checks if the current channel status is the same as the given status
-     * @param status The status to check
-     * @return True if the channel status is the same as the given status, false otherwise
-     */
-    @ApiStatus.Internal
-    public boolean isCurrentStatus(@Nullable String status) {
-        if (currentStatus == null && status == null)
-            return true;
-
-        if (status == null || status.isEmpty() || !status.contains(" "))
-            return false;
-
-        return currentStatus != null && currentStatus.endsWith(status.substring(status.indexOf(" ")));
     }
 
     /**
