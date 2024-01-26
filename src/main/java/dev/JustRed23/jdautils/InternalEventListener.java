@@ -7,8 +7,11 @@ import dev.JustRed23.jdautils.message.Filter;
 import dev.JustRed23.jdautils.message.MessageFilter;
 import dev.JustRed23.jdautils.music.AudioManager;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.audit.ActionType;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.StatusChangeEvent;
+import net.dv8tion.jda.api.events.channel.update.ChannelUpdateVoiceStatusEvent;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
@@ -97,10 +100,48 @@ final class InternalEventListener extends ListenerAdapter {
         boolean isBotAffected = event.getEntity().equals(event.getGuild().getSelfMember());
 
         if (isBotAffected && AudioManager.has(event.getGuild())) {
-            if (event.getChannelJoined() == null) //Bot left and was not moved
-                AudioManager.get(event.getGuild()).disconnect();
+            if (event.getChannelJoined() == null) {
+                final AudioManager audioManager = AudioManager.get(event.getGuild());
+                audioManager.disconnect();
+
+                if (!audioManager.getScheduler().isStatusChangedManually())
+                    event.getChannelLeft().asVoiceChannel().modifyStatus("").queue();
+            }
         }
     }
+
+    public void onChannelUpdateVoiceStatus(@NotNull ChannelUpdateVoiceStatusEvent event) {
+        if (!AudioManager.has(event.getGuild()))
+            return;
+
+        //Check if the bot is connected to a voice channel, or if the status was changed manually already
+        if (!AudioManager.get(event.getGuild()).isConnected() || AudioManager.get(event.getGuild()).getScheduler().isStatusChangedManually())
+            return;
+
+        //Check if the bot is in the affected channel
+        if (!event.getChannelType().isAudio() || event.getChannel().getIdLong() != AudioManager.get(event.getGuild()).getConnectedChannel().getIdLong())
+            return;
+
+        //Get the user that changed the voice state from audio logs
+        event.getGuild()
+                .retrieveAuditLogs()
+                .type(ActionType.VOICE_CHANNEL_STATUS_UPDATE)
+                .limit(1)
+                .queue(log -> {
+                    if (log.isEmpty())
+                        return;
+
+                    User user = log.get(0).getUser();
+                    if (user == null)
+                        return;
+
+                    if (event.getGuild().getSelfMember().getUser().equals(user))
+                        return;
+
+                    AudioManager.get(event.getGuild()).getScheduler().channelStatusChangedManually();
+                });
+    }
+
     //GUILD EVENTS
 
     //INTERACTION EVENTS
