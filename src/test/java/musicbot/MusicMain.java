@@ -74,7 +74,10 @@ public class MusicMain {
                         JDAUtilities.createSlashCommand("skip", "Skips the current song")
                                 .executes(event -> {
                                     TrackInfo skip = JDAUtilities.getGuildAudioManager(event.getGuild()).getControls().skip();
-                                    event.reply("Skipped track, now playing " + skip.track().getInfo().title + " by " + skip.track().getInfo().author).queue();
+                                    if (skip == null)
+                                        event.reply("Skipped track, no more tracks in queue").queue();
+                                    else
+                                        event.reply("Skipped track, now playing " + skip.track().getInfo().title + " by " + skip.track().getInfo().author).queue();
                                 })
                                 .build(),
                         JDAUtilities.createSlashCommand("pause", "Pauses the current song")
