@@ -16,6 +16,7 @@ import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;
@@ -163,6 +164,10 @@ final class InternalEventListener extends ListenerAdapter {
 
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         WatcherManager.onCommandEvent(event);
+    }
+
+    public void onCommandAutoCompleteInteraction(@NotNull CommandAutoCompleteInteractionEvent event) {
+        WatcherManager.onCommandAutoCompleteEvent(event);
     }
 
     public void onMessageContextInteraction(@NotNull MessageContextInteractionEvent event) {

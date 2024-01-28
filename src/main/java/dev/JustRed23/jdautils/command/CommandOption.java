@@ -1,7 +1,10 @@
 package dev.JustRed23.jdautils.command;
 
+import dev.JustRed23.jdautils.event.EventWatcher;
+import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +17,7 @@ public class CommandOption {
     private final boolean required;
     private final boolean autocomplete;
     private final List<Command.Choice> choices = new ArrayList<>();
+    private EventWatcher.Listener<CommandAutoCompleteInteractionEvent> autoCompleteListener;
 
     public CommandOption(OptionType type, String name, String description, boolean required, boolean autocomplete) {
         this.type = type;
@@ -21,6 +25,9 @@ public class CommandOption {
         this.description = description;
         this.required = required;
         this.autocomplete = autocomplete;
+
+        if (autocomplete && !type.canSupportChoices())
+            throw new IllegalStateException("This option type does not support auto completions");
     }
 
     public CommandOption(OptionType type, String name, String description, boolean required) {
@@ -38,6 +45,13 @@ public class CommandOption {
 
     public CommandOption addChoice(String name, String value) {
         choices.add(new Command.Choice(name, value));
+        return this;
+    }
+
+    public CommandOption onAutoComplete(EventWatcher.Listener<CommandAutoCompleteInteractionEvent> listener) {
+        if (!autocomplete)
+            throw new IllegalStateException("Cannot add an autocomplete listener to a non-autocomplete option");
+        autoCompleteListener = listener;
         return this;
     }
 
@@ -63,5 +77,9 @@ public class CommandOption {
 
     public List<Command.Choice> choices() {
         return choices;
+    }
+
+    public @Nullable EventWatcher.Listener<CommandAutoCompleteInteractionEvent> autoCompleteListener() {
+        return autoCompleteListener;
     }
 }

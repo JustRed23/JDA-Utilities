@@ -1,12 +1,14 @@
 package dev.JustRed23.jdautils.event;
 
 import dev.JustRed23.jdautils.command.CommandComponent;
+import dev.JustRed23.jdautils.command.OptionComponent;
 import dev.JustRed23.jdautils.component.SendableComponent;
 import dev.JustRed23.jdautils.component.interact.SmartReaction;
 import dev.JustRed23.jdautils.event.custom.MessageFilterEvent;
 import dev.JustRed23.jdautils.message.Filter;
 import dev.JustRed23.jdautils.message.MessageComponent;
 import net.dv8tion.jda.api.events.Event;
+import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.GenericContextInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
@@ -71,11 +73,19 @@ public final class WatcherManager {
     }
 
     public static void onCommandEvent(@NotNull SlashCommandInteractionEvent event) {
-        String command = event.getName() + (event.getSubcommandName() != null ? " " + event.getSubcommandName() : "");
-
         watchers.stream()
                 .filter(watcher -> watcher.getComponent() instanceof CommandComponent)
-                .filter(watcher -> watcher.getComponent().getName().equals(command))
+                .filter(watcher -> watcher.getComponent().getName().equals(event.getFullCommandName()))
+                .findFirst()
+                .ifPresent(watcher -> watcher.onEvent(event));
+    }
+
+    public static void onCommandAutoCompleteEvent(@NotNull CommandAutoCompleteInteractionEvent event) {
+        String commandAndOption = event.getFullCommandName() + " " + event.getFocusedOption().getName();
+
+        watchers.stream()
+                .filter(watcher -> watcher.getComponent() instanceof OptionComponent)
+                .filter(watcher -> watcher.getComponent().getName().equals(commandAndOption))
                 .findFirst()
                 .ifPresent(watcher -> watcher.onEvent(event));
     }

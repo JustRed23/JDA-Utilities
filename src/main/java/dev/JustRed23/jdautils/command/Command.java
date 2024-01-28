@@ -3,6 +3,7 @@ package dev.JustRed23.jdautils.command;
 import dev.JustRed23.jdautils.JDAUtilities;
 import dev.JustRed23.jdautils.event.EventWatcher;
 import dev.JustRed23.jdautils.utils.Unique;
+import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;
@@ -92,10 +93,15 @@ public final class Command {
     public static class SlashCommandBuilder implements Buildable<SlashCommandBuilder, SlashCommandData> {
 
         private final SlashCommandData data;
-        private final Map<String, EventWatcher.Listener<SlashCommandInteractionEvent>> subCommandListeners = new HashMap<>();
-        private final Map<String, List<Function<SlashCommandInteractionEvent, Boolean>>> subCommandConditions = new HashMap<>();
+
+        private final Map<String, EventWatcher.Listener<CommandAutoCompleteInteractionEvent>> autocompleteListeners = new HashMap<>();
         private final List<Function<SlashCommandInteractionEvent, Boolean>> conditions = new ArrayList<>();
         private EventWatcher.Listener<SlashCommandInteractionEvent> listener;
+
+        //Sub commands
+        private final Map<String, EventWatcher.Listener<CommandAutoCompleteInteractionEvent>> subCommandAutoCompleteListeners = new HashMap<>();
+        private final Map<String, List<Function<SlashCommandInteractionEvent, Boolean>>> subCommandConditions = new HashMap<>();
+        private final Map<String, EventWatcher.Listener<SlashCommandInteractionEvent>> subCommandListeners = new HashMap<>();
         private boolean containsSubCommands;
 
         private SlashCommandBuilder(String name, String description) {
@@ -103,14 +109,24 @@ public final class Command {
         }
 
         public SlashCommandBuilder addOption(@NotNull CommandOption option) {
+            if (containsSubCommands)
+                throw new IllegalStateException("Cannot add an option to a slash command that contains sub commands");
+
             OptionData optionData = new OptionData(option.type(), option.name(), option.description(), option.required(), option.autocomplete());
             for (net.dv8tion.jda.api.interactions.commands.Command.Choice choice : option.choices())
                 optionData.addChoice(choice.getName(), choice.getAsString());
             getData().addOptions(optionData);
+
+            if (option.autocomplete() && option.autoCompleteListener() != null)
+                autocompleteListeners.put(option.name(), option.autoCompleteListener());
+
             return this;
         }
 
         public SlashCommandBuilder addOptions(@NotNull CommandOption... options) {
+            if (containsSubCommands)
+                throw new IllegalStateException("Cannot add an option to a slash command that contains sub commands");
+
             for (CommandOption option : options)
                 addOption(option);
             return this;
@@ -146,11 +162,19 @@ public final class Command {
                 new EventWatcher<>(new CommandComponent(getData().getName()), SlashCommandInteractionEvent.class)
                         .setListener(listener)
                         .addConditions(conditions);
+
+                for (Map.Entry<String, EventWatcher.Listener<CommandAutoCompleteInteractionEvent>> entry : autocompleteListeners.entrySet())
+                    new EventWatcher<>(new OptionComponent(getData().getName() + " " + entry.getKey()), CommandAutoCompleteInteractionEvent.class)
+                            .setListener(entry.getValue());
             } else {
                 for (Map.Entry<String, EventWatcher.Listener<SlashCommandInteractionEvent>> entry : subCommandListeners.entrySet())
                     new EventWatcher<>(new CommandComponent(getData().getName() + " " + entry.getKey()), SlashCommandInteractionEvent.class)
                             .setListener(entry.getValue())
                             .addConditions(subCommandConditions.getOrDefault(entry.getKey(), Collections.emptyList()));
+
+                for (Map.Entry<String, EventWatcher.Listener<CommandAutoCompleteInteractionEvent>> entry : subCommandAutoCompleteListeners.entrySet())
+                    new EventWatcher<>(new OptionComponent(getData().getName() + " " + entry.getKey()), CommandAutoCompleteInteractionEvent.class)
+                            .setListener(entry.getValue());
             }
             return getData();
         }
@@ -159,6 +183,7 @@ public final class Command {
 
             private final SlashCommandBuilder parent;
             private final SubcommandData data;
+            private final Map<String, EventWatcher.Listener<CommandAutoCompleteInteractionEvent>> autocompleteListeners = new HashMap<>();
             private final List<Function<SlashCommandInteractionEvent, Boolean>> conditions = new ArrayList<>();
             private EventWatcher.Listener<SlashCommandInteractionEvent> listener;
 
@@ -169,6 +194,10 @@ public final class Command {
 
             public SubCommandBuilder addOption(@NotNull CommandOption option) {
                 data.addOption(option.type(), option.name(), option.description(), option.required(), option.autocomplete());
+
+                if (option.autocomplete() && option.autoCompleteListener() != null)
+                    autocompleteListeners.put(option.name(), option.autoCompleteListener());
+
                 return this;
             }
 
@@ -202,6 +231,9 @@ public final class Command {
 
                     if (!conditions.isEmpty())
                         parent.subCommandConditions.put(data.getName(), conditions);
+
+                    for (Map.Entry<String, EventWatcher.Listener<CommandAutoCompleteInteractionEvent>> entry : autocompleteListeners.entrySet())
+                        parent.subCommandAutoCompleteListeners.put(data.getName() + " " + entry.getKey(), entry.getValue());
                 }
                 return parent;
             }
