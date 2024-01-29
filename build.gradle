@@ -25,8 +25,8 @@ dependencies {
     api 'com.github.JustRed23:lavadsp:0.7.7-1'
 
     //search sources
-    api 'com.google.apis:google-api-services-youtube:v3-rev20231011-2.0.0'
-    api 'se.michaelthelin.spotify:spotify-web-api-java:8.3.4'
+    api 'com.google.apis:google-api-services-youtube:v3-rev20240123-2.0.0'
+    api 'se.michaelthelin.spotify:spotify-web-api-java:8.3.5'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.1'
