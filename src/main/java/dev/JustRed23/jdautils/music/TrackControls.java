@@ -50,7 +50,7 @@ public final class TrackControls {
         if (scheduler.prev.isEmpty())
             return null;
 
-        scheduler.getPlayer().startTrack(scheduler.prev.poll(), false);
+        scheduler.getPlayer().startTrack(scheduler.prev.poll().makeClone(), false);
         return scheduler.getPlayingTrackInfo();
     }
 

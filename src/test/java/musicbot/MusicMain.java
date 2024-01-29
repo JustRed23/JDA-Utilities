@@ -80,6 +80,15 @@ public class MusicMain {
                                         event.reply("Skipped track, now playing " + skip.track().getInfo().title + " by " + skip.track().getInfo().author).queue();
                                 })
                                 .build(),
+                        JDAUtilities.createSlashCommand("prev", "Goes back to the previous song")
+                                .executes(event -> {
+                                    TrackInfo prev = JDAUtilities.getGuildAudioManager(event.getGuild()).getControls().prev();
+                                    if (prev == null)
+                                        event.reply("Went back to previous track, no more tracks in queue").queue();
+                                    else
+                                        event.reply("Went back to previous track, now playing " + prev.track().getInfo().title + " by " + prev.track().getInfo().author).queue();
+                                })
+                                .build(),
                         JDAUtilities.createSlashCommand("pause", "Pauses the current song")
                                 .executes(event -> {
                                     JDAUtilities.getGuildAudioManager(event.getGuild()).getControls().pause();

@@ -77,13 +77,14 @@ public final class TrackScheduler extends AudioEventAdapter {
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, @NotNull AudioTrackEndReason endReason) {
         setChannelStatus(null);
+        if (!looping) prev.add(track);
+
         if (endReason.mayStartNext) {
             if (looping) {
                 player.startTrack(track.makeClone(), false);
                 return;
             }
 
-            prev.add(track);
             if (!queue.isEmpty())
                 player.startTrack(queue.poll(), false);
         }
@@ -191,6 +192,10 @@ public final class TrackScheduler extends AudioEventAdapter {
 
     public LinkedList<AudioTrack> getQueue() {
         return queue;
+    }
+
+    public LinkedList<AudioTrack> getPrev() {
+        return prev;
     }
 
     public Guild getGuild() {
