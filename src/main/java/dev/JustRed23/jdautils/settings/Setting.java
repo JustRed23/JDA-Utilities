@@ -12,19 +12,19 @@ public record Setting(long guildId, String name, Object value) {
     }
 
     public int intValue() {
-        return (int) value;
+        return Integer.parseInt(stringValue());
     }
 
     public long longValue() {
-        return (long) value;
+        return Long.parseLong(stringValue());
     }
 
     public double doubleValue() {
-        return (double) value;
+        return Double.parseDouble(stringValue());
     }
 
     public boolean booleanValue() {
-        return (boolean) value;
+        return Boolean.parseBoolean(stringValue());
     }
 
     public String stringValue() {
