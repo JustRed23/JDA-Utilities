@@ -75,7 +75,7 @@ public final class WatcherManager {
     public static void onCommandEvent(@NotNull SlashCommandInteractionEvent event) {
         watchers.stream()
                 .filter(watcher -> watcher.getComponent() instanceof CommandComponent)
-                .filter(watcher -> watcher.getComponent().getName().equals(event.getFullCommandName()))
+                .filter(watcher -> watcher.getComponent().getName().equals(event.getFullCommandName()) || ((CommandComponent) watcher.getComponent()).getAliases().contains(event.getFullCommandName()))
                 .findFirst()
                 .ifPresent(watcher -> watcher.onEvent(event));
     }

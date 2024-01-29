@@ -98,6 +98,7 @@ public final class Command {
     public static class SlashCommandBuilder implements Buildable<SlashCommandBuilder, SlashCommandData> {
 
         private final SlashCommandData data;
+        private final List<String> aliases = new ArrayList<>();
 
         private final Map<String, EventWatcher.Listener<CommandAutoCompleteInteractionEvent>> autocompleteListeners = new HashMap<>();
         private final List<Function<SlashCommandInteractionEvent, Boolean>> conditions = new ArrayList<>();
@@ -151,6 +152,34 @@ public final class Command {
             return this;
         }
 
+        /**
+         * Adds an alias to the slash command<br>
+         * <b>Note - only works when calling {@link #buildAndRegister()}</b>
+         * @param alias the alias to add
+         * @return the builder
+         */
+        public SlashCommandBuilder addAlias(@NotNull String alias) {
+            if (alias.equals(getData().getName()))
+                throw new IllegalArgumentException("Alias cannot be the same as the command name");
+            if (aliases.contains(alias))
+                throw new IllegalArgumentException("Alias '" + alias + "' already exists");
+            Unique.checkUnique("slashcommand", alias, "A slash command or alias with the name '" + alias + "' already exists");
+
+            aliases.add(alias);
+            return this;
+        }
+
+        /**
+         * Adds multiple aliases to the slash command<br>
+         * <b>Note - only works when calling {@link #buildAndRegister()}</b>
+         * @param aliases the aliases to add
+         * @return the builder
+         */
+        public SlashCommandBuilder addAliases(@NotNull String... aliases) {
+            Arrays.stream(aliases).forEach(this::addAlias);
+            return this;
+        }
+
         public SubCommandBuilder addSubCommand(String name, String description) {
             if (listener != null)
                 throw new IllegalStateException("Cannot add a sub command to a slash command that contains a listener");
@@ -164,7 +193,7 @@ public final class Command {
 
         public SlashCommandData build() {
             if (!containsSubCommands && listener != null) {
-                new EventWatcher<>(new CommandComponent(getData().getName()), SlashCommandInteractionEvent.class)
+                new EventWatcher<>(new CommandComponent(getData().getName(), aliases), SlashCommandInteractionEvent.class)
                         .setListener(listener)
                         .addConditions(conditions);
 
@@ -173,7 +202,7 @@ public final class Command {
                             .setListener(entry.getValue());
             } else {
                 for (Map.Entry<String, EventWatcher.Listener<SlashCommandInteractionEvent>> entry : subCommandListeners.entrySet())
-                    new EventWatcher<>(new CommandComponent(getData().getName() + " " + entry.getKey()), SlashCommandInteractionEvent.class)
+                    new EventWatcher<>(new CommandComponent(getData().getName(), aliases, " " + entry.getKey()), SlashCommandInteractionEvent.class)
                             .setListener(entry.getValue())
                             .addConditions(subCommandConditions.getOrDefault(entry.getKey(), Collections.emptyList()));
 
@@ -182,6 +211,11 @@ public final class Command {
                             .setListener(entry.getValue());
             }
             return getData();
+        }
+
+        public void buildAndRegister() {
+            Buildable.super.buildAndRegister();
+            aliases.forEach(alias -> globalCommands.add(SlashCommandData.fromData(getData().toData()).setName(alias)));
         }
 
         public static class SubCommandBuilder {

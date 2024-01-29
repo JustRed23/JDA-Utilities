@@ -175,4 +175,26 @@ class CommandTest {
 
         instance.shutdown();
     }
+
+    @Test
+    void testCommandAliases() throws InterruptedException {
+        JDAUtilities.createSlashCommand("test-alias", "A test command with aliases")
+                .addAliases("test-alias-1", "test-alias-2", "test-alias-3")
+                .executes(event -> event.reply("Command executed!").queue())
+                .buildAndRegister();
+
+        // Create a new JDA instance with the builder
+        ListenerAdapter listener = JDAUtilities.getInstance().listener();
+
+        JDA instance = JDABuilder.createDefault(secrets.getProperty("token"))
+                .enableIntents(GatewayIntent.MESSAGE_CONTENT)
+                .setActivity(Activity.playing("with cats"))
+                .setStatus(OnlineStatus.IDLE)
+                .addEventListeners(listener)
+                .build().awaitReady();
+
+        Thread.sleep(20_000);
+
+        instance.shutdown();
+    }
 }
