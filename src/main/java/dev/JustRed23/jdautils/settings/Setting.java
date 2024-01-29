@@ -24,7 +24,8 @@ public record Setting(long guildId, String name, Object value) {
     }
 
     public boolean booleanValue() {
-        return Boolean.parseBoolean(stringValue());
+        return "true".equalsIgnoreCase(stringValue()) ||
+                "1".equals(stringValue());
     }
 
     public String stringValue() {
