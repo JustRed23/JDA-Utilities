@@ -25,8 +25,12 @@ public final class TrackControls {
     }
 
     public void restart() {
+        seek(0);
+    }
+
+    public void seek(long ms) {
         if (scheduler.getPlayingTrack() != null)
-            scheduler.getPlayingTrack().setPosition(0);
+            scheduler.getPlayingTrack().setPosition(ms);
     }
 
     @Nullable
