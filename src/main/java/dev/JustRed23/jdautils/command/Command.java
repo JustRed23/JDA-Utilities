@@ -88,6 +88,11 @@ public final class Command {
             getData().setNSFW(nsfw);
             return (R) this;
         }
+
+        default R setGuildOnly() {
+            getData().setGuildOnly(true);
+            return (R) this;
+        }
     }
 
     public static class SlashCommandBuilder implements Buildable<SlashCommandBuilder, SlashCommandData> {
