@@ -33,6 +33,11 @@ public final class TrackControls {
             scheduler.getPlayingTrack().setPosition(ms);
     }
 
+    public boolean loop() {
+        scheduler.looping = !scheduler.looping;
+        return scheduler.looping;
+    }
+
     @Nullable
     public TrackInfo skip() {
         scheduler.looping = false;
