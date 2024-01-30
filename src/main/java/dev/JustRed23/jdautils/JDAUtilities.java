@@ -30,7 +30,7 @@ import java.util.function.Function;
  */
 public final class JDAUtilities {
 
-    private static final String version = "2.2";
+    private static final String version = "2.3";
     static Builder builder;
 
     private JDAUtilities() {}
