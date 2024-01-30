@@ -48,6 +48,12 @@ public class CommandOption {
         return this;
     }
 
+    public CommandOption addChoices(Command.Choice... choices) {
+        for (Command.Choice choice : choices)
+            addChoice(choice);
+        return this;
+    }
+
     public CommandOption onAutoComplete(EventWatcher.Listener<CommandAutoCompleteInteractionEvent> listener) {
         if (!autocomplete)
             throw new IllegalStateException("Cannot add an autocomplete listener to a non-autocomplete option");
