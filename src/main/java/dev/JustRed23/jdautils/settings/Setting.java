@@ -12,23 +12,22 @@ public record Setting(long guildId, String name, Object value) {
     }
 
     public int intValue() {
-        return Integer.parseInt(stringValue());
+        return value instanceof Integer ? (Integer) value : Integer.parseInt(stringValue());
     }
 
     public long longValue() {
-        return Long.parseLong(stringValue());
+        return value instanceof Long ? (Long) value : Long.parseLong(stringValue());
     }
 
     public double doubleValue() {
-        return Double.parseDouble(stringValue());
+        return value instanceof Double ? (Double) value : Double.parseDouble(stringValue());
     }
 
     public boolean booleanValue() {
-        return "true".equalsIgnoreCase(stringValue()) ||
-                "1".equals(stringValue());
+        return value instanceof Boolean ? (Boolean) value : ("true".equalsIgnoreCase(stringValue()) || "1".equals(stringValue()));
     }
 
     public String stringValue() {
-        return (String) value;
+        return value instanceof String ? (String) value : value.toString();
     }
 }
