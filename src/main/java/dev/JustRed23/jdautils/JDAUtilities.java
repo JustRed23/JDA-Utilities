@@ -12,6 +12,8 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.function.Function;
 
 /**
@@ -63,6 +65,17 @@ public final class JDAUtilities {
     public static @NotNull MessageFilter getGuildFilterManager(@NotNull Guild guild) {
         checkInitialized();
         return MessageFilter.get(guild);
+    }
+
+    /**
+     * Gets the database connection, you should use this to get a connection to the database
+     * <br><b>Do not forget to close the connection when you are done with it, use a try-with-resources statement</b>
+     * @return The database connection
+     * @throws SQLException If a database access error occurs
+     */
+    public static @NotNull Connection getDatabaseConnection() throws SQLException {
+        checkInitialized();
+        return builder.getDatabaseConnection();
     }
 
     /**

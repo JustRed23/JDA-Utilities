@@ -1,6 +1,8 @@
 import dev.JustRed23.jdautils.Builder;
 import dev.JustRed23.jdautils.JDAUtilities;
 import dev.JustRed23.jdautils.component.Component;
+import dev.JustRed23.jdautils.data.DataStore;
+import dev.JustRed23.jdautils.data.InteractionResult;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -97,7 +99,28 @@ class BaseTest {
 
     @Test
     void testDB() throws InterruptedException {
-        //TODO
+        final Builder builder = JDAUtilities.getInstance().withDatabase().fileBased("testdb.db");
+
+        JDA instance = createInstance()
+                .addEventListeners(builder.listener())
+                .build().awaitReady();
+
+        assertNotNull(instance);
+
+        DataStore.GUILD.use().createTable(123456789L);
+
+        final String s = DataStore.GUILD.use().get(123456789L, "testing").orElse("NO VALUE");
+        System.out.println(s);
+
+        final InteractionResult insert = DataStore.GUILD.use().insert(123456789L, "testing", "test value");
+        System.out.println(insert.name());
+
+        if (insert == InteractionResult.ERROR)
+            fail("Failed to insert value into database", insert.getError());
+
+        Thread.sleep(5000);
+
+        instance.shutdown();
     }
 
     @AfterEach
