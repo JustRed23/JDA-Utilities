@@ -56,15 +56,6 @@ public final class JDAUtilities {
     }
 
     /**
-     * Gets the guild setting manager, this is used to get and set guild settings
-     * @see Builder#withGuildSettingManager(GuildSettingManager)
-     */
-    public static @Nullable GuildSettingManager getGuildSettingManager() {
-        checkInitialized();
-        return builder.guildSettingManager;
-    }
-
-    /**
      * Gets the guild filter manager, this is used to get and set guild filters
      * @param guild The guild to get the filter manager for
      * @return The filter manager for the specified guild

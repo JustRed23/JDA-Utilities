@@ -57,9 +57,6 @@ final class InternalEventListener extends ListenerAdapter {
         builder.cachedBotIconUrl = event.getJDA().getSelfUser().getEffectiveAvatarUrl(); //Cache the bots avatar url
         builder.ready();
 
-        if (builder.guildSettingManager != null)
-            builder.guildSettingManager.loadGuilds(event.getJDA().getGuilds());
-
         event.getJDA()
                 .updateCommands()
                 .addCommands(Command.globalCommands)
@@ -84,15 +81,7 @@ final class InternalEventListener extends ListenerAdapter {
     //GENERIC EVENTS
 
     //GUILD EVENTS
-    public void onGuildJoin(@NotNull GuildJoinEvent event) {
-        if (builder.guildSettingManager != null)
-            builder.guildSettingManager.addGuild(event.getGuild().getIdLong());
-    }
-
     public void onGuildLeave(@NotNull GuildLeaveEvent event) {
-        if (builder.guildSettingManager != null)
-            builder.guildSettingManager.removeGuild(event.getGuild().getIdLong());
-
         if (AudioManager.has(event.getGuild()))
             AudioManager.get(event.getGuild()).destroy();
     }
