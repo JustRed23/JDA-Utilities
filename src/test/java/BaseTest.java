@@ -109,6 +109,9 @@ class BaseTest {
 
         DataStore.GUILD.use().createTable(123456789L);
 
+        System.out.println("Has testing value? " + DataStore.GUILD.use().has(123456789L, "testing"));
+        System.out.println("Has testing2 value? " + DataStore.GUILD.use().has(123456789L, "testing2"));
+
         final String s = DataStore.GUILD.use().get(123456789L, "testing").orElse("NO VALUE");
         System.out.println(s);
 

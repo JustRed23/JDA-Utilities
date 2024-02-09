@@ -2,6 +2,8 @@ package dev.JustRed23.jdautils.music;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import dev.JustRed23.jdautils.JDAUtilities;
+import dev.JustRed23.jdautils.data.DataStore;
+import dev.JustRed23.jdautils.data.InteractionResult;
 import dev.JustRed23.jdautils.music.effect.AbstractEffect;
 import net.dv8tion.jda.api.entities.Guild;
 import org.jetbrains.annotations.NotNull;
@@ -22,18 +24,18 @@ public final class AudioModifier {
     /**
      * Sets the volume of the player, can be between 0 and 100
      * @param volume The volume to set
-     * @return The result of the operation, can be SUCCESS, ERROR or INVALID_VALUE
+     * @return The result of the operation, or null if the volume is invalid
      */
-    public ConfigReturnValue setVolume(int volume) {
+    public InteractionResult setVolume(int volume) {
         if (volume <= 0 || volume > 100)
-            return ConfigReturnValue.INVALID_VALUE;
+            return null;
 
         player.setVolume(volume);
 
-        if (JDAUtilities.getGuildSettingManager() != null)
-            return JDAUtilities.getGuildSettingManager().set(guildId, "audioplayer-volume", volume);
+        if (JDAUtilities.isDatabaseInitialized())
+            return DataStore.GUILD.use().insertOrUpdate(guildId, "audioplayer-volume", String.valueOf(volume));
         else
-            return ConfigReturnValue.SUCCESS;
+            return InteractionResult.SUCCESS;
     }
 
     public int getVolume() {
@@ -45,9 +47,8 @@ public final class AudioModifier {
      * @return The default volume for the guild
      */
     public int getGuildDefaultVolume() {
-        return JDAUtilities.getGuildSettingManager() != null ?
-                JDAUtilities.getGuildSettingManager().getOrDefault(guildId, "audioplayer-volume", 100).intValue()
-                : 100;
+        final InteractionResult result = DataStore.GUILD.use().get(guildId, "audioplayer-volume");
+        return result == InteractionResult.SUCCESS ? result.asInt() : 100;
     }
 
     /**

@@ -68,6 +68,13 @@ public final class JDAUtilities {
     }
 
     /**
+     * @return Whether the database has been initialized
+     */
+    public static boolean isDatabaseInitialized() {
+        return builder != null && builder.dataSource != null;
+    }
+
+    /**
      * Gets the database connection, you should use this to get a connection to the database
      * <br><b>Do not forget to close the connection when you are done with it, use a try-with-resources statement</b>
      * @return The database connection

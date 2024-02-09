@@ -20,7 +20,7 @@ public final class Builder {
     boolean ready = false;
     private final ListenerAdapter adapter;
 
-    private HikariDataSource dataSource;
+    HikariDataSource dataSource;
 
     String cachedBotIconUrl;
 

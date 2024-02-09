@@ -72,4 +72,14 @@ public abstract class Manager {
     public InteractionResult delete(long tableIdentifier, String setting) {
         return null;
     }
+
+    public InteractionResult insertOrUpdate(long tableIdentifier, String setting, String value) {
+        if (has(tableIdentifier, setting))
+            return update(tableIdentifier, setting, value);
+        return insert(tableIdentifier, setting, value);
+    }
+
+    public boolean has(long tableIdentifier, String setting) {
+        return get(tableIdentifier, setting) != InteractionResult.NOT_FOUND;
+    }
 }

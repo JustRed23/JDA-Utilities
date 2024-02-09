@@ -5,6 +5,8 @@ import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import dev.JustRed23.jdautils.JDAUtilities;
+import dev.JustRed23.jdautils.data.DataStore;
+import dev.JustRed23.jdautils.data.InteractionResult;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
@@ -42,8 +44,11 @@ public final class TrackScheduler extends AudioEventAdapter {
 
         player.addListener(this);
 
-        if (JDAUtilities.getGuildSettingManager() != null)
-            setShowTrackInChannelStatus(JDAUtilities.getGuildSettingManager().getOrDefault(guild.getIdLong(), "audioplayer-show-track-in-channel-status", true).booleanValue());
+        if (JDAUtilities.isDatabaseInitialized()) {
+            final InteractionResult result = DataStore.GUILD.use().get(guild.getIdLong(), "audioplayer-show-track-in-channel-status");
+            if (result == InteractionResult.SUCCESS)
+                showTrackInChannelStatus = result.asBoolean();
+        }
     }
 
     void shutdown() {
@@ -148,8 +153,11 @@ public final class TrackScheduler extends AudioEventAdapter {
      */
     public void setShowTrackInChannelStatus(boolean showTrackInChannelStatus) {
         this.showTrackInChannelStatus = showTrackInChannelStatus;
-        if (JDAUtilities.getGuildSettingManager() != null)
-            JDAUtilities.getGuildSettingManager().set(guild.getIdLong(), "audioplayer-show-track-in-channel-status", showTrackInChannelStatus);
+        if (JDAUtilities.isDatabaseInitialized()) {
+            final InteractionResult result = DataStore.GUILD.use().insertOrUpdate(guild.getIdLong(), "audioplayer-show-track-in-channel-status", String.valueOf(showTrackInChannelStatus));
+            if (result == InteractionResult.ERROR)
+                throw new RuntimeException("Could not update the show track in channel status setting", result.getError());
+        }
     }
 
     /**
