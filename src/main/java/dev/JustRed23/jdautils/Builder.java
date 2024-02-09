@@ -3,8 +3,6 @@ package dev.JustRed23.jdautils;
 import dev.JustRed23.jdautils.message.MessageFilter;
 import dev.JustRed23.jdautils.music.AudioManager;
 import dev.JustRed23.jdautils.music.effect.AbstractEffect;
-import dev.JustRed23.jdautils.settings.DefaultGuildSettingManager;
-import dev.JustRed23.jdautils.settings.GuildSettingManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.ApiStatus;

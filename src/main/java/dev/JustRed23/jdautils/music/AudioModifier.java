@@ -3,7 +3,6 @@ package dev.JustRed23.jdautils.music;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import dev.JustRed23.jdautils.JDAUtilities;
 import dev.JustRed23.jdautils.music.effect.AbstractEffect;
-import dev.JustRed23.jdautils.settings.ConfigReturnValue;
 import net.dv8tion.jda.api.entities.Guild;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

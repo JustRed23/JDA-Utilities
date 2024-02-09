@@ -6,7 +6,6 @@ import dev.JustRed23.jdautils.event.EventWatcher;
 import dev.JustRed23.jdautils.message.MessageComponent;
 import dev.JustRed23.jdautils.message.MessageFilter;
 import dev.JustRed23.jdautils.music.AudioManager;
-import dev.JustRed23.jdautils.settings.GuildSettingManager;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.Contract;
