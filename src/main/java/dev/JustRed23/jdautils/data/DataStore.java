@@ -55,7 +55,6 @@ public enum DataStore {
         ) {
             stmt.setString(1, setting);
             stmt.setString(2, value);
-
             return stmt.executeUpdate() > 0 ? InteractionResult.SUCCESS : InteractionResult.NO_CHANGE;
         } catch (SQLException e) {
             if (e.getErrorCode() == 19) return InteractionResult.DUPLICATE;
@@ -65,12 +64,29 @@ public enum DataStore {
 
     @CheckReturnValue
     public InteractionResult update(long tableIdentifier, String setting, String newValue) {
-        return null;
+        try (
+                var connection = JDAUtilities.getDatabaseConnection();
+                PreparedStatement stmt = connection.prepareStatement("UPDATE " + tableName.formatted(tableIdentifier) + " SET value = ? WHERE setting = ?")
+        ) {
+            stmt.setString(1, newValue);
+            stmt.setString(2, setting);
+            return stmt.executeUpdate() > 0 ? InteractionResult.SUCCESS : InteractionResult.NOT_FOUND;
+        } catch (SQLException e) {
+            return InteractionResult.ERROR.setError(e);
+        }
     }
 
     @CheckReturnValue
     public InteractionResult delete(long tableIdentifier, String setting) {
-        return null;
+        try (
+                var connection = JDAUtilities.getDatabaseConnection();
+                PreparedStatement stmt = connection.prepareStatement("DELETE FROM " + tableName.formatted(tableIdentifier) + " WHERE setting = ?")
+        ) {
+            stmt.setString(1, setting);
+            return stmt.executeUpdate() > 0 ? InteractionResult.SUCCESS : InteractionResult.NOT_FOUND;
+        } catch (SQLException e) {
+            return InteractionResult.ERROR.setError(e);
+        }
     }
 
     public InteractionResult insertOrUpdate(long tableIdentifier, String setting, String value) {
