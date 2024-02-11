@@ -2,12 +2,14 @@ package dev.JustRed23.jdautils;
 
 import dev.JustRed23.jdautils.command.Command;
 import dev.JustRed23.jdautils.component.SendableComponent;
+import dev.JustRed23.jdautils.data.DataStore;
 import dev.JustRed23.jdautils.event.WatcherManager;
 import dev.JustRed23.jdautils.message.Filter;
 import dev.JustRed23.jdautils.message.MessageFilter;
 import dev.JustRed23.jdautils.music.AudioManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.audit.ActionType;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.StatusChangeEvent;
@@ -62,6 +64,13 @@ final class InternalEventListener extends ListenerAdapter {
                 .addCommands(Command.globalCommands)
                 .queue(success -> LOGGER.info("Successfully registered {} global command(s)", Command.globalCommands.size()),
                         failure -> LOGGER.error("Failed to register global command(s): {}", failure.getMessage()));
+
+        if (JDAUtilities.isDatabaseInitialized())
+            event.getJDA()
+                    .getGuilds()
+                    .stream()
+                    .map(Guild::getIdLong)
+                    .forEach(DataStore.GUILD::createTable);
     }
 
     public void onGenericEvent(@NotNull GenericEvent event) {
@@ -81,6 +90,11 @@ final class InternalEventListener extends ListenerAdapter {
     //GENERIC EVENTS
 
     //GUILD EVENTS
+    public void onGuildJoin(@NotNull GuildJoinEvent event) {
+        if (JDAUtilities.isDatabaseInitialized())
+            DataStore.GUILD.createTable(event.getGuild().getIdLong());
+    }
+
     public void onGuildLeave(@NotNull GuildLeaveEvent event) {
         if (AudioManager.has(event.getGuild()))
             AudioManager.get(event.getGuild()).destroy();

@@ -48,6 +48,8 @@ public enum DataStore {
             if (cached != null) return InteractionResult.SUCCESS.setValue(cached);
         }
 
+        createTable(tableIdentifier);
+
         try (
                 var connection = JDAUtilities.getDatabaseConnection();
                 PreparedStatement stmt = connection.prepareStatement("SELECT * FROM " + tableName.formatted(tableIdentifier) + " WHERE setting = ?")
@@ -68,6 +70,8 @@ public enum DataStore {
 
     @CheckReturnValue
     public InteractionResult insert(long tableIdentifier, String setting, String value) {
+        createTable(tableIdentifier);
+
         try (
                 var connection = JDAUtilities.getDatabaseConnection();
                 PreparedStatement stmt = connection.prepareStatement("INSERT INTO " + tableName.formatted(tableIdentifier) + " (setting, value) VALUES (?, ?)")
@@ -83,6 +87,8 @@ public enum DataStore {
 
     @CheckReturnValue
     public InteractionResult update(long tableIdentifier, String setting, String newValue) {
+        createTable(tableIdentifier);
+
         try (
                 var connection = JDAUtilities.getDatabaseConnection();
                 PreparedStatement stmt = connection.prepareStatement("UPDATE " + tableName.formatted(tableIdentifier) + " SET value = ? WHERE setting = ?")
@@ -101,6 +107,8 @@ public enum DataStore {
 
     @CheckReturnValue
     public InteractionResult delete(long tableIdentifier, String setting) {
+        createTable(tableIdentifier);
+
         try (
                 var connection = JDAUtilities.getDatabaseConnection();
                 PreparedStatement stmt = connection.prepareStatement("DELETE FROM " + tableName.formatted(tableIdentifier) + " WHERE setting = ?")
