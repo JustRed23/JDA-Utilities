@@ -33,7 +33,7 @@ public final class AudioModifier {
         player.setVolume(volume);
 
         if (JDAUtilities.isDatabaseInitialized())
-            return DataStore.GUILD.use().insertOrUpdate(guildId, "audioplayer-volume", String.valueOf(volume));
+            return DataStore.GUILD.insertOrUpdate(guildId, "audioplayer-volume", String.valueOf(volume));
         else
             return InteractionResult.SUCCESS;
     }
@@ -47,7 +47,7 @@ public final class AudioModifier {
      * @return The default volume for the guild
      */
     public int getGuildDefaultVolume() {
-        final InteractionResult result = DataStore.GUILD.use().get(guildId, "audioplayer-volume");
+        final InteractionResult result = DataStore.GUILD.get(guildId, "audioplayer-volume");
         return result == InteractionResult.SUCCESS ? result.asInt() : 100;
     }
 

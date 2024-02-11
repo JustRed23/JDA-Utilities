@@ -107,15 +107,15 @@ class BaseTest {
 
         assertNotNull(instance);
 
-        DataStore.GUILD.use().createTable(123456789L);
+        DataStore.GUILD.createTable(123456789L);
 
-        System.out.println("Has testing value? " + DataStore.GUILD.use().has(123456789L, "testing"));
-        System.out.println("Has testing2 value? " + DataStore.GUILD.use().has(123456789L, "testing2"));
+        System.out.println("Has testing value? " + DataStore.GUILD.has(123456789L, "testing"));
+        System.out.println("Has testing2 value? " + DataStore.GUILD.has(123456789L, "testing2"));
 
-        final String s = DataStore.GUILD.use().get(123456789L, "testing").orElse("NO VALUE");
+        final String s = DataStore.GUILD.get(123456789L, "testing").orElse("NO VALUE");
         System.out.println(s);
 
-        final InteractionResult insert = DataStore.GUILD.use().insert(123456789L, "testing", "test value");
+        final InteractionResult insert = DataStore.GUILD.insert(123456789L, "testing", "test value");
         System.out.println(insert.name());
 
         if (insert == InteractionResult.ERROR)

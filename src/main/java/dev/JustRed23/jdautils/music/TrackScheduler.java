@@ -45,7 +45,7 @@ public final class TrackScheduler extends AudioEventAdapter {
         player.addListener(this);
 
         if (JDAUtilities.isDatabaseInitialized()) {
-            final InteractionResult result = DataStore.GUILD.use().get(guild.getIdLong(), "audioplayer-show-track-in-channel-status");
+            final InteractionResult result = DataStore.GUILD.get(guild.getIdLong(), "audioplayer-show-track-in-channel-status");
             if (result == InteractionResult.SUCCESS)
                 showTrackInChannelStatus = result.asBoolean();
         }
@@ -154,7 +154,7 @@ public final class TrackScheduler extends AudioEventAdapter {
     public void setShowTrackInChannelStatus(boolean showTrackInChannelStatus) {
         this.showTrackInChannelStatus = showTrackInChannelStatus;
         if (JDAUtilities.isDatabaseInitialized()) {
-            final InteractionResult result = DataStore.GUILD.use().insertOrUpdate(guild.getIdLong(), "audioplayer-show-track-in-channel-status", String.valueOf(showTrackInChannelStatus));
+            final InteractionResult result = DataStore.GUILD.insertOrUpdate(guild.getIdLong(), "audioplayer-show-track-in-channel-status", String.valueOf(showTrackInChannelStatus));
             if (result == InteractionResult.ERROR)
                 throw new RuntimeException("Could not update the show track in channel status setting", result.getError());
         }
