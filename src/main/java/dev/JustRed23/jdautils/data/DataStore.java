@@ -7,11 +7,21 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * The entry point for all data storage operations.
+ */
 public enum DataStore {
 
     GUILD("guild_%s_settings"),
     USER("user_%s_settings"),
     CUSTOM("custom_%s_settings");
+
+    /**
+     * Creates a new cache with the specified maximum size.
+     */
+    public static void createCache(int maxSize) {
+        Database.cache = new DBCache(maxSize);
+    }
 
     private final String tableName;
 
@@ -33,6 +43,11 @@ public enum DataStore {
 
     @CheckReturnValue
     public InteractionResult get(long tableIdentifier, String setting) {
+        if (Database.cache != null) {
+            String cached = Database.cache.get(tableIdentifier + "-" + setting);
+            if (cached != null) return InteractionResult.SUCCESS.setValue(cached);
+        }
+
         try (
                 var connection = JDAUtilities.getDatabaseConnection();
                 PreparedStatement stmt = connection.prepareStatement("SELECT * FROM " + tableName.formatted(tableIdentifier) + " WHERE setting = ?")
@@ -40,7 +55,11 @@ public enum DataStore {
             stmt.setString(1, setting);
 
             try (ResultSet resultSet = stmt.executeQuery()) {
-                return resultSet.next() ? InteractionResult.SUCCESS.setValue(resultSet.getString("value")) : InteractionResult.NOT_FOUND;
+                if (resultSet.next()) {
+                    String value = resultSet.getString("value");
+                    if (Database.cache != null) Database.cache.put(tableIdentifier + "-" + setting, value);
+                    return InteractionResult.SUCCESS.setValue(value);
+                } else return InteractionResult.NOT_FOUND;
             }
         } catch (SQLException e) {
             return InteractionResult.ERROR.setError(e);
@@ -70,7 +89,11 @@ public enum DataStore {
         ) {
             stmt.setString(1, newValue);
             stmt.setString(2, setting);
-            return stmt.executeUpdate() > 0 ? InteractionResult.SUCCESS : InteractionResult.NOT_FOUND;
+
+            if (stmt.executeUpdate() > 0) {
+                if (Database.cache != null) Database.cache.put(tableIdentifier + "-" + setting, newValue);
+                return InteractionResult.SUCCESS;
+            } else return InteractionResult.NOT_FOUND;
         } catch (SQLException e) {
             return InteractionResult.ERROR.setError(e);
         }
@@ -83,7 +106,11 @@ public enum DataStore {
                 PreparedStatement stmt = connection.prepareStatement("DELETE FROM " + tableName.formatted(tableIdentifier) + " WHERE setting = ?")
         ) {
             stmt.setString(1, setting);
-            return stmt.executeUpdate() > 0 ? InteractionResult.SUCCESS : InteractionResult.NOT_FOUND;
+
+            if (stmt.executeUpdate() > 0) {
+                if (Database.cache != null) Database.cache.remove(tableIdentifier + "-" + setting);
+                return InteractionResult.SUCCESS;
+            } else return InteractionResult.NOT_FOUND;
         } catch (SQLException e) {
             return InteractionResult.ERROR.setError(e);
         }

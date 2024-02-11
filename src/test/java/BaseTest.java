@@ -107,6 +107,8 @@ class BaseTest {
 
         assertNotNull(instance);
 
+        DataStore.createCache(1000);
+
         DataStore.GUILD.createTable(123456789L);
 
         System.out.println("Has testing value? " + DataStore.GUILD.has(123456789L, "testing"));
