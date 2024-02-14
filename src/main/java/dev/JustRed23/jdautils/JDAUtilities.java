@@ -31,7 +31,7 @@ import java.util.function.Function;
  */
 public final class JDAUtilities {
 
-    private static final String version = "3.1";
+    private static final String version = "3.2";
     static Builder builder;
 
     private JDAUtilities() {}
