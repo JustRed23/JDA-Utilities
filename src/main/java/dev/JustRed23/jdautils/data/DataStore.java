@@ -44,7 +44,7 @@ public enum DataStore {
     @CheckReturnValue
     public InteractionResult get(long tableIdentifier, String setting) {
         if (Database.cache != null) {
-            String cached = Database.cache.get(tableIdentifier + "-" + setting);
+            String cached = Database.cache.get(this + "-" + tableIdentifier + "-" + setting);
             if (cached != null) return InteractionResult.SUCCESS.setValue(cached);
         }
 
@@ -59,7 +59,7 @@ public enum DataStore {
             try (ResultSet resultSet = stmt.executeQuery()) {
                 if (resultSet.next()) {
                     String value = resultSet.getString("value");
-                    if (Database.cache != null) Database.cache.put(tableIdentifier + "-" + setting, value);
+                    if (Database.cache != null) Database.cache.put(this + "-" + tableIdentifier + "-" + setting, value);
                     return InteractionResult.SUCCESS.setValue(value);
                 } else return InteractionResult.NOT_FOUND;
             }
@@ -97,7 +97,7 @@ public enum DataStore {
             stmt.setString(2, setting);
 
             if (stmt.executeUpdate() > 0) {
-                if (Database.cache != null) Database.cache.put(tableIdentifier + "-" + setting, newValue);
+                if (Database.cache != null) Database.cache.put(this + "-" + tableIdentifier + "-" + setting, newValue);
                 return InteractionResult.SUCCESS;
             } else return InteractionResult.NOT_FOUND;
         } catch (SQLException e) {
@@ -116,7 +116,7 @@ public enum DataStore {
             stmt.setString(1, setting);
 
             if (stmt.executeUpdate() > 0) {
-                if (Database.cache != null) Database.cache.remove(tableIdentifier + "-" + setting);
+                if (Database.cache != null) Database.cache.remove(this + "-" + tableIdentifier + "-" + setting);
                 return InteractionResult.SUCCESS;
             } else return InteractionResult.NOT_FOUND;
         } catch (SQLException e) {
