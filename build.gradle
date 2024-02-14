@@ -29,7 +29,7 @@ dependencies {
     api 'se.michaelthelin.spotify:spotify-web-api-java:8.3.5'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
 
     testImplementation 'net.dv8tion:JDA:5.0.0-beta.20'
     testImplementation 'ch.qos.logback:logback-classic:1.4.14'
