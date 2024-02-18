@@ -12,6 +12,7 @@ import dev.JustRed23.jdautils.music.effect.AbstractEffect;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
 import net.dv8tion.jda.internal.utils.Checks;
@@ -66,6 +67,8 @@ public final class AudioManager {
     private AudioModifier audioModifier;
     private TrackControls controls;
 
+    private TextChannel boundChannel;
+
     private AudioManager(@NotNull AudioPlayer player, @NotNull Guild guild) {
         this.guild = guild;
 
@@ -74,6 +77,16 @@ public final class AudioManager {
         this.controls = new TrackControls(scheduler, audioModifier);
 
         guild.getAudioManager().setSendingHandler(new JDASendHandler(player));
+    }
+
+    /**
+     * Binds the audio manager to the specified text channel, this essentially does nothing but can be useful for blocking access in other channels
+     * <br><b>Note - The bound channel will automatically be reset if {@link #disconnect()} is called</b>
+     * @param channel The text channel to bind to, must not be null
+     * @see #isBoundChannel(TextChannel)
+     */
+    public void bindTextChannel(@NotNull TextChannel channel) {
+        boundChannel = channel;
     }
 
     /**
@@ -96,6 +109,8 @@ public final class AudioManager {
 
         if (isConnected())
             scheduler.getGuild().getAudioManager().closeAudioConnection();
+
+        boundChannel = null;
     }
 
     /**
@@ -213,5 +228,13 @@ public final class AudioManager {
 
     public Guild getGuild() {
         return guild;
+    }
+
+    public TextChannel getBoundChannel() {
+        return boundChannel;
+    }
+
+    public boolean isBoundChannel(TextChannel channel) {
+        return boundChannel != null && boundChannel.equals(channel);
     }
 }
