@@ -12,6 +12,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.dv8tion.jda.api.utils.MarkdownSanitizer;
 import net.dv8tion.jda.internal.utils.Checks;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -110,7 +111,7 @@ public final class TrackScheduler extends AudioEventAdapter {
             if (voiceChannel.MAX_STATUS_LENGTH <= newStatus.length())
                 newStatus = newStatus.substring(0, voiceChannel.MAX_STATUS_LENGTH - 4) + "...";
 
-            voiceChannel.modifyStatus(newStatus).queue();
+            voiceChannel.modifyStatus(MarkdownSanitizer.escape(newStatus)).queue();
         }
     }
 
