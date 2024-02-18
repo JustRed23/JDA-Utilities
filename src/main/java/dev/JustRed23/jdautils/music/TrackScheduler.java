@@ -48,11 +48,8 @@ public final class TrackScheduler extends AudioEventAdapter {
 
         player.addListener(this);
 
-        if (JDAUtilities.isDatabaseInitialized()) {
-            final InteractionResult result = DataStore.GUILD.get(guild.getIdLong(), "audioplayer-show-track-in-channel-status");
-            if (result == InteractionResult.SUCCESS)
-                showTrackInChannelStatus = result.asBoolean();
-        }
+        if (JDAUtilities.isDatabaseInitialized())
+            showTrackInChannelStatus = DataStore.GUILD.get(guild.getIdLong(), "audioplayer-show-track-in-channel-status").orElse(true);
     }
 
     void shutdown() {

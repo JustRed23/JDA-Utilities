@@ -47,8 +47,7 @@ public final class AudioModifier {
      * @return The default volume for the guild
      */
     public int getGuildDefaultVolume() {
-        final InteractionResult result = DataStore.GUILD.get(guildId, "audioplayer-volume");
-        return result == InteractionResult.SUCCESS ? result.asInt() : 100;
+        return DataStore.GUILD.get(guildId, "audioplayer-volume").orElse(100);
     }
 
     /**
