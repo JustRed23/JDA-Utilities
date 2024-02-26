@@ -144,6 +144,9 @@ public final class TrackScheduler extends AudioEventAdapter {
     public void addEventListener(@NotNull AudioEventAdapter listener) {
         Checks.notNull(listener, "Listener");
 
+        if (listeners.contains(listener))
+            return;
+
         listeners.add(listener);
         player.addListener(listener);
     }
