@@ -7,6 +7,7 @@ group 'dev.JustRed23'
 repositories {
     mavenCentral()
     maven { url 'https://jitpack.io' }
+    maven { url 'https://maven.lavalink.dev/snapshots' }
 }
 
 dependencies {
@@ -21,7 +22,7 @@ dependencies {
 
     implementation 'org.yaml:snakeyaml:2.2'
 
-    api 'dev.arbjerg:lavaplayer:2.1.0'
+    api 'dev.arbjerg:lavaplayer:727959e9f621fc457b3a5adafcfffb55fdeaa538-SNAPSHOT'
     api 'com.github.JustRed23:lavadsp:0.7.7-1'
 
     //search sources
