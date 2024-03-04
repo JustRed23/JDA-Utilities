@@ -27,7 +27,7 @@ dependencies {
 
     //search sources
     api 'com.google.apis:google-api-services-youtube:v3-rev20240213-2.0.0'
-    api 'se.michaelthelin.spotify:spotify-web-api-java:8.3.5'
+    api 'se.michaelthelin.spotify:spotify-web-api-java:8.3.6'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
