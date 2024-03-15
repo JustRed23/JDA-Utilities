@@ -7,11 +7,10 @@ group 'dev.JustRed23'
 repositories {
     mavenCentral()
     maven { url 'https://jitpack.io' }
-    maven { url 'https://maven.lavalink.dev/snapshots' }
 }
 
 dependencies {
-    compileOnly 'net.dv8tion:JDA:5.0.0-beta.20'
+    compileOnly 'net.dv8tion:JDA:5.0.0-beta.21'
 
     implementation 'org.jetbrains:annotations:24.1.0'
 
@@ -22,18 +21,18 @@ dependencies {
 
     implementation 'org.yaml:snakeyaml:2.2'
 
-    api 'dev.arbjerg:lavaplayer:727959e9f621fc457b3a5adafcfffb55fdeaa538-SNAPSHOT'
+    api 'dev.arbjerg:lavaplayer:2.1.1'
     api 'com.github.JustRed23:lavadsp:0.7.7-1'
 
     //search sources
-    api 'com.google.apis:google-api-services-youtube:v3-rev20240213-2.0.0'
-    api 'se.michaelthelin.spotify:spotify-web-api-java:8.3.5'
+    api 'com.google.apis:google-api-services-youtube:v3-rev20240303-2.0.0'
+    api 'se.michaelthelin.spotify:spotify-web-api-java:8.3.6'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
 
-    testImplementation 'net.dv8tion:JDA:5.0.0-beta.20'
-    testImplementation 'ch.qos.logback:logback-classic:1.5.0'
+    testImplementation 'net.dv8tion:JDA:5.0.0-beta.21'
+    testImplementation 'ch.qos.logback:logback-classic:1.5.3'
 }
 
 test {
