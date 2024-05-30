@@ -3,9 +3,11 @@ package musicbot;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import dev.JustRed23.jdautils.JDAUtilities;
 import dev.JustRed23.jdautils.command.CommandOption;
+import dev.JustRed23.jdautils.music.AudioManager;
 import dev.JustRed23.jdautils.music.TrackInfo;
 import dev.JustRed23.jdautils.music.TrackLoadCallback;
 import dev.JustRed23.jdautils.music.effect.AbstractEffect;
+import dev.lavalink.youtube.YoutubeAudioSourceManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -31,7 +33,10 @@ public class MusicMain {
             e.printStackTrace();
         }
 
-        ListenerAdapter listener = JDAUtilities.getInstance().listener();
+        ListenerAdapter listener = JDAUtilities.getInstance()
+                .withDatabase()
+                    .fileBased("testmusicdb.db")
+                .listener();
 
         JDA instance = JDABuilder.createDefault(secrets.getProperty("token"))
                 .enableIntents(GatewayIntent.MESSAGE_CONTENT)
@@ -39,6 +44,12 @@ public class MusicMain {
                 .setStatus(OnlineStatus.IDLE)
                 .addEventListeners(listener)
                 .build().awaitReady();
+
+        //default youtube source manager is deprecated, use lavaplayer's instead
+        AudioManager.registerDefaultRemoteSources = false;
+
+        YoutubeAudioSourceManager youtube = new YoutubeAudioSourceManager();
+        AudioManager.playerManager.registerSourceManager(youtube);
 
         instance.updateCommands()
                 .addCommands(

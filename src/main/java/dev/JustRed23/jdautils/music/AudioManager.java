@@ -25,12 +25,25 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class AudioManager {
 
     private static final Map<Long, AudioManager> managers = new ConcurrentHashMap<>();
-    private static final AudioPlayerManager playerManager;
+    private static boolean initialized = false;
 
-    static {
-        playerManager = new DefaultAudioPlayerManager();
-        AudioSourceManagers.registerRemoteSources(playerManager);
+    public static final AudioPlayerManager playerManager = new DefaultAudioPlayerManager();
+
+    /**
+     * Whether to register the default remote sources, disable this if you want to use your own sources
+     * <br> Default: true
+     * <br> Use {@link #playerManager} to register your own sources
+     * @see AudioSourceManagers#registerRemoteSources(AudioPlayerManager)
+     */
+    public static boolean registerDefaultRemoteSources = true;
+
+    private static void initPlayerManager() {
+        if (initialized) return;
+
+        if (registerDefaultRemoteSources) AudioSourceManagers.registerRemoteSources(playerManager);
         AudioSourceManagers.registerLocalSource(playerManager);
+
+        initialized = true;
     }
 
     /**
@@ -70,6 +83,7 @@ public final class AudioManager {
     private TextChannel boundChannel;
 
     private AudioManager(@NotNull AudioPlayer player, @NotNull Guild guild) {
+        initPlayerManager();
         this.guild = guild;
 
         this.scheduler = new TrackScheduler(player, guild);
