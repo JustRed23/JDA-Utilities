@@ -29,7 +29,7 @@ dependencies {
     api 'com.google.apis:google-api-services-youtube:v3-rev20240514-2.0.0'
     api 'se.michaelthelin.spotify:spotify-web-api-java:8.4.0'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.3'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.3'
 
     testImplementation 'net.dv8tion:JDA:5.0.0'
