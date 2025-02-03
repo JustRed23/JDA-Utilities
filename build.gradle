@@ -22,7 +22,7 @@ dependencies {
 
     implementation 'org.yaml:snakeyaml:2.2'
 
-    api 'dev.arbjerg:lavaplayer:2.2.2'
+    api 'dev.arbjerg:lavaplayer:2.2.3'
     api 'com.github.JustRed23:lavadsp:0.7.7-1'
 
     //search sources
