@@ -11,30 +11,31 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'net.dv8tion:JDA:5.2.3'
+    compileOnly libs.jda
 
-    implementation 'org.jetbrains:annotations:26.0.2'
+    implementation libs.jetbrains.annotations
 
-    implementation 'org.reflections:reflections:0.10.2'
+    implementation libs.reflections
 
-    implementation 'com.zaxxer:HikariCP:5.1.0'
-    implementation 'org.xerial:sqlite-jdbc:3.47.1.0'
+    implementation libs.hikaricp
+    implementation libs.sqlite.jdbc
 
-    implementation 'org.yaml:snakeyaml:2.2'
+    implementation libs.snakeyaml
 
-    api 'dev.arbjerg:lavaplayer:2.2.2'
-    api 'com.github.JustRed23:lavadsp:0.7.7-1'
+    api libs.lavaplayer
+    api libs.lavadsp
 
     //search sources
-    api 'com.google.apis:google-api-services-youtube:v3-rev20241203-2.0.0'
-    api 'se.michaelthelin.spotify:spotify-web-api-java:9.1.1'
+    api libs.google.api.services.youtube
+    api libs.spotify.web.api.java
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.3'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.11.4'
+    testImplementation libs.junit.jupiter.api
+    testRuntimeOnly libs.junit.jupiter.engine
+    testRuntimeOnly libs.junit.platform.launcher
 
-    testImplementation 'net.dv8tion:JDA:5.2.3'
-    testImplementation 'ch.qos.logback:logback-classic:1.5.12'
-    testImplementation 'dev.lavalink.youtube:v2:1.11.1'
+    testImplementation libs.jda
+    testImplementation libs.logback.classic
+    testImplementation libs.lavalink.youtube.v2
 }
 
 test {
