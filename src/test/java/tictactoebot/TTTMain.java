@@ -2,11 +2,11 @@ package tictactoebot;
 
 import dev.JustRed23.jdautils.JDAUtilities;
 import dev.JustRed23.jdautils.command.CommandOption;
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.interactions.InteractionContextType;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import testapp.Main;
@@ -43,7 +43,7 @@ public class TTTMain {
                         JDAUtilities.createComponent(TTTInviteComponent.class, new Class[] {User.class, User.class}, event.getMember().getUser(), opponent).reply(event);
                     })
                     .build()
-                .modifyData(data -> data.setGuildOnly(true))
+                .modifyData(data -> data.setContexts(InteractionContextType.GUILD))
                 .buildAndRegister();
 
         JDABuilder.createDefault(secrets.getProperty("token"))

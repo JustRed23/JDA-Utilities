@@ -11,14 +11,13 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.components.text.TextInput;
-import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
-import net.dv8tion.jda.api.interactions.modals.Modal;
+import net.dv8tion.jda.api.interactions.InteractionContextType;
+import net.dv8tion.jda.api.components.textinput.TextInput;
+import net.dv8tion.jda.api.components.textinput.TextInputStyle;
+import net.dv8tion.jda.api.components.label.Label;
+import net.dv8tion.jda.api.modals.Modal;
 import net.dv8tion.jda.api.requests.GatewayIntent;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.InputStream;
 import java.util.Objects;
@@ -55,7 +54,7 @@ public class Main {
                 Command.slash("test", "A simple test command")
                         .executes(event -> JDAUtilities.createComponent(HelloComponent.class).reply(event))
                         .build()
-                        .setGuildOnly(true), // You can still modify the data after building
+                        .setContexts(InteractionContextType.GUILD), // You can still modify the data after building
                 JDAUtilities.createSlashCommand("testsub", "A simple test command to test sub commands") // You can also use the JDAUtilities method
                         .addSubCommand("sub1", "My first sub command")
                             .executes(event -> event.reply("Sub command 1").setEphemeral(true).queue())
@@ -63,7 +62,7 @@ public class Main {
                         .addSubCommand("sub2", "My second sub command")
                             .executes(event -> event.reply("Sub command 2").setEphemeral(true).queue())
                             .build()
-                        .modifyData(data -> data.setGuildOnly(true)) // This is just to show that you can modify the data
+                        .modifyData(data -> data.setContexts(InteractionContextType.GUILD)) // This is just to show that you can modify the data
                         .build(),
                 JDAUtilities.createSlashCommand("testemotes", "Test the emote listener")
                         .executes(event ->
@@ -83,20 +82,20 @@ public class Main {
                                         })
                                         .reply(event)
                         ).build()
-                        .setGuildOnly(true),
+                        .setContexts(InteractionContextType.GUILD),
                 JDAUtilities.createSlashCommand("testmodal", "Test the modal listener")
                         .executes(event ->
                                 SmartModal.create(Modal.create("test-modal", "Welcome to my test modal!")
-                                                .addActionRow(TextInput.create("test-input", "Enter some text", TextInputStyle.SHORT).build())
+                                                .addComponents(Label.of("Enter some text", TextInput.create("test-input", TextInputStyle.SHORT).build()))
                                         )
                                         .withListener(modalEvent -> modalEvent.reply(modalEvent.getMember().getEffectiveName() + ", you typed `" + modalEvent.getInteraction().getValue("test-input").getAsString() + "`").queue())
                                         .reply(event)
                         ).build()
-                        .setGuildOnly(true),
+                        .setContexts(InteractionContextType.GUILD),
                 JDAUtilities.createSlashCommand("checkwatchers", "Check which watchers are active")
                         .executes(event -> event.reply(WatcherManager.getStatus()).queue())
                         .build()
-                        .setGuildOnly(true),
+                        .setContexts(InteractionContextType.GUILD),
                 JDAUtilities.createMessageContextCommand("say message")
                         .executes(event -> event.reply(event.getTarget().getContentRaw()).queue())
                         .build(),

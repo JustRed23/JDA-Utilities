@@ -4,6 +4,7 @@ import dev.JustRed23.jdautils.JDAUtilities;
 import dev.JustRed23.jdautils.component.Component;
 import dev.JustRed23.jdautils.component.SendableComponent;
 import dev.JustRed23.jdautils.component.interact.SmartButton;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -69,7 +70,7 @@ public class TTTInviteComponent extends SendableComponent {
 
     protected InteractionCallbackAction onReply(@NotNull SlashCommandInteractionEvent event) {
         return event.reply(opponent.getAsMention() + ", " + player.getEffectiveName() + " wants to play Tic Tac Toe with you! Do you accept?")
-                .addActionRow(btnYes.build(), btnNo.build());
+                .addComponents(ActionRow.of(btnYes.build(), btnNo.build()));
     }
 
     protected List<Component> getChildren() {

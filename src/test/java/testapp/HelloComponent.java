@@ -4,11 +4,12 @@ import dev.JustRed23.jdautils.component.Component;
 import dev.JustRed23.jdautils.component.SendableComponent;
 import dev.JustRed23.jdautils.component.interact.SmartButton;
 import dev.JustRed23.jdautils.component.interact.SmartDropdown;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.interactions.components.selections.EntitySelectMenu;
-import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
+import net.dv8tion.jda.api.components.selections.EntitySelectMenu;
+import net.dv8tion.jda.api.components.selections.StringSelectMenu;
 import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
 import org.jetbrains.annotations.NotNull;
@@ -75,15 +76,15 @@ public class HelloComponent extends SendableComponent {
 
     public MessageCreateAction onSend(@NotNull MessageReceivedEvent event) {
         return event.getChannel().sendMessageEmbeds(builder.build())
-                .addActionRow(select.build())
-                .addActionRow(userSelect.build())
-                .addActionRow(randomButton.build(), deleteButton.build());
+                .addComponents(ActionRow.of(select.build()))
+                .addComponents(ActionRow.of(userSelect.build()))
+                .addComponents(ActionRow.of(randomButton.build(), deleteButton.build()));
     }
 
     public ReplyCallbackAction onReply(@NotNull SlashCommandInteractionEvent event) {
         return event.replyEmbeds(builder.build())
-                .addActionRow(select.build())
-                .addActionRow(userSelect.build())
-                .addActionRow(randomButton.build(), deleteButton.build());
+                .addComponents(ActionRow.of(select.build()))
+                .addComponents(ActionRow.of(userSelect.build()))
+                .addComponents(ActionRow.of(randomButton.build(), deleteButton.build()));
     }
 }
