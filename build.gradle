@@ -22,9 +22,6 @@ dependencies {
 
     implementation libs.snakeyaml
 
-    api libs.lavaplayer
-    api libs.lavadsp
-
     //search sources
     api libs.google.api.services.youtube
     api libs.spotify.web.api.java
@@ -35,7 +32,6 @@ dependencies {
 
     testImplementation libs.jda
     testImplementation libs.logback.classic
-    testImplementation libs.lavalink.youtube.v2
 }
 
 test {

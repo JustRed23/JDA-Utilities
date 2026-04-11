@@ -6,7 +6,6 @@ import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.SearchResult;
 import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoContentDetails;
-import dev.JustRed23.jdautils.music.AudioSource;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -98,9 +97,5 @@ public final class YouTubeSource {
                 .getItems();
 
         return details.isEmpty() ? null : details.stream().map(Video::getContentDetails).toList();
-    }
-
-    public AudioSource getSource() {
-        return AudioSource.YOUTUBE;
     }
 }

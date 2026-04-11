@@ -3,13 +3,10 @@ package dev.JustRed23.jdautils;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import dev.JustRed23.jdautils.message.MessageFilter;
-import dev.JustRed23.jdautils.music.AudioManager;
-import dev.JustRed23.jdautils.music.effect.AbstractEffect;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import org.reflections.Reflections;
 
 import java.io.File;
 import java.sql.Connection;
@@ -31,15 +28,6 @@ public final class Builder {
 
     @ApiStatus.Internal
     void ready() {
-        Reflections reflections = new Reflections(AbstractEffect.class.getPackageName() + ".impl");
-        reflections.getSubTypesOf(AbstractEffect.class).forEach(clazz -> {
-            try {
-                clazz.getDeclaredConstructor().newInstance();
-            } catch (Exception e) {
-                throw new RuntimeException("An error occurred while trying to register default effects", e);
-            }
-        });
-
         ready = true;
     }
 
@@ -48,7 +36,6 @@ public final class Builder {
         if (dataSource != null)
             dataSource.close();
 
-        AudioManager.destroyAll();
         MessageFilter.destroyAll();
 
         JDAUtilities.builder = null;

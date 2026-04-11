@@ -1,6 +1,5 @@
 package dev.JustRed23.jdautils.music.search;
 
-import dev.JustRed23.jdautils.music.AudioSource;
 import org.apache.hc.core5.http.ParseException;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
@@ -72,9 +71,5 @@ public final class SpotifySource {
     public List<Track> search(String query, int limit) throws IOException, ParseException, SpotifyWebApiException {
         final Paging<Track> execute = getApi().searchTracks(query).limit(limit).build().execute();
         return Arrays.stream(execute.getItems()).toList();
-    }
-
-    public AudioSource getSource() {
-        return AudioSource.SPOTIFY;
     }
 }

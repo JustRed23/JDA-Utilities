@@ -5,7 +5,6 @@ import dev.JustRed23.jdautils.component.SendableComponent;
 import dev.JustRed23.jdautils.event.EventWatcher;
 import dev.JustRed23.jdautils.message.MessageComponent;
 import dev.JustRed23.jdautils.message.MessageFilter;
-import dev.JustRed23.jdautils.music.AudioManager;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.Contract;
@@ -106,17 +105,6 @@ public final class JDAUtilities {
         return new EventWatcher<>(new MessageComponent(listener), MessageReceivedEvent.class)
                 .setListener(listener)
                 .addCondition(condition);
-    }
-
-    /**
-     * Gets the audio manager for the specified guild, this is used to control the music player
-     * @param guild The guild to get the audio manager for
-     * @return The audio manager for the specified guild
-     * @see AudioManager#get(Guild)
-     */
-    public static @NotNull AudioManager getGuildAudioManager(@NotNull Guild guild) {
-        checkInitialized();
-        return AudioManager.get(guild);
     }
 
     /**
