@@ -17,13 +17,13 @@ import java.security.GeneralSecurityException;
  */
 public final class Search {
 
-    private static String appName = JDAUtilities.getVersion() + " v" + JDAUtilities.getVersion();
+    private static String appName = "JDA Utilities v" + JDAUtilities.getVersion();
 
     private Search() {}
 
     /**
      * Sets the application name, this is used for some sources to identify the application.
-     * @param appName The application name to use (default: JDAUtilities v(VERSION))
+     * @param appName The application name to use (default: JDA Utilities v(VERSION))
      */
     public static void setAppName(String appName) {
         Search.appName = appName;
