@@ -1,0 +1,57 @@
+package dev.JustRed23.jdautils.music;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.time.Duration;
+import java.util.Optional;
+
+public interface GuildMusicManager {
+
+    void play(@NotNull PlayableTrack track);
+    void pause();
+    void resume();
+    void stop();
+
+    @NotNull Optional<PlayableTrack> getCurrentTrack();
+
+    GuildPlayerOptions options();
+
+    default GuildQueueOptions queue() {
+        throw new UnsupportedOperationException("Queue is not supported by this player");
+    }
+
+    default void seek(long positionMillis) {
+        throw new UnsupportedOperationException("Seeking is not supported by this player");
+    }
+
+    default void seek(@NotNull Duration position) {
+        seek(position.toMillis());
+    }
+
+    default boolean togglePause() {
+        if (!hasTrack()) {
+            return isPaused();
+        }
+
+        if (isPaused()) resume();
+        else pause();
+
+        return isPaused();
+    }
+
+    default boolean hasTrack() {
+        return getCurrentTrack().isPresent();
+    }
+
+    default @NotNull PlaybackState getPlaybackState() {
+        return PlaybackState.IDLE;
+    }
+
+    default boolean isPlaying() {
+        return getPlaybackState() == PlaybackState.PLAYING;
+    }
+
+    default boolean isPaused() {
+        return getPlaybackState() == PlaybackState.PAUSED;
+    }
+}

@@ -6,19 +6,24 @@ import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.SearchResult;
 import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoContentDetails;
+import dev.JustRed23.jdautils.music.PlayableTrack;
+import dev.JustRed23.jdautils.music.TrackSource;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.time.Duration;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public final class YouTubeSource {
 
     @Contract(pure = true)
     public static @NotNull String getThumbnail(String videoID) {
-        return "http://img.youtube.com/vi/" + videoID +"/0.jpg";
+        return "https://img.youtube.com/vi/" + videoID + "/0.jpg";
     }
 
     @Contract(pure = true)
@@ -27,8 +32,30 @@ public final class YouTubeSource {
     }
 
     @Contract(pure = true)
-    public static @NotNull String getVideoID(@NotNull String youtubeUrl) {
-        return youtubeUrl.replace("https://www.youtube.com/watch?v=", "");
+    public static @NotNull String getVideoId(@NotNull String youtubeUrl) {
+        String value = youtubeUrl.trim();
+
+        if (value.contains("youtu.be/")) {
+            value = value.substring(value.lastIndexOf('/') + 1);
+        } else if (value.contains("watch?v=")) {
+            value = value.substring(value.indexOf("watch?v=") + 8);
+        } else if (value.contains("/shorts/")) {
+            value = value.substring(value.indexOf("/shorts/") + 8);
+        } else if (value.contains("/embed/")) {
+            value = value.substring(value.indexOf("/embed/") + 7);
+        }
+
+        int queryIndex = value.indexOf('?');
+        if (queryIndex >= 0) {
+            value = value.substring(0, queryIndex);
+        }
+
+        int ampIndex = value.indexOf('&');
+        if (ampIndex >= 0) {
+            value = value.substring(0, ampIndex);
+        }
+
+        return value;
     }
 
     public static @NotNull YouTubeSource login(@NotNull String appName, @NotNull String token) throws GeneralSecurityException, IOException {
@@ -79,7 +106,63 @@ public final class YouTubeSource {
                 .execute()
                 .getItems();
 
-        return results.isEmpty() ? null : results;
+        return results == null ? List.of() : results;
+    }
+
+    public @NotNull List<PlayableTrack> searchTracks(String query) throws IOException {
+        return searchTracks(query, 5);
+    }
+
+    public @NotNull List<PlayableTrack> searchTracks(String query, long limit) throws IOException {
+        List<SearchResult> results = search(query, limit);
+        if (results.isEmpty()) {
+            return List.of();
+        }
+
+        Map<String, Long> durations = new HashMap<>();
+        List<String> videoIds = results.stream()
+                .map(result -> result.getId() == null ? null : result.getId().getVideoId())
+                .filter(id -> id != null && !id.isBlank())
+                .toList();
+
+        if (!videoIds.isEmpty()) {
+            List<VideoContentDetails> details = getVideoDetails(videoIds.toArray(new String[0]));
+            for (int i = 0; i < Math.min(videoIds.size(), details.size()); i++) {
+                VideoContentDetails detail = details.get(i);
+                if (detail != null && detail.getDuration() != null) {
+                    durations.put(videoIds.get(i), Duration.parse(detail.getDuration()).toMillis());
+                }
+            }
+        }
+
+        return results.stream()
+                .map(result -> toPlayableTrack(result, durations))
+                .toList();
+    }
+
+    public @NotNull PlayableTrack toPlayableTrack(@NotNull SearchResult result) {
+        return toPlayableTrack(result, Collections.emptyMap());
+    }
+
+    private @NotNull PlayableTrack toPlayableTrack(@NotNull SearchResult result, @NotNull Map<String, Long> durations) {
+        String videoId = result.getId() == null ? null : result.getId().getVideoId();
+        long duration = videoId == null ? -1L : durations.getOrDefault(videoId, -1L);
+        String title = result.getSnippet() == null ? "Unknown title" : result.getSnippet().getTitle();
+        String author = result.getSnippet() == null ? null : result.getSnippet().getChannelTitle();
+        String thumbnail = result.getSnippet() == null || result.getSnippet().getThumbnails() == null || result.getSnippet().getThumbnails().getDefault() == null ? null : result.getSnippet().getThumbnails().getDefault().getUrl();
+
+        return new PlayableTrack(
+                TrackSource.YOUTUBE,
+                videoId,
+                title == null ? "Unknown title" : title,
+                videoId == null || videoId.isBlank() ? "https://www.youtube.com" : getVideo(videoId),
+                thumbnail == null || thumbnail.isBlank() ? null : thumbnail,
+                author,
+                null,
+                duration,
+                false,
+                result
+        );
     }
 
     /**
@@ -96,6 +179,6 @@ public final class YouTubeSource {
                 .execute()
                 .getItems();
 
-        return details.isEmpty() ? null : details.stream().map(Video::getContentDetails).toList();
+        return details == null ? List.of() : details.stream().map(Video::getContentDetails).toList();
     }
 }

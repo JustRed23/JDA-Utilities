@@ -5,8 +5,7 @@ Some utility classes to help with making a Discord Bot with [JDA](https://github
 
 ## Features
  One class for everything: **JDAUtilities.class**. It includes:
-- Audio system: play / search for music in vc
-    - Includes effects! You can make your own by extending **AbstractEffect.class**
+- Audio API: play / search for music in vc
     - Includes sources to search from: currently only supports YouTube and Spotify
 - Commands: easily create commands with our command tool
     - Supports slash and context commands!

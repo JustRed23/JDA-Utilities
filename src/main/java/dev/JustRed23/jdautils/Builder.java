@@ -3,6 +3,7 @@ package dev.JustRed23.jdautils;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import dev.JustRed23.jdautils.message.MessageFilter;
+import dev.JustRed23.jdautils.music.MusicManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.ApiStatus;
@@ -16,6 +17,8 @@ public final class Builder {
 
     boolean ready = false;
     private final ListenerAdapter adapter;
+
+    MusicManager musicManager;
 
     HikariDataSource dataSource;
 
@@ -36,9 +39,20 @@ public final class Builder {
         if (dataSource != null)
             dataSource.close();
 
+        if (musicManager != null)
+            musicManager.destroy();
+
         MessageFilter.destroyAll();
 
         JDAUtilities.builder = null;
+    }
+
+    /**
+     * Sets the music manager for JDA Utilities to use
+     */
+    public MusicManagerBuilder withMusicManager() {
+        if (ready) throw new IllegalStateException("Music Manager must be set before JDA is built");
+        return new MusicManagerBuilder(this);
     }
 
     /**
@@ -59,6 +73,12 @@ public final class Builder {
         if (dataSource == null)
             throw new IllegalStateException("Database has not been set");
         return dataSource.getConnection();
+    }
+
+    public MusicManager getMusicManager() {
+        if (musicManager == null)
+            throw new IllegalStateException("Music Manager has not been set");
+        return musicManager;
     }
 
     /**
@@ -113,6 +133,33 @@ public final class Builder {
                 throw new IllegalStateException("Database has already been set");
 
             builder.dataSource = new HikariDataSource(config);
+            return builder;
+        }
+    }
+
+    public static class MusicManagerBuilder {
+
+        private final Builder builder;
+        private MusicManager musicManager;
+
+        public MusicManagerBuilder(Builder current) {
+            this.builder = current;
+        }
+
+        public MusicManagerBuilder withMusicManager(@NotNull MusicManager musicManager) {
+            if (this.musicManager != null) throw new IllegalStateException("Cannot register multiple music managers");
+            this.musicManager = musicManager;
+            return this;
+        }
+
+        public Builder build() {
+            if (builder.musicManager != null)
+                throw new IllegalStateException("Music Manager has already been set");
+
+            if (musicManager == null)
+                throw new IllegalStateException("Music Manager has not been set");
+
+            builder.musicManager = musicManager;
             return builder;
         }
     }
