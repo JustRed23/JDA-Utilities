@@ -4,8 +4,10 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import dev.JustRed23.jdautils.message.MessageFilter;
 import dev.JustRed23.jdautils.music.MusicManager;
-import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.hooks.VoiceDispatchInterceptor;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -82,11 +84,11 @@ public final class Builder {
     }
 
     /**
-     * Gets the internal event listener, you need to add this to your JDA instance
-     * @see JDA#addEventListener(Object...)
+     * Builds an immutable configuration snapshot from the current builder state.
+     * <p>Call {@link Configuration#configure(JDABuilder)} or {@link Configuration#configure(DefaultShardManagerBuilder)} on the returned snapshot.</p>
      */
-    public ListenerAdapter listener() {
-        return adapter;
+    public @NotNull Configuration buildConfiguration() {
+        return new Configuration(adapter, musicManager == null ? null : musicManager.getVoiceDispatchInterceptor());
     }
 
     /**
@@ -95,6 +97,44 @@ public final class Builder {
      */
     public boolean isReady() {
         return ready;
+    }
+
+    /**
+     * Immutable configuration snapshot for applying JDA Utilities to builders.
+     */
+    public static final class Configuration {
+
+        private final ListenerAdapter adapter;
+        private final VoiceDispatchInterceptor voiceDispatchInterceptor;
+
+        private Configuration(ListenerAdapter adapter, VoiceDispatchInterceptor voiceDispatchInterceptor) {
+            this.adapter = adapter;
+            this.voiceDispatchInterceptor = voiceDispatchInterceptor;
+        }
+
+        /**
+         * Applies this configuration to a JDA builder.
+         */
+        public <T extends JDABuilder> T configure(@NotNull T jdaBuilder) {
+            jdaBuilder.addEventListeners(adapter);
+
+            if (voiceDispatchInterceptor != null)
+                jdaBuilder.setVoiceDispatchInterceptor(voiceDispatchInterceptor);
+
+            return jdaBuilder;
+        }
+
+        /**
+         * Applies this configuration to a shard manager builder.
+         */
+        public <T extends DefaultShardManagerBuilder> T configure(@NotNull T shardBuilder) {
+            shardBuilder.addEventListeners(adapter);
+
+            if (voiceDispatchInterceptor != null)
+                shardBuilder.setVoiceDispatchInterceptor(voiceDispatchInterceptor);
+
+            return shardBuilder;
+        }
     }
 
     public static class DBBuilder {
@@ -146,7 +186,7 @@ public final class Builder {
             this.builder = current;
         }
 
-        public MusicManagerBuilder withMusicManager(@NotNull MusicManager musicManager) {
+        public MusicManagerBuilder useImplementation(@NotNull MusicManager musicManager) {
             if (this.musicManager != null) throw new IllegalStateException("Cannot register multiple music managers");
             this.musicManager = musicManager;
             return this;
