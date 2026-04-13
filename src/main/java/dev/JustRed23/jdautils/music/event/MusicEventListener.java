@@ -1,0 +1,36 @@
+package dev.JustRed23.jdautils.music.event;
+
+import org.jetbrains.annotations.NotNull;
+
+public interface MusicEventListener {
+
+    /**
+     * Called when a track starts playing
+     */
+    default void onTrackStart(@NotNull TrackStartEvent event) {}
+
+    /**
+     * Called when a track finishes or is stopped
+     */
+    default void onTrackEnd(@NotNull TrackEndEvent event) {}
+
+    /**
+     * Called when the playback state changes
+     */
+    default void onPlaybackStateChange(@NotNull PlaybackStateChangeEvent event) {}
+
+    /**
+     * Called when a track fails to load or play
+     */
+    default void onTrackError(@NotNull TrackErrorEvent event) {}
+
+    /**
+     * Called when the queue is updated
+     */
+    default void onQueueUpdate(@NotNull QueueUpdateEvent event) {}
+
+    /**
+     * Called when the volume changes
+     */
+    default void onVolumeChange(@NotNull VolumeChangeEvent event) {}
+}
