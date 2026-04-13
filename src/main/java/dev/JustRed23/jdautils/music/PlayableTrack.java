@@ -72,4 +72,32 @@ public record PlayableTrack(
     public @NotNull PlayableTrack withRaw(@Nullable Object raw) {
         return new PlayableTrack(source, id, title, url, thumbnailUrl, author, album, durationMillis, explicit, raw);
     }
+
+    @Contract(pure = true)
+    public @NotNull String getDisplayName() {
+        if (hasAuthor()) {
+            return author + " - " + title;
+        }
+        return title;
+    }
+
+    @Contract(pure = true)
+    public boolean isSameTrack(@NotNull PlayableTrack other) {
+        if (source != other.source) {
+            return false;
+        }
+        if (id != null && other.id != null) {
+            return id.equals(other.id);
+        }
+        return url.equals(other.url);
+    }
+
+    @Contract(pure = true)
+    public boolean matches(@NotNull String query) {
+        String lowerQuery = query.toLowerCase();
+        return title.toLowerCase().contains(lowerQuery) ||
+               (author != null && author.toLowerCase().contains(lowerQuery)) ||
+               (album != null && album.toLowerCase().contains(lowerQuery)) ||
+               url.toLowerCase().contains(lowerQuery);
+    }
 }
