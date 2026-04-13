@@ -1,5 +1,8 @@
 package dev.JustRed23.jdautils.music;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
 public interface GuildQueueOptions {
@@ -9,6 +12,11 @@ public interface GuildQueueOptions {
     void clear();
     void shuffle();
 
-    List<PlayableTrack> getQueue();
-    List<PlayableTrack> getHistory();
+    @NotNull List<PlayableTrack> getQueue();
+    @NotNull List<PlayableTrack> getHistory();
+
+    default @Nullable PlayableTrack peek() {
+        List<PlayableTrack> queue = getQueue();
+        return queue.isEmpty() ? null : queue.get(0);
+    }
 }
