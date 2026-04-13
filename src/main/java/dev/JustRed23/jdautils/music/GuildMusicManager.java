@@ -14,10 +14,16 @@ public interface GuildMusicManager {
 
     @NotNull Optional<PlayableTrack> getCurrentTrack();
 
+    long getTrackPosition();
+
     GuildPlayerOptions options();
 
     default GuildQueueOptions queue() {
         throw new UnsupportedOperationException("Queue is not supported by this player");
+    }
+
+    default GuildPlaylistManager playlist() {
+        throw new UnsupportedOperationException("Playlists are not supported by this player");
     }
 
     default void seek(long positionMillis) {
@@ -53,5 +59,17 @@ public interface GuildMusicManager {
 
     default boolean isPaused() {
         return getPlaybackState() == PlaybackState.PAUSED;
+    }
+
+    default long getRemainingTime() {
+        PlayableTrack track = getCurrentTrack().orElse(null);
+        if (track == null || !track.hasDuration()) {
+            return -1;
+        }
+        long position = getTrackPosition();
+        if (position < 0) {
+            return -1;
+        }
+        return track.durationMillis() - position;
     }
 }
