@@ -56,12 +56,26 @@ Using maven:
 
     
 ## Usage
-To initialize JDA-Utilities, you will need to add the internal event listener to your JDA instance.
+To initialize JDA-Utilities, first build a configuration snapshot, then apply it to your JDA or shard builder.
 ```java
-JDA instance = JDABuilder.createDefault("TOKEN")
-                .addEventListeners(JDAUtilities.getInstance().listener(), yourlistener)
-                .build();
+Builder builder = JDAUtilities.getInstance()
+        .withMusicManager()
+            .useImplementation(yourMusicManager)
+            .build();
+
+Builder.Configuration utilities = builder.buildConfiguration();
+
+JDA instance = utilities.configure(JDABuilder.createDefault("TOKEN"))
+        .addEventListeners(yourlistener)
+        .build();
+
+// or, if you are using shards:
+ShardManager shardManager = utilities.configure(DefaultShardManagerBuilder.createDefault("TOKEN"))
+        .addEventListeners(yourlistener)
+        .build();
 ```
+If your `MusicManager` provides a voice dispatch interceptor, JDA Utilities will automatically apply it when the configuration snapshot is built.
+
 After that you can freely use all methods in the JDAUtilities class
 
 ## Examples
