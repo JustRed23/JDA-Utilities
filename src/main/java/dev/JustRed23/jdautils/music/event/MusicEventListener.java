@@ -33,4 +33,9 @@ public interface MusicEventListener {
      * Called when the volume changes
      */
     default void onVolumeChange(@NotNull VolumeChangeEvent event) {}
+
+    /**
+     * Custom implementation specific events
+     */
+    default void onCustomEvent(@NotNull MusicEvent event) {}
 }
