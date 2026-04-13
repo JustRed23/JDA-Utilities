@@ -2,19 +2,54 @@ package dev.JustRed23.jdautils.music.event;
 
 import dev.JustRed23.jdautils.music.PlayableTrack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+/**
+ * Event fired after a queue modification (add, remove, move, shuffle, clear).
+ * <p>
+ * The {@code track} and {@code index} values describe the primary item affected by the update:
+ * <ul>
+ *     <li>{@link QueueUpdateType#ADDED}: the added track and its queue index.</li>
+ *     <li>{@link QueueUpdateType#REMOVED}: the removed track and its previous queue index.</li>
+ *     <li>{@link QueueUpdateType#MOVED}: the moved track and its new queue index.</li>
+ *     <li>{@link QueueUpdateType#SHUFFLED}: no single track is targeted ({@code track == null}, {@code index == -1}).</li>
+ *     <li>{@link QueueUpdateType#CLEARED}: no single track is targeted ({@code track == null}, {@code index == -1}).</li>
+ * </ul>
+ *
+ * @param guildId the id of the guild whose queue was updated
+ * @param type the type of update that occurred
+ * @param track the primary track affected by this update, or {@code null} if no single track is targeted
+ * @param index the relevant queue index for the update, or {@code -1} if no single index is targeted
+ *
+ * @see QueueUpdateType
+ */
 public record QueueUpdateEvent(
         long guildId,
         @NotNull QueueUpdateType type,
-        @NotNull PlayableTrack track,
+        @Nullable PlayableTrack track,
         int index
 ) implements MusicEvent {
 
     public enum QueueUpdateType {
+        /**
+         * A track was added to the queue.
+         */
         ADDED,
+        /**
+         * A track was removed from the queue.
+         */
         REMOVED,
+        /**
+         * A track was moved to another index in the queue.
+         */
         MOVED,
+        /**
+         * The queue order was randomized.
+         */
         SHUFFLED,
+        /**
+         * All tracks were removed from the queue.
+         */
         CLEARED
     }
 }

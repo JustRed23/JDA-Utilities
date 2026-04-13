@@ -2,6 +2,9 @@ package dev.JustRed23.jdautils.music.event;
 
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Listener interface for music events. Implement this interface and register it with the MusicManager to receive music event callbacks.
+ */
 public interface MusicEventListener {
 
     /**
