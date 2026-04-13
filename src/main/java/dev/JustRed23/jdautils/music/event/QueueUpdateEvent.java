@@ -1,6 +1,8 @@
 package dev.JustRed23.jdautils.music.event;
 
 import dev.JustRed23.jdautils.music.PlayableTrack;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Guild;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,7 +18,8 @@ import org.jetbrains.annotations.Nullable;
  *     <li>{@link QueueUpdateType#CLEARED}: no single track is targeted ({@code track == null}, {@code index == -1}).</li>
  * </ul>
  *
- * @param guildId the id of the guild whose queue was updated
+ * @param client the client responsible for handling guild interactions
+ * @param guild the guild whose queue was updated
  * @param type the type of update that occurred
  * @param track the primary track affected by this update, or {@code null} if no single track is targeted
  * @param index the relevant queue index for the update, or {@code -1} if no single index is targeted
@@ -24,7 +27,8 @@ import org.jetbrains.annotations.Nullable;
  * @see QueueUpdateType
  */
 public record QueueUpdateEvent(
-        long guildId,
+        JDA client,
+        Guild guild,
         @NotNull QueueUpdateType type,
         @Nullable PlayableTrack track,
         int index
