@@ -35,8 +35,8 @@ class BaseTest {
         }
     }
 
-    JDABuilder createInstance() {
-        return JDABuilder.createDefault(secrets.getProperty("token"))
+    JDABuilder createInstance(Builder.Configuration config) {
+        return config.configure(JDABuilder.createDefault(secrets.getProperty("token")))
                 .setActivity(Activity.playing("with cats"))
                 .setStatus(OnlineStatus.IDLE);
     }
@@ -52,12 +52,9 @@ class BaseTest {
     @Test
     void testInternalEventListener() {
         Builder builder = JDAUtilities.getInstance();
-        ListenerAdapter build = builder.listener();
 
-        assertNotNull(build);
-
-        JDA instance = createInstance()
-                .addEventListeners(build, new TestListener())
+        JDA instance = createInstance(builder.buildConfiguration())
+                .addEventListeners(new TestListener())
                 .build();
 
         assertNotNull(instance);
@@ -79,8 +76,7 @@ class BaseTest {
         // Create a new component - this should fail as the listener was not initialized
         assertThrows(IllegalStateException.class, () -> JDAUtilities.createComponent(TestComponent.class));
 
-        JDA instance = createInstance()
-                .addEventListeners(builder.listener())
+        JDA instance = createInstance(builder.buildConfiguration())
                 .build().awaitReady();
 
         // Create a new component
@@ -101,8 +97,7 @@ class BaseTest {
     void testDB() throws InterruptedException {
         final Builder builder = JDAUtilities.getInstance().withDatabase().fileBased("testdb.db");
 
-        JDA instance = createInstance()
-                .addEventListeners(builder.listener())
+        JDA instance = createInstance(builder.buildConfiguration())
                 .build().awaitReady();
 
         assertNotNull(instance);

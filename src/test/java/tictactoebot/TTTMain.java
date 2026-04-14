@@ -1,5 +1,6 @@
 package tictactoebot;
 
+import dev.JustRed23.jdautils.Builder;
 import dev.JustRed23.jdautils.JDAUtilities;
 import dev.JustRed23.jdautils.command.CommandOption;
 import net.dv8tion.jda.api.JDABuilder;
@@ -46,11 +47,12 @@ public class TTTMain {
                 .modifyData(data -> data.setContexts(InteractionContextType.GUILD))
                 .buildAndRegister();
 
-        JDABuilder.createDefault(secrets.getProperty("token"))
+        Builder.Configuration config = JDAUtilities.getInstance().buildConfiguration();
+
+        config.configure(JDABuilder.createDefault(secrets.getProperty("token")))
                 .enableIntents(GatewayIntent.MESSAGE_CONTENT)
                 .setActivity(Activity.playing("with cats"))
                 .setStatus(OnlineStatus.IDLE)
-                .addEventListeners(JDAUtilities.getInstance().listener())
                 .build().awaitReady();
     }
 }

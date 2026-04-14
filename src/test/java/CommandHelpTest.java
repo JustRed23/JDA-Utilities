@@ -1,3 +1,4 @@
+import dev.JustRed23.jdautils.Builder;
 import dev.JustRed23.jdautils.JDAUtilities;
 import dev.JustRed23.jdautils.command.CommandOption;
 import dev.JustRed23.jdautils.help.CommandHelp;
@@ -31,8 +32,8 @@ class CommandHelpTest {
         }
     }
 
-    JDABuilder createInstance() {
-        return JDABuilder.createDefault(secrets.getProperty("token"))
+    JDABuilder createInstance(Builder.Configuration config) {
+        return config.configure(JDABuilder.createDefault(secrets.getProperty("token")))
                 .setActivity(Activity.playing("with cats"))
                 .setStatus(OnlineStatus.IDLE);
     }
@@ -60,8 +61,8 @@ class CommandHelpTest {
         JDAUtilities.createSlashCommand("testtwo", "A random test description")
                 .buildAndRegister();
 
-        JDA instance = createInstance()
-                .addEventListeners(JDAUtilities.getInstance().listener())
+        Builder builder = JDAUtilities.getInstance();
+        JDA instance = createInstance(builder.buildConfiguration())
                 .build().awaitReady();
 
         assertNotNull(instance);

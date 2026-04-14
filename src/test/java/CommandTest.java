@@ -1,3 +1,4 @@
+import dev.JustRed23.jdautils.Builder;
 import dev.JustRed23.jdautils.JDAUtilities;
 import dev.JustRed23.jdautils.command.Command;
 import dev.JustRed23.jdautils.command.CommandOption;
@@ -6,7 +7,6 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -70,13 +70,12 @@ class CommandTest {
                 .buildAndRegister();
 
         // Create a new JDA instance with the builder
-        ListenerAdapter listener = JDAUtilities.getInstance().listener();
+        Builder.Configuration config = JDAUtilities.getInstance().buildConfiguration();
 
-        JDA instance = JDABuilder.createDefault(secrets.getProperty("token"))
+        JDA instance = config.configure(JDABuilder.createDefault(secrets.getProperty("token")))
                 .enableIntents(GatewayIntent.MESSAGE_CONTENT)
                 .setActivity(Activity.playing("with cats"))
                 .setStatus(OnlineStatus.IDLE)
-                .addEventListeners(listener)
                 .build().awaitReady();
 
         Thread.sleep(5000);
@@ -123,13 +122,12 @@ class CommandTest {
                 .buildAndRegister();
 
         // Create a new JDA instance with the builder
-        ListenerAdapter listener = JDAUtilities.getInstance().listener();
+        Builder.Configuration config = JDAUtilities.getInstance().buildConfiguration();
 
-        JDA instance = JDABuilder.createDefault(secrets.getProperty("token"))
+        JDA instance = config.configure(JDABuilder.createDefault(secrets.getProperty("token")))
                 .enableIntents(GatewayIntent.MESSAGE_CONTENT)
                 .setActivity(Activity.playing("with cats"))
                 .setStatus(OnlineStatus.IDLE)
-                .addEventListeners(listener)
                 .build().awaitReady();
 
         Thread.sleep(20_000);
@@ -162,13 +160,12 @@ class CommandTest {
                 .buildAndRegister();
 
         // Create a new JDA instance with the builder
-        ListenerAdapter listener = JDAUtilities.getInstance().listener();
+        Builder.Configuration config = JDAUtilities.getInstance().buildConfiguration();
 
-        JDA instance = JDABuilder.createDefault(secrets.getProperty("token"))
+        JDA instance = config.configure(JDABuilder.createDefault(secrets.getProperty("token")))
                 .enableIntents(GatewayIntent.MESSAGE_CONTENT)
                 .setActivity(Activity.playing("with cats"))
                 .setStatus(OnlineStatus.IDLE)
-                .addEventListeners(listener)
                 .build().awaitReady();
 
         Thread.sleep(20_000);
@@ -184,13 +181,12 @@ class CommandTest {
                 .buildAndRegister();
 
         // Create a new JDA instance with the builder
-        ListenerAdapter listener = JDAUtilities.getInstance().listener();
+        Builder.Configuration config = JDAUtilities.getInstance().buildConfiguration();
 
-        JDA instance = JDABuilder.createDefault(secrets.getProperty("token"))
+        JDA instance = config.configure(JDABuilder.createDefault(secrets.getProperty("token")))
                 .enableIntents(GatewayIntent.MESSAGE_CONTENT)
                 .setActivity(Activity.playing("with cats"))
                 .setStatus(OnlineStatus.IDLE)
-                .addEventListeners(listener)
                 .build().awaitReady();
 
         Thread.sleep(20_000);
