@@ -1,5 +1,6 @@
 package testapp;
 
+import dev.JustRed23.jdautils.Builder;
 import dev.JustRed23.jdautils.JDAUtilities;
 import dev.JustRed23.jdautils.command.Command;
 import dev.JustRed23.jdautils.component.interact.SmartModal;
@@ -11,7 +12,6 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.InteractionContextType;
 import net.dv8tion.jda.api.components.textinput.TextInput;
 import net.dv8tion.jda.api.components.textinput.TextInputStyle;
@@ -41,13 +41,12 @@ public class Main {
             e.printStackTrace();
         }
 
-        ListenerAdapter listener = JDAUtilities.getInstance().listener();
+        final Builder.Configuration config = JDAUtilities.getInstance().buildConfiguration();
 
-        JDA instance = JDABuilder.createDefault(secrets.getProperty("token"))
+        JDA instance = config.configure(JDABuilder.createDefault(secrets.getProperty("token")))
                 .enableIntents(GatewayIntent.MESSAGE_CONTENT)
                 .setActivity(Activity.playing("with cats"))
                 .setStatus(OnlineStatus.IDLE)
-                .addEventListeners(listener)
                 .build().awaitReady();
 
         instance.updateCommands().addCommands(
