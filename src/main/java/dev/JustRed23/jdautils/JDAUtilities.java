@@ -23,13 +23,21 @@ import java.util.function.Function;
  * This is the main class of JDAUtilities, this is used to initialize JDAUtilities and get some useful methods
  * <p>This class is meant as a utility class, the methods in this class <b>CANNOT</b> be used before JDAUtilities has been initialized</p>
  * <p>The methods in this class directly reference static methods in other classes, this is done to make it easier to use. <b>This does not mean that you can call these static methods directly as we use an internal event listener to handle everything</b></p>
- * <p>To initialize JDA Utilities you need to call {@link #getInstance()} and add the {@link Builder#listener()} to your JDA instance</p>
+ * <p>To initialize JDA Utilities, first build a configuration snapshot from {@link #getInstance()} and then apply it to your builder before calling {@code build()}.</p>
  * <p>Example:</p>
  * <pre><code>
- * JDA jda = JDABuilder.createDefault("token").build();
- * jda.addEventListener(JDAUtilities.getInstance().listener());
+ * Builder.Configuration config = JDAUtilities.getInstance()
+ *         .withMusicManager()
+ *              .useImplementation(new YourMusicManager())
+ *              .build()
+ *         .buildConfiguration();
+ *
+ * JDA jda = config.configure(JDABuilder.createDefault("token")).build();
  * jda.awaitReady();
- * // JDAUtilities is now initialized
+ *
+ * //JDA Utilities also supports sharding:
+ *
+ * ShardManager manager = config.configure(DefaultShardManagerBuilder.createDefault("token")).build();
  * </code></pre>
  */
 public final class JDAUtilities {
