@@ -7,8 +7,10 @@ import dev.JustRed23.jdautils.message.MessageComponent;
 import dev.JustRed23.jdautils.message.MessageFilter;
 import dev.JustRed23.jdautils.music.GuildMusicManager;
 import dev.JustRed23.jdautils.music.MusicManager;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.sharding.ShardManager;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -119,12 +121,34 @@ public final class JDAUtilities {
     }
 
     /**
-     * Gets the music manager for the specified guild, this is used to play music in the guild
+     * Gets the music manager for the specified guild, this is used to play music in the guild.
+     * <p>Use this when you only have a guild id but know the owning JDA instance.</p>
+     * @param jda The JDA instance that owns the guild
      * @param guildId The id of the guild to get the music manager for
      * @return A music manager for that guild
+     * @throws IllegalArgumentException If the guild could not be resolved from the provided JDA instance
      */
-    public static @NotNull GuildMusicManager getGuildMusicManager(long guildId) {
-        return getMusicManager().forGuild(guildId);
+    public static @NotNull GuildMusicManager getGuildMusicManager(@NotNull JDA jda, long guildId) {
+        Guild guild = jda.getGuildById(guildId);
+        if (guild == null)
+            throw new IllegalArgumentException("Could not resolve guild with id " + guildId + " from the provided JDA instance");
+
+        return getGuildMusicManager(guild);
+    }
+
+    /**
+     * Gets the music manager for the specified guild id using a shard manager to resolve the owning shard.
+     * @param shardManager The shard manager that owns the guild
+     * @param guildId The id of the guild to get the music manager for
+     * @return A music manager for that guild
+     * @throws IllegalArgumentException If the guild could not be resolved from the provided shard manager
+     */
+    public static @NotNull GuildMusicManager getGuildMusicManager(@NotNull ShardManager shardManager, long guildId) {
+        Guild guild = shardManager.getGuildById(guildId);
+        if (guild == null)
+            throw new IllegalArgumentException("Could not resolve guild with id " + guildId + " from the provided shard manager");
+
+        return getGuildMusicManager(guild);
     }
 
     /**

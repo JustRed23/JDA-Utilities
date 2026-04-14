@@ -8,8 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 public interface MusicManager {
 
-    GuildMusicManager forGuild(Guild guild);
-    GuildMusicManager forGuild(long guildId);
+    GuildMusicManager forGuild(@NotNull Guild guild);
 
     void addEventListener(@NotNull MusicEventListener listener);
     void removeEventListener(@NotNull MusicEventListener listener);
