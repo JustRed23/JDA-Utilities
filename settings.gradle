@@ -1,2 +1,7 @@
 rootProject.name = 'JDA-Utilities'
 
+include 'lavaplayer'
+project(':lavaplayer').projectDir = file('music/lavaplayer')
+
+include 'lavalink'
+project(':lavalink').projectDir = file('music/lavalink')

@@ -32,6 +32,27 @@ dependencies {
     testImplementation libs.logback.classic
 }
 
+subprojects {
+    apply plugin: 'java-library'
+
+    repositories {
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://maven.lavalink.dev/releases' }
+    }
+
+    dependencies {
+        compileOnly libs.jda
+
+        implementation libs.jetbrains.annotations
+
+        implementation libs.hikaricp
+        implementation libs.sqlite.jdbc
+
+        implementation libs.snakeyaml
+    }
+}
+
 test {
     useJUnitPlatform()
 }
