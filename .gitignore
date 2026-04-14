@@ -11,4 +11,5 @@ gradle-app.setting
 config
 
 secrets.properties
-TESTRUN
+run
+testdb.db
