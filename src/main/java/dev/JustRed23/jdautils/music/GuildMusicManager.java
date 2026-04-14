@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface GuildMusicManager {
 
     Guild guild();
-    void play(@NotNull PlayableTrack track, AudioChannel channel);
+    void play(@NotNull PlayableTrack track, @NotNull AudioChannel channel);
     void pause();
     void resume();
     void stop();
