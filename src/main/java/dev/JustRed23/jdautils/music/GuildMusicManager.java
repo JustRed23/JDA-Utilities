@@ -1,6 +1,7 @@
 package dev.JustRed23.jdautils.music;
 
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
@@ -9,7 +10,7 @@ import java.util.Optional;
 public interface GuildMusicManager {
 
     Guild guild();
-    void play(@NotNull PlayableTrack track);
+    void play(@NotNull PlayableTrack track, AudioChannel channel);
     void pause();
     void resume();
     void stop();
