@@ -15,8 +15,6 @@ dependencies {
 
     implementation libs.jetbrains.annotations
 
-    implementation libs.reflections
-
     implementation libs.hikaricp
     implementation libs.sqlite.jdbc
 
