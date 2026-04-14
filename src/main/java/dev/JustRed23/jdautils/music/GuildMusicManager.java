@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface GuildMusicManager {
 
-    Guild getGuild();
+    Guild guild();
     void play(@NotNull PlayableTrack track);
     void pause();
     void resume();
