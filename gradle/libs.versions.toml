@@ -4,6 +4,8 @@ jetbrains-annotations = "26.1.0"
 hikaricp = "7.0.2"
 sqlite-jdbc = "3.51.3.0"
 snakeyaml = "2.6"
+lavalink-client = "3.4.0"
+lavaplayer = "2.2.6"
 google-api-services-youtube = "v3-rev20260323-2.0.0"
 spotify-web-api-java = "10.0.0-RC2"
 junit-jupiter-api = "6.1.0-M1"
@@ -17,6 +19,8 @@ jetbrains-annotations = { module = "org.jetbrains:annotations", version.ref = "j
 hikaricp = { module = "com.zaxxer:HikariCP", version.ref = "hikaricp" }
 sqlite-jdbc = { module = "org.xerial:sqlite-jdbc", version.ref = "sqlite-jdbc" }
 snakeyaml = { module = "org.yaml:snakeyaml", version.ref = "snakeyaml" }
+lavalink-client = { module = "dev.arbjerg:lavalink-client", version.ref = "lavalink-client" }
+lavaplayer = { module = "dev.arbjerg:lavaplayer", version.ref = "lavaplayer" }
 google-api-services-youtube = { module = "com.google.apis:google-api-services-youtube", version.ref = "google-api-services-youtube" }
 spotify-web-api-java = { module = "se.michaelthelin.spotify:spotify-web-api-java", version.ref = "spotify-web-api-java" }
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit-jupiter-api" }
