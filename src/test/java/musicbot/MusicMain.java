@@ -5,6 +5,7 @@ import dev.JustRed23.jdautils.JDAUtilities;
 import dev.JustRed23.jdautils.command.CommandOption;
 import dev.JustRed23.jdautils.music.GuildMusicManager;
 import dev.JustRed23.jdautils.music.RepeatMode;
+import dev.JustRed23.jdautils.music.event.*;
 import dev.JustRed23.jdautils.music.impl.lavalink.LavalinkMusicManager;
 import dev.arbjerg.lavalink.client.Helpers;
 import dev.arbjerg.lavalink.client.LavalinkClient;
@@ -16,12 +17,17 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import testapp.Main;
 
 import java.io.InputStream;
 import java.util.Properties;
 
 public class MusicMain {
+
+    private static final Logger logger = LoggerFactory.getLogger(MusicMain.class);
 
     public static void main(String[] args) throws InterruptedException {
         addCommands();
@@ -66,6 +72,68 @@ public class MusicMain {
                 .setStatus(OnlineStatus.IDLE);
         JDA instance = builder.build();
         instance.awaitReady();
+
+        JDAUtilities.getMusicManager().addEventListener(new MusicEventListener() {
+            public void onTrackStart(@NotNull TrackStartEvent event) {
+                logger.info("[{}] Track started: '{}' by {} ({})",
+                        event.guild().getName(),
+                        event.track().title(),
+                        event.track().author(),
+                        formatTime(event.track().durationMillis()));
+            }
+
+            public void onTrackEnd(@NotNull TrackEndEvent event) {
+                logger.info("[{}] Track ended: '{}' (May start next: {})",
+                        event.guild().getName(),
+                        event.track().title(),
+                        event.mayStartNext());
+            }
+
+            public void onPlaybackStateChange(@NotNull PlaybackStateChangeEvent event) {
+                logger.info("[{}] Playback state changed: {} -> {}",
+                        event.guild().getName(),
+                        event.oldState(),
+                        event.newState());
+            }
+
+            public void onTrackError(@NotNull TrackErrorEvent event) {
+                String trackInfo = event.track() != null ? event.track().title() : "Unknown";
+                logger.error("[{}] Track error on '{}': {}",
+                        event.guild().getName(),
+                        trackInfo,
+                        event.error().getMessage());
+            }
+
+            public void onTrackNotFound(@NotNull TrackNotFoundEvent event) {
+                logger.warn("[{}] Track not found: {}",
+                        event.guild().getName(),
+                        event.url());
+            }
+
+            public void onQueueUpdate(@NotNull QueueUpdateEvent event) {
+                String trackInfo = event.affectedTracks() != null && !event.affectedTracks().isEmpty()
+                        ? event.affectedTracks().stream().map(t -> "'" + t.title() + "'").reduce((a, b) -> a + ", " + b).orElse("No tracks")
+                        : "N/A";
+                logger.info("[{}] Queue updated: {} (type: {}, index: {})",
+                        event.guild().getName(),
+                        trackInfo,
+                        event.type(),
+                        event.index());
+            }
+
+            public void onVolumeChange(@NotNull VolumeChangeEvent event) {
+                logger.info("[{}] Volume changed: {} -> {}",
+                        event.guild().getName(),
+                        event.oldVolume(),
+                        event.newVolume());
+            }
+
+            public void onCustomEvent(@NotNull MusicEvent event) {
+                logger.debug("[{}] Custom event: {}",
+                        event.guild().getName(),
+                        event.getClass().getSimpleName());
+            }
+        });
     }
 
     private static void addCommands() {
