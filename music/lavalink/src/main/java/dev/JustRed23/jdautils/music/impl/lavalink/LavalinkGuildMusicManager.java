@@ -16,6 +16,8 @@ import java.util.Optional;
 
 public final class LavalinkGuildMusicManager implements GuildMusicManager {
 
+    private static final int MAX_CONSECUTIVE_FAILURES = 3;
+
     private final @NotNull Guild guild;
     private final @NotNull LavalinkClient client;
     private final @NotNull EventBus eventBus;
@@ -27,6 +29,7 @@ public final class LavalinkGuildMusicManager implements GuildMusicManager {
     private volatile PlayableTrack currentTrack;
     private volatile PlaybackState currentState = PlaybackState.IDLE;
     private volatile long currentPosition = 0;
+    private volatile int consecutiveFailures = 0;
 
     public LavalinkGuildMusicManager(@NotNull Guild guild, @NotNull LavalinkClient client, @NotNull EventBus eventBus) {
         this.guild = guild;
@@ -167,6 +170,22 @@ public final class LavalinkGuildMusicManager implements GuildMusicManager {
         var prevState = getPlaybackState();
         setState(PlaybackState.LOADING);
         getLink().loadItem(url).subscribe(new LavalinkAudioLoadResultHandler(this, prevState, url));
+    }
+
+    @ApiStatus.Internal
+    void incrementConsecutiveFailures() {
+        int newVal = this.consecutiveFailures + 1;
+        this.consecutiveFailures = newVal;
+    }
+
+    @ApiStatus.Internal
+    void resetConsecutiveFailures() {
+        this.consecutiveFailures = 0;
+    }
+
+    @ApiStatus.Internal
+    boolean exceedsFailureThreshold() {
+        return consecutiveFailures >= MAX_CONSECUTIVE_FAILURES;
     }
 
     @ApiStatus.Internal

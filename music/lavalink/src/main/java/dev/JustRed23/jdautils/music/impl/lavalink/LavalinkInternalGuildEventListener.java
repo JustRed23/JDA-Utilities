@@ -19,6 +19,7 @@ public class LavalinkInternalGuildEventListener implements MusicEventListener {
         if (!event.guild().equals(manager.guild())) return;
         manager.setTrack(event.track());
         manager.setPosition(0);
+        manager.resetConsecutiveFailures();
         manager.setState(PlaybackState.PLAYING);
     }
 
@@ -36,7 +37,14 @@ public class LavalinkInternalGuildEventListener implements MusicEventListener {
     public void onTrackError(@NotNull TrackErrorEvent event) {
         if (!event.guild().equals(manager.guild())) return;
         if (event.track() == null) return; //Track load exception, not a player exception
-        manager.stop();
-        manager.setState(PlaybackState.ERROR);
+
+        manager.incrementConsecutiveFailures();
+
+        if (manager.exceedsFailureThreshold()) {
+            manager.stop();
+            manager.setState(PlaybackState.ERROR);
+        } else {
+            manager.nextTrack();
+        }
     }
 }
