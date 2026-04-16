@@ -28,11 +28,11 @@ public class EventBus {
     }
 
     public void addListener(MusicEventListener listener) {
-        listeners.add(listener);
+        getListeners().add(listener);
     }
 
     public void removeListener(MusicEventListener listener) {
-        listeners.remove(listener);
+        getListeners().remove(listener);
     }
 
     protected List<MusicEventListener> getListeners() {
@@ -47,7 +47,7 @@ public class EventBus {
         var handler = dispatchMap.get(event.getClass());
         if (handler == null) handler = DEFAULT_HANDLER;
 
-        for (MusicEventListener listener : listeners) {
+        for (MusicEventListener listener : getListeners()) {
             try {
                 handler.accept(listener, event);
             } catch (Exception e) {
