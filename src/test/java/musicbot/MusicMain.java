@@ -15,6 +15,7 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.jetbrains.annotations.NotNull;
@@ -23,11 +24,14 @@ import org.slf4j.LoggerFactory;
 import testapp.Main;
 
 import java.io.InputStream;
+import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class MusicMain {
 
     private static final Logger logger = LoggerFactory.getLogger(MusicMain.class);
+    private static final Map<Long, Long> lastCommandChannels = new ConcurrentHashMap<>();
 
     public static void main(String[] args) throws InterruptedException {
         addCommands();
@@ -80,6 +84,8 @@ public class MusicMain {
                         event.track().title(),
                         event.track().author(),
                         formatTime(event.track().durationMillis()));
+
+                sendGuildMessage(event.guild(), "▶️ Now playing: **" + event.track().title() + "** by *" + event.track().author() + "*");
             }
 
             public void onTrackEnd(@NotNull TrackEndEvent event) {
@@ -102,6 +108,10 @@ public class MusicMain {
                         event.guild().getName(),
                         trackInfo,
                         event.error().getMessage());
+
+                if (event.track() != null) {
+                    sendGuildMessage(event.guild(), "⚠️ Track failed to play: **" + event.track().title() + "** - Skipping...");
+                }
             }
 
             public void onTrackNotFound(@NotNull TrackNotFoundEvent event) {
@@ -142,6 +152,7 @@ public class MusicMain {
                 .addOption(new CommandOption(OptionType.STRING, "url", "the url of the video", true))
                 .executes(event -> {
                     event.deferReply().queue();
+                    lastCommandChannels.put(event.getGuild().getIdLong(), event.getChannel().getIdLong());
                     assert event.getMember() != null;
                     var state = event.getMember().getVoiceState();
 
@@ -157,6 +168,7 @@ public class MusicMain {
 
                 .addSubCommand("pause", "pauses the current track")
                 .executes(event -> {
+                    lastCommandChannels.put(event.getGuild().getIdLong(), event.getChannel().getIdLong());
                     event.deferReply().queue();
                     gmm(event.getGuild()).pause();
                     event.getHook().sendMessage("Paused!").queue();
@@ -165,6 +177,7 @@ public class MusicMain {
 
                 .addSubCommand("resume", "resumes the current track")
                 .executes(event -> {
+                    lastCommandChannels.put(event.getGuild().getIdLong(), event.getChannel().getIdLong());
                     event.deferReply().queue();
                     gmm(event.getGuild()).resume();
                     event.getHook().sendMessage("Resumed!").queue();
@@ -173,6 +186,7 @@ public class MusicMain {
 
                 .addSubCommand("stop", "stops music")
                 .executes(event -> {
+                    lastCommandChannels.put(event.getGuild().getIdLong(), event.getChannel().getIdLong());
                     event.deferReply().queue();
                     gmm(event.getGuild()).stop();
                     event.getHook().sendMessage("Stopped music!").queue();
@@ -181,6 +195,7 @@ public class MusicMain {
 
                 .addSubCommand("skip", "skips the current track")
                 .executes(event -> {
+                    lastCommandChannels.put(event.getGuild().getIdLong(), event.getChannel().getIdLong());
                     event.deferReply().queue();
                     boolean skipped = gmm(event.getGuild()).queue().skip();
                     event.getHook().sendMessage(skipped ? "Skipped!" : "Nothing to skip.").queue();
@@ -189,6 +204,7 @@ public class MusicMain {
 
                 .addSubCommand("back", "goes back to the previous track")
                 .executes(event -> {
+                    lastCommandChannels.put(event.getGuild().getIdLong(), event.getChannel().getIdLong());
                     event.deferReply().queue();
                     boolean backed = gmm(event.getGuild()).queue().back();
                     event.getHook().sendMessage(backed ? "Went back!" : "Nothing to go back to.").queue();
@@ -197,6 +213,7 @@ public class MusicMain {
 
                 .addSubCommand("shuffle", "shuffles the queue")
                 .executes(event -> {
+                    lastCommandChannels.put(event.getGuild().getIdLong(), event.getChannel().getIdLong());
                     event.deferReply().queue();
                     gmm(event.getGuild()).queue().shuffle();
                     event.getHook().sendMessage("Shuffled!").queue();
@@ -205,6 +222,7 @@ public class MusicMain {
 
                 .addSubCommand("clear", "clears the queue")
                 .executes(event -> {
+                    lastCommandChannels.put(event.getGuild().getIdLong(), event.getChannel().getIdLong());
                     event.deferReply().queue();
                     gmm(event.getGuild()).queue().clear();
                     event.getHook().sendMessage("Cleared queue!").queue();
@@ -214,6 +232,7 @@ public class MusicMain {
                 .addSubCommand("volume", "sets or gets the volume")
                 .addOption(new CommandOption(OptionType.INTEGER, "level", "volume level (0-100)", false))
                 .executes(event -> {
+                    lastCommandChannels.put(event.getGuild().getIdLong(), event.getChannel().getIdLong());
                     event.deferReply().queue();
                     var gmm = gmm(event.getGuild());
                     var level = event.getOption("level");
@@ -237,6 +256,7 @@ public class MusicMain {
                     .addChoice("one", "ONE")
                     .addChoice("all", "ALL"))
                 .executes(event -> {
+                    lastCommandChannels.put(event.getGuild().getIdLong(), event.getChannel().getIdLong());
                     event.deferReply().queue();
                     var modeStr = event.getOption("mode").getAsString();
                     var mode = RepeatMode.valueOf(modeStr);
@@ -247,6 +267,7 @@ public class MusicMain {
 
                 .addSubCommand("nowplaying", "shows the current track")
                 .executes(event -> {
+                    lastCommandChannels.put(event.getGuild().getIdLong(), event.getChannel().getIdLong());
                     event.deferReply().queue();
                     var gmm = gmm(event.getGuild());
                     var track = gmm.getCurrentTrack();
@@ -263,6 +284,7 @@ public class MusicMain {
 
                 .addSubCommand("queue", "shows the current queue")
                 .executes(event -> {
+                    lastCommandChannels.put(event.getGuild().getIdLong(), event.getChannel().getIdLong());
                     event.deferReply().queue();
                     var queue = gmm(event.getGuild()).queue().getQueue();
                     if (queue.isEmpty()) {
@@ -284,6 +306,7 @@ public class MusicMain {
                 .addSubCommand("seek", "seeks to a position in the current track")
                 .addOption(new CommandOption(OptionType.STRING, "time", "time in format MM:SS or seconds", true))
                 .executes(event -> {
+                    lastCommandChannels.put(event.getGuild().getIdLong(), event.getChannel().getIdLong());
                     event.deferReply().queue();
                     var timeStr = event.getOption("time").getAsString();
                     long millis = parseTime(timeStr);
@@ -302,6 +325,7 @@ public class MusicMain {
 
                 .addSubCommand("dc", "disconnects the bot")
                 .executes(event -> {
+                    lastCommandChannels.put(event.getGuild().getIdLong(), event.getChannel().getIdLong());
                     event.deferReply().queue();
                     gmm(event.getGuild()).disconnect();
                     event.getHook().sendMessage("Disconnected!").queue();
@@ -339,5 +363,23 @@ public class MusicMain {
             return -1;
         }
         return -1;
+    }
+
+    private static void sendGuildMessage(@NotNull Guild guild, @NotNull String message) {
+        Long channelId = lastCommandChannels.get(guild.getIdLong());
+        if (channelId != null) {
+            try {
+                var channel = guild.getTextChannelById(channelId);
+                if (channel != null) {
+                    channel.sendMessage(message).queue();
+                    return;
+                }
+            } catch (Exception ignored) {}
+        }
+
+        var textChannel = guild.getDefaultChannel();
+        if (textChannel instanceof MessageChannel) {
+            ((MessageChannel) textChannel).sendMessage(message).queue();
+        }
     }
 }
