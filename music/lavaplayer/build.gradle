@@ -1,4 +1,4 @@
 dependencies {
-	implementation libs.lavaplayer
+	api libs.lavaplayer
 	implementation project(':')
 }
