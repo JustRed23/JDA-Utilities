@@ -10,11 +10,16 @@ import java.util.Optional;
 public interface GuildMusicManager {
 
     Guild guild();
-    void play(@NotNull PlayableTrack track, @NotNull AudioChannel channel);
+    void play(@NotNull String url, @NotNull AudioChannel channel);
     void pause();
     void resume();
     void stop();
     void disconnect();
+    void destroy();
+
+    default void play(@NotNull PlayableTrack track, @NotNull AudioChannel channel) {
+        play(track.url(), channel);
+    }
 
     @NotNull Optional<PlayableTrack> getCurrentTrack();
 
