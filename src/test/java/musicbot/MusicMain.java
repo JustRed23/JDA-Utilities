@@ -198,7 +198,7 @@ public class MusicMain {
                     lastCommandChannels.put(event.getGuild().getIdLong(), event.getChannel().getIdLong());
                     event.deferReply().queue();
                     boolean skipped = gmm(event.getGuild()).queue().skip();
-                    event.getHook().sendMessage(skipped ? "Skipped!" : "Nothing to skip.").queue();
+                    event.getHook().sendMessage(skipped ? "Skipped!" : "Skipped song and stopped player.").queue();
                 })
                 .build()
 
