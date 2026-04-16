@@ -28,6 +28,11 @@ public interface MusicEventListener {
     default void onTrackError(@NotNull TrackErrorEvent event) {}
 
     /**
+     * Called when a track search yields no results
+     */
+    default void onTrackNotFound(@NotNull TrackNotFoundEvent event) {}
+
+    /**
      * Called when the queue is updated
      */
     default void onQueueUpdate(@NotNull QueueUpdateEvent event) {}
