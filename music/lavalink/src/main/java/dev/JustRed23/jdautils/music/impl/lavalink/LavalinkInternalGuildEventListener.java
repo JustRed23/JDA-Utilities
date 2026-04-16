@@ -44,7 +44,9 @@ public class LavalinkInternalGuildEventListener implements MusicEventListener {
             manager.stop();
             manager.setState(PlaybackState.ERROR);
         } else {
-            manager.nextTrack();
+            manager.getLink().getPlayer().subscribe(player ->
+                    player.stopTrack().subscribe()
+            );
         }
     }
 }

@@ -174,8 +174,7 @@ public final class LavalinkGuildMusicManager implements GuildMusicManager {
 
     @ApiStatus.Internal
     void incrementConsecutiveFailures() {
-        int newVal = this.consecutiveFailures + 1;
-        this.consecutiveFailures = newVal;
+        this.consecutiveFailures++;
     }
 
     @ApiStatus.Internal
