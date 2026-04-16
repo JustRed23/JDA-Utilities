@@ -7,8 +7,8 @@ import java.util.List;
 
 public interface GuildQueueOptions {
 
-    void skip();
-    void back();
+    boolean skip();
+    boolean back();
     void clear();
     void shuffle();
 

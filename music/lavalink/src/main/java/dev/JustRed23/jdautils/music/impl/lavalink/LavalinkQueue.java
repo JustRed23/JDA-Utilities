@@ -57,27 +57,29 @@ public final class LavalinkQueue implements GuildQueueOptions {
         manager.getLink().getPlayer().subscribe(player -> player.setTrack((Track) track.raw()).subscribe());
     }
 
-    public void skip() {
+    public boolean skip() {
         manager.getCurrentTrack().ifPresent(history::add);
 
         if (queue.isEmpty()) {
             manager.stop();
-            return;
+            return false;
         }
 
         PlayableTrack next = queue.remove(0);
         manager.setTrack(next);
         manager.getLink().getPlayer().subscribe(player -> player.setTrack((Track) next.raw()).subscribe());
         manager.setState(PlaybackState.PLAYING);
+        return true;
     }
 
-    public void back() {
-        if (history.isEmpty()) return;
+    public boolean back() {
+        if (history.isEmpty()) return false;
         manager.getCurrentTrack().ifPresent(track -> queue.add(0, track));
         PlayableTrack previous = history.remove(history.size() - 1);
         manager.setTrack(previous);
         manager.getLink().getPlayer().subscribe(player -> player.setTrack((Track) previous.raw()).subscribe());
         manager.setState(PlaybackState.PLAYING);
+        return true;
     }
 
     @ApiStatus.Internal
