@@ -10,8 +10,8 @@ public interface GuildPlayerOptions {
     void setAutoDisconnect(boolean autoDisconnect);
     boolean isAutoDisconnect();
 
-    void updateUserStatusWithSongInfo(boolean enabled);
-    boolean isUpdateUserStatusWithSongInfo();
+    void setTrackDisplayMode(@NotNull TrackDisplayMode displayMode);
+    @NotNull TrackDisplayMode getTrackDisplayMode();
 
     default void setRepeatMode(@NotNull RepeatMode repeatMode) {
         throw new UnsupportedOperationException("Repeat mode is not supported by this player");

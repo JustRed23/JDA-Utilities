@@ -2,6 +2,7 @@ package dev.JustRed23.jdautils.music.impl.lavalink;
 
 import dev.JustRed23.jdautils.music.GuildPlayerOptions;
 import dev.JustRed23.jdautils.music.RepeatMode;
+import dev.JustRed23.jdautils.music.TrackDisplayMode;
 import dev.JustRed23.jdautils.music.event.VolumeChangeEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,7 +12,7 @@ public class LavalinkPlayerOptions implements GuildPlayerOptions {
 
     private volatile float volume = 100F;
     private volatile boolean autoDisconnect;
-    private volatile boolean updateUserStatusWithSongInfo;
+    private volatile TrackDisplayMode trackDisplayMode = TrackDisplayMode.NONE;
     private volatile RepeatMode repeatMode;
 
     public LavalinkPlayerOptions(LavalinkGuildMusicManager manager) {
@@ -40,12 +41,12 @@ public class LavalinkPlayerOptions implements GuildPlayerOptions {
         return this.autoDisconnect;
     }
 
-    public void updateUserStatusWithSongInfo(boolean enabled) {
-        this.updateUserStatusWithSongInfo = enabled;
+    public void setTrackDisplayMode(@NotNull TrackDisplayMode displayMode) {
+        this.trackDisplayMode = displayMode;
     }
 
-    public boolean isUpdateUserStatusWithSongInfo() {
-        return this.updateUserStatusWithSongInfo;
+    public @NotNull TrackDisplayMode getTrackDisplayMode() {
+        return this.trackDisplayMode;
     }
 
     public void setRepeatMode(@NotNull RepeatMode repeatMode) {
