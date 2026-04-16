@@ -259,7 +259,13 @@ public class MusicMain {
                     lastCommandChannels.put(event.getGuild().getIdLong(), event.getChannel().getIdLong());
                     event.deferReply().queue();
                     var modeStr = event.getOption("mode").getAsString();
-                    var mode = RepeatMode.valueOf(modeStr);
+                    RepeatMode mode;
+                    try {
+                        mode = RepeatMode.get(modeStr);
+                    }  catch (IllegalArgumentException e) {
+                        event.getHook().sendMessage("Invalid repeat mode: " + modeStr).queue();
+                        return;
+                    }
                     gmm(event.getGuild()).options().setRepeatMode(mode);
                     event.getHook().sendMessage("Repeat mode set to " + mode + "!").queue();
                 })
