@@ -31,6 +31,7 @@ dependencies {
     testImplementation libs.jda
     testImplementation libs.logback.classic
     testImplementation(project(":lavalink"))
+    testImplementation(project(":lavaplayer"))
 }
 
 subprojects {
