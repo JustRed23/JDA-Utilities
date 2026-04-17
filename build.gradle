@@ -4,6 +4,12 @@ plugins {
 
 group 'dev.JustRed23'
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
 repositories {
     mavenCentral()
     maven { url 'https://jitpack.io' }
@@ -30,12 +36,21 @@ dependencies {
 
     testImplementation libs.jda
     testImplementation libs.logback.classic
+    testImplementation(libs.dave.api)
+    testImplementation(libs.bundles.dave.natives)
     testImplementation(project(":lavalink"))
     testImplementation(project(":lavaplayer"))
+    testImplementation(libs.lavalink.youtube)
 }
 
 subprojects {
     apply plugin: 'java-library'
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(25)
+        }
+    }
 
     repositories {
         mavenCentral()

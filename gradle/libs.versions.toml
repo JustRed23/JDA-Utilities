@@ -1,10 +1,13 @@
 [versions]
 jda = "6.4.1"
+dave-api = "0.1.8"
+dave-natives = "0.1.8"
 jetbrains-annotations = "26.1.0"
 hikaricp = "7.0.2"
 sqlite-jdbc = "3.51.3.0"
 snakeyaml = "2.6"
 lavalink-client = "3.4.0"
+lavalink-youtube = "1.18.0"
 lavaplayer = "2.2.6"
 google-api-services-youtube = "v3-rev20260323-2.0.0"
 spotify-web-api-java = "10.0.0-RC2"
@@ -15,11 +18,17 @@ logback-classic = "1.5.32"
 
 [libraries]
 jda = { module = "net.dv8tion:JDA", version.ref = "jda" }
+dave-api = { module = "club.minnced:jdave-api", version.ref = "dave-api" }
+dave-native-linux-x64 = { module = "club.minnced:jdave-native-linux-x86-64", version.ref = "dave-natives" }
+dave-native-linux-arm64 = { module = "club.minnced:jdave-native-linux-aarch64", version.ref = "dave-natives" }
+dave-native-win-x64 = { module = "club.minnced:jdave-native-win-x86-64", version.ref = "dave-natives" }
+dave-native-macos = { module = "club.minnced:jdave-native-darwin", version.ref = "dave-natives" }
 jetbrains-annotations = { module = "org.jetbrains:annotations", version.ref = "jetbrains-annotations" }
 hikaricp = { module = "com.zaxxer:HikariCP", version.ref = "hikaricp" }
 sqlite-jdbc = { module = "org.xerial:sqlite-jdbc", version.ref = "sqlite-jdbc" }
 snakeyaml = { module = "org.yaml:snakeyaml", version.ref = "snakeyaml" }
 lavalink-client = { module = "dev.arbjerg:lavalink-client", version.ref = "lavalink-client" }
+lavalink-youtube = { module = "dev.lavalink.youtube:v2", version.ref = "lavalink-youtube" }
 lavaplayer = { module = "dev.arbjerg:lavaplayer", version.ref = "lavaplayer" }
 google-api-services-youtube = { module = "com.google.apis:google-api-services-youtube", version.ref = "google-api-services-youtube" }
 spotify-web-api-java = { module = "se.michaelthelin.spotify:spotify-web-api-java", version.ref = "spotify-web-api-java" }
@@ -27,3 +36,6 @@ junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.re
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit-jupiter-engine" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit-platform-launcher" }
 logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback-classic" }
+
+[bundles]
+dave-natives = ["dave-native-linux-x64", "dave-native-linux-arm64", "dave-native-win-x64", "dave-native-macos"]

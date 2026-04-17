@@ -1,5 +1,8 @@
 package musicbot;
 
+import club.minnced.discord.jdave.interop.JDaveSessionFactory;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import dev.JustRed23.jdautils.Builder;
 import dev.JustRed23.jdautils.JDAUtilities;
 import dev.JustRed23.jdautils.command.CommandOption;
@@ -7,12 +10,15 @@ import dev.JustRed23.jdautils.music.GuildMusicManager;
 import dev.JustRed23.jdautils.music.RepeatMode;
 import dev.JustRed23.jdautils.music.event.*;
 import dev.JustRed23.jdautils.music.impl.lavalink.LavalinkMusicManager;
+import dev.JustRed23.jdautils.music.impl.lavaplayer.LavaplayerMusicManager;
 import dev.arbjerg.lavalink.client.Helpers;
 import dev.arbjerg.lavalink.client.LavalinkClient;
 import dev.arbjerg.lavalink.client.NodeOptions;
+import dev.lavalink.youtube.YoutubeAudioSourceManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.audio.AudioModuleConfig;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
@@ -44,33 +50,40 @@ public class MusicMain {
             e.printStackTrace();
         }
 
-        LavalinkClient client = new LavalinkClient(Helpers.getUserIdFromToken(secrets.getProperty("token")));
-        client.addNode(new NodeOptions.Builder()
+        LavalinkClient lavalinkClient = new LavalinkClient(Helpers.getUserIdFromToken(secrets.getProperty("token")));
+        lavalinkClient.addNode(new NodeOptions.Builder()
                 .setName("Serenetia")
                 .setServerUri("https://lavalinkv4.serenetia.com:443")
                 .setPassword("https://seretia.link/discord")
                 .build()
         );
-        client.addNode(new NodeOptions.Builder()
+        lavalinkClient.addNode(new NodeOptions.Builder()
                 .setName("Jirayu")
                 .setServerUri("https://lavalink.jirayu.net:443")
                 .setPassword("youshallnotpass")
                 .build()
         );
-        client.addNode(new NodeOptions.Builder()
+        lavalinkClient.addNode(new NodeOptions.Builder()
                 .setName("AneFaiz")
                 .setServerUri("https://lava-v4.millohost.my.id:443")
                 .setPassword("https://discord.gg/mjS5J2K3ep")
                 .build()
         );
 
+        AudioPlayerManager lavaplayerClient = new DefaultAudioPlayerManager();
+        lavaplayerClient.registerSourceManager(new YoutubeAudioSourceManager());
+
         final Builder.Configuration config = JDAUtilities.getInstance()
                 .withMusicManager()
-                    .useImplementation(new LavalinkMusicManager(client))
+                    .useImplementation(new LavalinkMusicManager(lavalinkClient))
+                    //.useImplementation(new LavaplayerMusicManager(lavaplayerClient))
                     .build()
                 .buildConfiguration();
 
         JDABuilder builder = config.configure(JDABuilder.createDefault(secrets.getProperty("token")))
+                .setAudioModuleConfig(new AudioModuleConfig()
+                        .withDaveSessionFactory(new JDaveSessionFactory())
+                )
                 .enableIntents(GatewayIntent.GUILD_VOICE_STATES)
                 .setActivity(Activity.playing("with the radio"))
                 .setStatus(OnlineStatus.IDLE);
@@ -79,8 +92,9 @@ public class MusicMain {
 
         JDAUtilities.getMusicManager().addEventListener(new MusicEventListener() {
             public void onTrackStart(@NotNull TrackStartEvent event) {
-                logger.info("[{}] Track started: '{}' by {} ({})",
+                logger.info("[{}] {} track started: '{}' by {} ({})",
                         event.guild().getName(),
+                        event.track().source().name().toLowerCase(),
                         event.track().title(),
                         event.track().author(),
                         formatTime(event.track().durationMillis()));
