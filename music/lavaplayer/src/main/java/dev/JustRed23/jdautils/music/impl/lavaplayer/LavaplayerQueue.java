@@ -1,0 +1,106 @@
+package dev.JustRed23.jdautils.music.impl.lavaplayer;
+
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import dev.JustRed23.jdautils.music.GuildQueueOptions;
+import dev.JustRed23.jdautils.music.PlayableTrack;
+import dev.JustRed23.jdautils.music.PlaybackState;
+import dev.JustRed23.jdautils.music.RepeatMode;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+public final class LavaplayerQueue implements GuildQueueOptions {
+
+    private final List<PlayableTrack> queue = new CopyOnWriteArrayList<>();
+    private final List<PlayableTrack> history = new CopyOnWriteArrayList<>();
+    private final LavaplayerGuildMusicManager manager;
+
+    public LavaplayerQueue(LavaplayerGuildMusicManager musicManager) {
+        this.manager = musicManager;
+    }
+
+    @ApiStatus.Internal
+    void addToQueue(@NotNull PlayableTrack track) {
+        queue.add(track);
+        if (manager.getCurrentTrack().isEmpty()) nextTrack();
+    }
+
+    @ApiStatus.Internal
+    void addAllToQueue(@NotNull List<PlayableTrack> tracks) {
+        queue.addAll(tracks);
+        if (manager.getCurrentTrack().isEmpty()) nextTrack();
+    }
+
+    @ApiStatus.Internal
+    void nextTrack() {
+        if (queue.isEmpty()) {
+            RepeatMode mode = manager.options().getRepeatMode();
+            if (mode == RepeatMode.ONE && manager.getCurrentTrack().isPresent()) {
+                PlayableTrack current = manager.getCurrentTrack().get();
+                manager.getPlayer().playTrack((AudioTrack) current.raw());
+                return;
+            } else if (mode == RepeatMode.ALL && !history.isEmpty()) {
+                queue.addAll(history);
+                history.clear();
+            } else {
+                manager.setTrack(null);
+                manager.setState(PlaybackState.IDLE);
+                return;
+            }
+        }
+
+        PlayableTrack track = queue.remove(0);
+        manager.setTrack(track);
+        manager.getPlayer().playTrack((AudioTrack) track.raw());
+    }
+
+    public boolean skip() {
+        manager.getCurrentTrack().ifPresent(history::add);
+
+        if (queue.isEmpty()) {
+            manager.stop();
+            return false;
+        }
+
+        PlayableTrack next = queue.remove(0);
+        manager.setTrack(next);
+        manager.getPlayer().playTrack((AudioTrack) next.raw());
+        manager.setState(PlaybackState.PLAYING);
+        return true;
+    }
+
+    public boolean back() {
+        if (history.isEmpty()) return false;
+        manager.getCurrentTrack().ifPresent(track -> queue.add(0, track));
+        PlayableTrack previous = history.remove(history.size() - 1);
+        manager.setTrack(previous);
+        manager.getPlayer().playTrack((AudioTrack) previous.raw());
+        manager.setState(PlaybackState.PLAYING);
+        return true;
+    }
+
+    @ApiStatus.Internal
+    void addToHistory(@NotNull PlayableTrack track) {
+        history.add(track);
+    }
+
+    public void clear() {
+        queue.clear();
+        history.clear();
+    }
+
+    public void shuffle() {
+        Collections.shuffle(queue);
+    }
+
+    public @NotNull List<PlayableTrack> getQueue() {
+        return List.copyOf(queue);
+    }
+
+    public @NotNull List<PlayableTrack> getHistory() {
+        return List.copyOf(history);
+    }
+}
