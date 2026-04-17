@@ -77,6 +77,7 @@ public final class LavalinkGuildMusicManager implements GuildMusicManager {
     }
 
     public void disconnect() {
+        stop();
         guild.getJDA().getDirectAudioController().disconnect(guild);
     }
 
