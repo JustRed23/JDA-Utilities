@@ -104,7 +104,6 @@ public final class SpotifySource {
                 author,
                 album,
                 track.getDurationMs(),
-                track.getIsExplicit(),
                 track
         );
     }

@@ -160,7 +160,6 @@ public final class YouTubeSource {
                 author,
                 null,
                 duration,
-                false,
                 result
         );
     }

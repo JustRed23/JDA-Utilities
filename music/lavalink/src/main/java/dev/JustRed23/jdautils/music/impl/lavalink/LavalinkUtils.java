@@ -25,7 +25,6 @@ public final class LavalinkUtils {
                 info.getAuthor(),
                 null,
                 info.isStream() ? 0 : info.getLength(),
-                false,
                 track
         );
     }

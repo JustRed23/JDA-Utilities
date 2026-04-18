@@ -16,7 +16,6 @@ public record PlayableTrack(
         @Nullable String author,
         @Nullable String album,
         long durationMillis,
-        boolean explicit,
         @Nullable Object raw
 ) {
 
@@ -70,7 +69,7 @@ public record PlayableTrack(
 
     @Contract(pure = true)
     public @NotNull PlayableTrack withRaw(@Nullable Object raw) {
-        return new PlayableTrack(source, id, title, url, thumbnailUrl, author, album, durationMillis, explicit, raw);
+        return new PlayableTrack(source, id, title, url, thumbnailUrl, author, album, durationMillis, raw);
     }
 
     @Contract(pure = true)

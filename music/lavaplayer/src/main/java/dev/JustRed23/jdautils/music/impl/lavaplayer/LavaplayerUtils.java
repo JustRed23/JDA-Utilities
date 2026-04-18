@@ -25,7 +25,6 @@ public final class LavaplayerUtils {
                 info.author,
                 null,
                 info.isStream ? 0 : info.length,
-                false,
                 track
         );
     }

@@ -41,12 +41,6 @@ public final class TrackUtils {
                 .toList();
     }
 
-    public static @NotNull List<PlayableTrack> filterExplicit(@NotNull List<PlayableTrack> tracks, boolean includeExplicit) {
-        return tracks.stream()
-                .filter(t -> t.explicit() == includeExplicit)
-                .toList();
-    }
-
     public static @NotNull List<String> getUniqueAuthors(@NotNull List<PlayableTrack> tracks) {
         return tracks.stream()
                 .map(PlayableTrack::author)
