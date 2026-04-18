@@ -1,4 +1,3 @@
-
 # JDA-Utilities
 
 Some utility classes to help with making a Discord Bot with [JDA](https://github.com/discord-jda/JDA)
@@ -14,12 +13,19 @@ Some utility classes to help with making a Discord Bot with [JDA](https://github
     - Smart components: components that can directly interact with the event provided
         - Currently, includes SmartButton, SmartDropdown, SmartModal and SmartReaction
         - These components have an event listener assigned to it, to subscribe to these events use `withListener`. No need to listen for them on your own event listener!
+- Database system: locally stored database for persistent data storage
+    - Supports both file-based SQLite databases and remote databases
+    - Use `JDAUtilities.getDatabaseConnection()` to get a connection
 - Guild settings manager: a locally stored database used for getting and setting custom settings
 - Chat filters: filter out spam, discord invites, etc.
     - Customisable with specific filtering rules. See `JDAUtilities.getGuildFilterManager(Guild guild)`
+- Event watching: listen for specific events with conditions
+    - Use `JDAUtilities.addMessageListener()` or `JDAUtilities.addGuildMessageListener()`
 
 ## TODO
-- There is currently nothing planned.
+- implement auto disconnect after inactivity
+- playlist integration in lavaplayer and lavalink
+- implement displaying song information (hang status, voice channel status)
   - More suggestions welcome!
 
 ## Installation
@@ -80,4 +86,3 @@ After that you can freely use all methods in the JDAUtilities class
 
 ## Examples
 Examples are located in src/test/java
-
