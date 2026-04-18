@@ -1,5 +1,8 @@
 package dev.JustRed23.jdautils.music.exception;
 
+/**
+ * Exception thrown when a track fails to load.
+ */
 public class TrackLoadException extends PlayerException {
 
     public TrackLoadException(String message) {

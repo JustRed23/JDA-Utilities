@@ -7,6 +7,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+/**
+ * Represents an audio track that can be played.
+ * <p>
+ * Contains metadata about the track such as title, URL, duration, and optional fields like author and album.
+ * Provides utility methods for checking track properties and formatting information.
+ */
 public record PlayableTrack(
         @NotNull TrackSource source,
         @Nullable String id,
@@ -28,36 +34,73 @@ public record PlayableTrack(
             throw new IllegalArgumentException("Duration must be -1 or greater");
     }
 
+    /**
+     * Checks if this track has a known duration.
+     *
+     * @return true if duration is known and greater than 0, false otherwise.
+     */
     @Contract(pure = true)
     public boolean hasDuration() {
         return durationMillis > 0;
     }
 
+    /**
+     * Checks if this track is a live stream.
+     *
+     * @return true if duration is 0 (live stream), false otherwise.
+     */
     @Contract(pure = true)
     public boolean isLiveStream() {
         return durationMillis == 0;
     }
 
+    /**
+     * Checks if this track has an unknown duration.
+     *
+     * @return true if duration is negative, false otherwise.
+     */
     @Contract(pure = true)
     public boolean isUnknownDuration() {
         return durationMillis < 0;
     }
 
+    /**
+     * Checks if this track has a thumbnail URL.
+     *
+     * @return true if a thumbnail URL is available and not blank, false otherwise.
+     */
     @Contract(pure = true)
     public boolean hasThumbnail() {
         return thumbnailUrl != null && !thumbnailUrl.isBlank();
     }
 
+    /**
+     * Checks if this track has an author.
+     *
+     * @return true if an author is available and not blank, false otherwise.
+     */
     @Contract(pure = true)
     public boolean hasAuthor() {
         return author != null && !author.isBlank();
     }
 
+    /**
+     * Checks if this track has an album.
+     *
+     * @return true if an album is available and not blank, false otherwise.
+     */
     @Contract(pure = true)
     public boolean hasAlbum() {
         return album != null && !album.isBlank();
     }
 
+    /**
+     * Gets the duration formatted as a human-readable string.
+     * <p>
+     * Returns "LIVE" for live streams, "UNKNOWN" for unknown duration, or formatted time otherwise.
+     *
+     * @return The formatted duration string.
+     */
     @Contract(pure = true)
     public @NotNull String formattedDuration() {
         if (isUnknownDuration()) {
@@ -67,11 +110,24 @@ public record PlayableTrack(
         return isLiveStream() ? "LIVE" : TimeUtils.millisToTime(durationMillis);
     }
 
+    /**
+     * Creates a new PlayableTrack with the specified raw data.
+     *
+     * @param raw The raw data object to attach.
+     * @return A new PlayableTrack with the raw data set.
+     */
     @Contract(pure = true)
     public @NotNull PlayableTrack withRaw(@Nullable Object raw) {
         return new PlayableTrack(source, id, title, url, thumbnailUrl, author, album, durationMillis, raw);
     }
 
+    /**
+     * Gets a display name for this track.
+     * <p>
+     * Returns "Author - Title" if author is available, otherwise just the title.
+     *
+     * @return The display name for this track.
+     */
     @Contract(pure = true)
     public @NotNull String getDisplayName() {
         if (hasAuthor()) {
@@ -80,6 +136,14 @@ public record PlayableTrack(
         return title;
     }
 
+    /**
+     * Checks if this track is the same as another track.
+     * <p>
+     * Compares by source, then by ID if available, otherwise by URL.
+     *
+     * @param other The other track to compare with.
+     * @return true if the tracks are the same, false otherwise.
+     */
     @Contract(pure = true)
     public boolean isSameTrack(@NotNull PlayableTrack other) {
         if (source != other.source) {
@@ -91,6 +155,14 @@ public record PlayableTrack(
         return url.equals(other.url);
     }
 
+    /**
+     * Checks if this track matches the given search query.
+     * <p>
+     * Searches case-insensitively in title, author, album, and URL.
+     *
+     * @param query The search query string.
+     * @return true if the track matches the query, false otherwise.
+     */
     @Contract(pure = true)
     public boolean matches(@NotNull String query) {
         String lowerQuery = query.toLowerCase();

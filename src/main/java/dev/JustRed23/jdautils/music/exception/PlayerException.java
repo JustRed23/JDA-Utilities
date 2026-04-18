@@ -1,5 +1,8 @@
 package dev.JustRed23.jdautils.music.exception;
 
+/**
+ * Exception thrown when an error occurs in the music player.
+ */
 public class PlayerException extends RuntimeException {
 
     public PlayerException(String message) {
