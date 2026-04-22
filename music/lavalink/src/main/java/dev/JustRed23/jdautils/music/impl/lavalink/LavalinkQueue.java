@@ -4,6 +4,7 @@ import dev.JustRed23.jdautils.music.GuildQueueOptions;
 import dev.JustRed23.jdautils.music.PlayableTrack;
 import dev.JustRed23.jdautils.music.PlaybackState;
 import dev.JustRed23.jdautils.music.RepeatMode;
+import dev.JustRed23.jdautils.music.event.QueueUpdateEvent;
 import dev.arbjerg.lavalink.client.player.Track;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -88,24 +89,29 @@ public final class LavalinkQueue implements GuildQueueOptions {
     }
 
     public @NotNull PlayableTrack remove(int index) {
-        return queue.remove(index);
+        var track = queue.remove(index);
+        manager.postEvent(new QueueUpdateEvent(manager.guild().getJDA(), manager.guild(), QueueUpdateEvent.QueueUpdateType.REMOVED, List.of(track), index));
+        return track;
     }
 
     public void move(int from, int to) {
         if (from == to) return;
         if (from < 0 || from >= queue.size()) throw new IndexOutOfBoundsException("From index out of bounds: " + from);
         if (to < 0 || to >= queue.size()) throw new IndexOutOfBoundsException("To index out of bounds: " + to);
-        PlayableTrack track = remove(from);
+        PlayableTrack track = queue.remove(from);
         queue.add(to, track);
+        manager.postEvent(new QueueUpdateEvent(manager.guild().getJDA(), manager.guild(), QueueUpdateEvent.QueueUpdateType.MOVED, List.of(track), to));
     }
 
     public void clear() {
         queue.clear();
         history.clear();
+        manager.postEvent(new QueueUpdateEvent(manager.guild().getJDA(), manager.guild(), QueueUpdateEvent.QueueUpdateType.CLEARED, null, -1));
     }
 
     public void shuffle() {
         Collections.shuffle(queue);
+        manager.postEvent(new QueueUpdateEvent(manager.guild().getJDA(), manager.guild(), QueueUpdateEvent.QueueUpdateType.SHUFFLED, null, -1));
     }
 
     public @NotNull List<PlayableTrack> getQueue() {
