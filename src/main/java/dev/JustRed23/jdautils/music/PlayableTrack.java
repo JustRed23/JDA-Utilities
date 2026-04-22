@@ -12,6 +12,16 @@ import java.util.Objects;
  * <p>
  * Contains metadata about the track such as title, URL, duration, and optional fields like author and album.
  * Provides utility methods for checking track properties and formatting information.
+ *
+ * @param source The source of the track (e.g., YouTube, Spotify).
+ * @param id An optional unique identifier for the track from its source.
+ * @param title The title of the track.
+ * @param url The URL where the track can be accessed.
+ * @param thumbnailUrl An optional URL for the track's thumbnail image.
+ * @param author An optional author or artist of the track.
+ * @param album An optional album name for the track.
+ * @param durationMillis The duration of the track in milliseconds, or -1 if unknown, or 0 if it's a live stream.
+ * @param raw An optional raw data object from the source, which can be used for advanced features or debugging.
  */
 public record PlayableTrack(
         @NotNull TrackSource source,

@@ -36,7 +36,7 @@ public class MessageFilter {
 
     /**
      * Broadcasts the specified event to all active filters in the specified guild
-     * <br><b>Internal use only!
+     * <br><b>Internal use only!</b>
      * @param event The event to broadcast, must not be null
      * @return A list of all filters that triggered
      */

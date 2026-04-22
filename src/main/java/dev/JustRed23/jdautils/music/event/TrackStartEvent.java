@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
  * @param client the client responsible for handling guild interactions
  * @param guild the guild where the track started playing
  * @param track the track that started playing
+ * @see TrackEndEvent
  */
 public record TrackStartEvent(
         JDA client,

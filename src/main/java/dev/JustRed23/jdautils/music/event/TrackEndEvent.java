@@ -11,6 +11,8 @@ import org.jetbrains.annotations.Nullable;
  * @param client the client responsible for handling guild interactions
  * @param guild the guild where playback ended
  * @param track the track that ended, never null
+ * @param mayStartNext whether the next track may start playing, false if the track ended due to an error or was stopped
+ * @see TrackStartEvent
  */
 public record TrackEndEvent(
         JDA client,

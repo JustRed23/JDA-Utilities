@@ -38,6 +38,9 @@ public class EventBus {
     private final List<MusicEventListener> listeners = new CopyOnWriteArrayList<>();
     private final Map<Class<? extends MusicEvent>, BiConsumer<MusicEventListener, MusicEvent>> dispatchMap = new HashMap<>();
 
+    /**
+     * Initializes the event bus and registers default handlers for common music events.
+     */
     public EventBus() {
         register(TrackStartEvent.class, MusicEventListener::onTrackStart);
         register(TrackEndEvent.class, MusicEventListener::onTrackEnd);
