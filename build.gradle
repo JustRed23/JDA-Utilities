@@ -46,6 +46,7 @@ dependencies {
 
 subprojects {
     apply plugin: 'java-library'
+    apply plugin: 'maven-publish'
 
     java {
         toolchain {
@@ -68,6 +69,14 @@ subprojects {
         implementation libs.sqlite.jdbc
 
         implementation libs.snakeyaml
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+            }
+        }
     }
 }
 
