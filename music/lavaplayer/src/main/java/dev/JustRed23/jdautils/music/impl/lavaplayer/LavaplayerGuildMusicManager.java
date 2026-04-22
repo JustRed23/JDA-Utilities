@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -61,17 +62,20 @@ public class LavaplayerGuildMusicManager implements GuildMusicManager {
         return guild;
     }
 
-    private void joinChannel(AudioChannel channel) {
-        var state = guild.getSelfMember().getVoiceState();
-        AudioChannel current = state != null ? state.getChannel() : null;
-
+    public void join(@NotNull AudioChannel channel) {
+        AudioChannel current = getCurrentChannel();
         if (current == null || current.getIdLong() != channel.getIdLong()) {
             guild.getAudioManager().openAudioConnection(channel);
         }
     }
 
+    public @Nullable AudioChannel getCurrentChannel() {
+        var state = guild.getSelfMember().getVoiceState();
+        return state != null ? state.getChannel() : null;
+    }
+
     public void play(@NotNull String url, @NotNull AudioChannel channel) {
-        joinChannel(channel);
+        join(channel);
         startTrack(url);
     }
 

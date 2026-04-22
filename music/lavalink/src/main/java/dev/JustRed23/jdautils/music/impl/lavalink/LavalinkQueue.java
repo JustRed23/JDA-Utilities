@@ -35,6 +35,11 @@ public final class LavalinkQueue implements GuildQueueOptions {
     }
 
     @ApiStatus.Internal
+    void addToHistory(@NotNull PlayableTrack track) {
+        history.add(track);
+    }
+
+    @ApiStatus.Internal
     void nextTrack() {
         if (queue.isEmpty()) {
             RepeatMode mode = manager.options().getRepeatMode();
@@ -82,9 +87,16 @@ public final class LavalinkQueue implements GuildQueueOptions {
         return true;
     }
 
-    @ApiStatus.Internal
-    void addToHistory(@NotNull PlayableTrack track) {
-        history.add(track);
+    public @NotNull PlayableTrack remove(int index) {
+        return queue.remove(index);
+    }
+
+    public void move(int from, int to) {
+        if (from == to) return;
+        if (from < 0 || from >= queue.size()) throw new IndexOutOfBoundsException("From index out of bounds: " + from);
+        if (to < 0 || to >= queue.size()) throw new IndexOutOfBoundsException("To index out of bounds: " + to);
+        PlayableTrack track = remove(from);
+        queue.add(to, track);
     }
 
     public void clear() {

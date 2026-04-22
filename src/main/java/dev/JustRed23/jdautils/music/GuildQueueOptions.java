@@ -25,6 +25,19 @@ public interface GuildQueueOptions {
     boolean back();
 
     /**
+     * Removes a track from the queue at the specified index.
+     * @param index The index of the track to remove (0-based).
+     */
+    @NotNull PlayableTrack remove(int index);
+
+    /**
+     * Moves a track from one position in the queue to another.
+     * @param from The index of the track to move.
+     * @param to The index to move the track to.
+     */
+    void move(int from, int to);
+
+    /**
      * Clears all tracks from the queue.
      */
     void clear();

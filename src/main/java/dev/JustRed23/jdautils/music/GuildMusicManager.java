@@ -3,6 +3,7 @@ package dev.JustRed23.jdautils.music;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.util.Optional;
@@ -45,9 +46,21 @@ public interface GuildMusicManager {
     void stop();
 
     /**
+     * Joins the specified audio channel without starting playback. This can be used to prepare the music manager for playback in a specific channel.
+     */
+    void join(@NotNull AudioChannel channel);
+
+    /**
      * Stops playback and disconnects from the audio channel.
      */
     void disconnect();
+
+    /**
+     * Gets the audio channel that the music manager is currently connected to.
+     *
+     * @return The current audio channel, or null if not connected to any channel.
+     */
+    @Nullable AudioChannel getCurrentChannel();
 
     /**
      * Destroys the music manager and releases all resources. The music manager should not be used after calling this method.
@@ -137,6 +150,15 @@ public interface GuildMusicManager {
         else pause();
 
         return isPaused();
+    }
+
+    /**
+     * Checks if the music manager is currently connected to an audio channel.
+     *
+     * @return true if connected to an audio channel, false otherwise.
+     */
+    default boolean isConnected() {
+        return getCurrentChannel() != null;
     }
 
     /**
