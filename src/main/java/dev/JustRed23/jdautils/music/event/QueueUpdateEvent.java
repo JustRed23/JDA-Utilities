@@ -3,7 +3,6 @@ package dev.JustRed23.jdautils.music.event;
 import dev.JustRed23.jdautils.music.PlayableTrack;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,7 +23,6 @@ import java.util.List;
  *
  * @param client the client responsible for handling guild interactions
  * @param guild the guild whose queue was updated
- * @param member the member responsible for the queue update
  * @param type the type of update that occurred
  * @param affectedTracks the tracks affected by this update, or {@code null} if no tracks are targeted
  * @param index the relevant queue index for the update, or {@code -1} if no single index is targeted
@@ -34,7 +32,6 @@ import java.util.List;
 public record QueueUpdateEvent(
         JDA client,
         Guild guild,
-        @NotNull Member member,
         @NotNull QueueUpdateType type,
         @Nullable List<PlayableTrack> affectedTracks,
         int index
