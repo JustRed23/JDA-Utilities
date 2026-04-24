@@ -7,11 +7,12 @@ import dev.JustRed23.jdautils.music.exception.TrackLoadException;
 import dev.arbjerg.lavalink.client.player.Track;
 import dev.arbjerg.lavalink.client.player.TrackException;
 import dev.arbjerg.lavalink.protocol.v4.Exception;
+import net.dv8tion.jda.api.entities.Member;
 import org.jetbrains.annotations.NotNull;
 
 public final class LavalinkUtils {
 
-    public static @NotNull PlayableTrack fromTrack(Track track) {
+    public static @NotNull PlayableTrack fromTrack(Track track, Member member) {
         var info = track.getInfo();
         if (info.getUri() == null)
             throw new IllegalArgumentException("Track URI is null");
@@ -25,6 +26,7 @@ public final class LavalinkUtils {
                 info.getAuthor(),
                 null,
                 info.isStream() ? 0 : info.getLength(),
+                member,
                 track
         );
     }

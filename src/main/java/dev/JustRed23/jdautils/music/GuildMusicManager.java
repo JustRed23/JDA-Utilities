@@ -1,6 +1,7 @@
 package dev.JustRed23.jdautils.music;
 
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,8 +28,9 @@ public interface GuildMusicManager {
      *
      * @param url The URL of the track to play.
      * @param channel The audio channel in which to play the track.
+     * @param member The member who requested the track.
      */
-    void play(@NotNull String url, @NotNull AudioChannel channel);
+    void play(@NotNull String url, @NotNull AudioChannel channel, @NotNull Member member);
 
     /**
      * Pauses the currently playing track.
@@ -73,8 +75,8 @@ public interface GuildMusicManager {
      * @param track The track to play.
      * @param channel The audio channel in which to play the track.
      */
-    default void play(@NotNull PlayableTrack track, @NotNull AudioChannel channel) {
-        play(track.url(), channel);
+    default void play(@NotNull PlayableTrack track, @NotNull AudioChannel channel, @NotNull Member member) {
+        play(track.url(), channel, member);
     }
 
     /**

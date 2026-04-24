@@ -175,7 +175,7 @@ public class MusicMain {
                         return;
                     }
 
-                    gmm(event.getGuild()).play(event.getOption("url").getAsString(), state.getChannel());
+                    gmm(event.getGuild()).play(event.getOption("url").getAsString(), state.getChannel(), event.getMember());
                     event.getHook().sendMessage("Playing music!").queue();
                 })
                 .build()

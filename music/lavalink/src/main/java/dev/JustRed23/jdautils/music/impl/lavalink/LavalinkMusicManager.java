@@ -7,6 +7,7 @@ import dev.JustRed23.jdautils.music.exception.PlayerException;
 import dev.arbjerg.lavalink.client.LavalinkClient;
 import dev.arbjerg.lavalink.libraries.jda.JDAVoiceUpdateListener;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.hooks.VoiceDispatchInterceptor;
 import org.jetbrains.annotations.NotNull;
 
@@ -60,7 +61,7 @@ public final class LavalinkMusicManager implements MusicManager {
             if (guildMusicManager == null) return;
             Guild guild = guildMusicManager.guild();
 
-            eventBus.post(new TrackStartEvent(guild.getJDA(), guild, fromTrack(event.getTrack())));
+            eventBus.post(new TrackStartEvent(guild.getJDA(), guild, fromTrack(event.getTrack(), getMember(guildMusicManager))));
         });
 
         client.on(dev.arbjerg.lavalink.client.event.TrackEndEvent.class).subscribe(event -> {
@@ -68,7 +69,7 @@ public final class LavalinkMusicManager implements MusicManager {
             if (guildMusicManager == null) return;
             Guild guild = guildMusicManager.guild();
 
-            eventBus.post(new TrackEndEvent(guild.getJDA(), guild, fromTrack(event.getTrack()), event.getEndReason().getMayStartNext()));
+            eventBus.post(new TrackEndEvent(guild.getJDA(), guild, fromTrack(event.getTrack(), getMember(guildMusicManager)), event.getEndReason().getMayStartNext()));
         });
 
         client.on(dev.arbjerg.lavalink.client.event.TrackStuckEvent.class).subscribe(event -> {
@@ -76,7 +77,7 @@ public final class LavalinkMusicManager implements MusicManager {
             if (guildMusicManager == null) return;
             Guild guild = guildMusicManager.guild();
 
-            eventBus.post(new TrackErrorEvent(guild.getJDA(), guild, fromTrack(event.getTrack()), new PlayerException("Track got stuck for more than " + event.getThresholdMs() + "ms")));
+            eventBus.post(new TrackErrorEvent(guild.getJDA(), guild, fromTrack(event.getTrack(), getMember(guildMusicManager)), new PlayerException("Track got stuck for more than " + event.getThresholdMs() + "ms")));
         });
 
         client.on(dev.arbjerg.lavalink.client.event.TrackExceptionEvent.class).subscribe(event -> {
@@ -84,7 +85,7 @@ public final class LavalinkMusicManager implements MusicManager {
             if (guildMusicManager == null) return;
             Guild guild = guildMusicManager.guild();
 
-            eventBus.post(new TrackErrorEvent(guild.getJDA(), guild, fromTrack(event.getTrack()), fromLavalinkException(event.getException())));
+            eventBus.post(new TrackErrorEvent(guild.getJDA(), guild, fromTrack(event.getTrack(), getMember(guildMusicManager)), fromLavalinkException(event.getException())));
         });
 
         client.on(dev.arbjerg.lavalink.client.event.PlayerUpdateEvent.class).subscribe(event -> {
@@ -92,6 +93,10 @@ public final class LavalinkMusicManager implements MusicManager {
             if (guildMusicManager == null) return;
             ((LavalinkGuildMusicManager) guildMusicManager).setPosition(event.getState().getPosition());
         });
+    }
+
+    private Member getMember(GuildMusicManager manager) {
+        return ((LavalinkGuildMusicManager) manager).getTrackMember();
     }
     //</editor-fold>
 }

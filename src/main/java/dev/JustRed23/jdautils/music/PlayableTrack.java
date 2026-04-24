@@ -1,6 +1,7 @@
 package dev.JustRed23.jdautils.music;
 
 import dev.JustRed23.jdautils.utils.TimeUtils;
+import net.dv8tion.jda.api.entities.Member;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,6 +22,7 @@ import java.util.Objects;
  * @param author An optional author or artist of the track.
  * @param album An optional album name for the track.
  * @param durationMillis The duration of the track in milliseconds, or -1 if unknown, or 0 if it's a live stream.
+ * @param member The member who requested the track.
  * @param raw An optional raw data object from the source, which can be used for advanced features or debugging.
  */
 public record PlayableTrack(
@@ -32,6 +34,7 @@ public record PlayableTrack(
         @Nullable String author,
         @Nullable String album,
         long durationMillis,
+        @NotNull Member member,
         @Nullable Object raw
 ) {
 
@@ -128,7 +131,7 @@ public record PlayableTrack(
      */
     @Contract(pure = true)
     public @NotNull PlayableTrack withRaw(@Nullable Object raw) {
-        return new PlayableTrack(source, id, title, url, thumbnailUrl, author, album, durationMillis, raw);
+        return new PlayableTrack(source, id, title, url, thumbnailUrl, author, album, durationMillis, member, raw);
     }
 
     /**

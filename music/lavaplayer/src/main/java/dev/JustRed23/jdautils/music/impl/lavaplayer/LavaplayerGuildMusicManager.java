@@ -7,6 +7,7 @@ import dev.JustRed23.jdautils.music.*;
 import dev.JustRed23.jdautils.music.event.*;
 import dev.JustRed23.jdautils.music.exception.PlayerException;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -45,13 +46,13 @@ public class LavaplayerGuildMusicManager implements GuildMusicManager {
     private void setupPlayer() {
         this.player.addListener(audioEvent -> {
             if (audioEvent instanceof com.sedmelluq.discord.lavaplayer.player.event.TrackStartEvent event) {
-                eventBus.post(new TrackStartEvent(guild.getJDA(), guild, fromTrack(event.track)));
+                eventBus.post(new TrackStartEvent(guild.getJDA(), guild, fromTrack(event.track, getTrackMember())));
             } else if (audioEvent instanceof com.sedmelluq.discord.lavaplayer.player.event.TrackEndEvent event) {
-                eventBus.post(new TrackEndEvent(guild.getJDA(), guild, fromTrack(event.track), event.endReason.mayStartNext));
+                eventBus.post(new TrackEndEvent(guild.getJDA(), guild, fromTrack(event.track, getTrackMember()), event.endReason.mayStartNext));
             } else if (audioEvent instanceof com.sedmelluq.discord.lavaplayer.player.event.TrackStuckEvent event) {
-                eventBus.post(new TrackErrorEvent(guild.getJDA(), guild, fromTrack(event.track), new PlayerException("Track got stuck for more than " + event.thresholdMs + "ms")));
+                eventBus.post(new TrackErrorEvent(guild.getJDA(), guild, fromTrack(event.track, getTrackMember()), new PlayerException("Track got stuck for more than " + event.thresholdMs + "ms")));
             } else if (audioEvent instanceof com.sedmelluq.discord.lavaplayer.player.event.TrackExceptionEvent event) {
-                eventBus.post(new TrackErrorEvent(guild.getJDA(), guild, fromTrack(event.track), event.exception));
+                eventBus.post(new TrackErrorEvent(guild.getJDA(), guild, fromTrack(event.track, getTrackMember()), event.exception));
             }
         });
 
@@ -74,9 +75,9 @@ public class LavaplayerGuildMusicManager implements GuildMusicManager {
         return state != null ? state.getChannel() : null;
     }
 
-    public void play(@NotNull String url, @NotNull AudioChannel channel) {
+    public void play(@NotNull String url, @NotNull AudioChannel channel, @NotNull Member member) {
         join(channel);
-        startTrack(url);
+        startTrack(url, member);
     }
 
     public void pause() {
@@ -158,6 +159,11 @@ public class LavaplayerGuildMusicManager implements GuildMusicManager {
     }
 
     @ApiStatus.Internal
+    @Nullable Member getTrackMember() {
+        return getCurrentTrack().map(PlayableTrack::member).orElse(null);
+    }
+
+    @ApiStatus.Internal
     void postEvent(MusicEvent event) {
         eventBus.post(event);
     }
@@ -179,10 +185,10 @@ public class LavaplayerGuildMusicManager implements GuildMusicManager {
     }
 
     @ApiStatus.Internal
-    void startTrack(@NotNull String url) {
+    void startTrack(@NotNull String url, @NotNull Member member) {
         var prevState = getPlaybackState();
         setState(PlaybackState.LOADING);
-        client.loadItem(url, new LavaplayerAudioLoadResultHandler(this, prevState, url));
+        client.loadItem(url, new LavaplayerAudioLoadResultHandler(this, prevState, url, member));
     }
 
     @ApiStatus.Internal

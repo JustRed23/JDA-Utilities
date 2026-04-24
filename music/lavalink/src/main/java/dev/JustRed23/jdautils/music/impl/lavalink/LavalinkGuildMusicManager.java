@@ -8,6 +8,7 @@ import dev.arbjerg.lavalink.client.LavalinkClient;
 import dev.arbjerg.lavalink.client.Link;
 import dev.arbjerg.lavalink.client.player.Track;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -55,9 +56,9 @@ public final class LavalinkGuildMusicManager implements GuildMusicManager {
         return state != null ? state.getChannel() : null;
     }
 
-    public void play(@NotNull String url, @NotNull AudioChannel channel) {
+    public void play(@NotNull String url, @NotNull AudioChannel channel, @NotNull Member member) {
         join(channel);
-        startTrack(url);
+        startTrack(url, member);
     }
 
     public void pause() {
@@ -145,6 +146,11 @@ public final class LavalinkGuildMusicManager implements GuildMusicManager {
     }
 
     @ApiStatus.Internal
+    @Nullable Member getTrackMember() {
+        return getCurrentTrack().map(PlayableTrack::member).orElse(null);
+    }
+
+    @ApiStatus.Internal
     void postEvent(MusicEvent event) {
         eventBus.post(event);
     }
@@ -171,10 +177,10 @@ public final class LavalinkGuildMusicManager implements GuildMusicManager {
     }
 
     @ApiStatus.Internal
-    void startTrack(@NotNull String url) {
+    void startTrack(@NotNull String url, @NotNull Member member) {
         var prevState = getPlaybackState();
         setState(PlaybackState.LOADING);
-        getLink().loadItem(url).subscribe(new LavalinkAudioLoadResultHandler(this, prevState, url));
+        getLink().loadItem(url).subscribe(new LavalinkAudioLoadResultHandler(this, prevState, url, member));
     }
 
     @ApiStatus.Internal
