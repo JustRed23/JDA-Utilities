@@ -1,7 +1,5 @@
 package dev.JustRed23.jdautils.music.search;
 
-import dev.JustRed23.jdautils.music.PlayableTrack;
-import dev.JustRed23.jdautils.music.TrackSource;
 import org.apache.hc.core5.http.ParseException;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
@@ -73,38 +71,5 @@ public final class SpotifySource {
     public List<Track> search(String query, int limit) throws IOException, ParseException, SpotifyWebApiException {
         final Paging<Track> execute = getApi().searchTracks(query).limit(limit).build().execute();
         return Arrays.stream(execute.getItems()).toList();
-    }
-
-    public @NotNull List<PlayableTrack> searchTracks(String query) throws IOException, ParseException, SpotifyWebApiException {
-        return searchTracks(query, 5);
-    }
-
-    public @NotNull List<PlayableTrack> searchTracks(String query, int limit) throws IOException, ParseException, SpotifyWebApiException {
-        return search(query, limit).stream()
-                .map(this::toPlayableTrack)
-                .toList();
-    }
-
-    public @NotNull PlayableTrack toPlayableTrack(@NotNull Track track) {
-        String url = track.getExternalUrls() == null ? null : track.getExternalUrls().getExternalUrls().get("spotify");
-        if (url == null || url.isBlank()) {
-            url = track.getUri();
-        }
-
-        String author = track.getArtists() == null || track.getArtists().length == 0 ? null : track.getArtists()[0].getName();
-        String album = track.getAlbum() == null ? null : track.getAlbum().getName();
-        String thumbnail = track.getAlbum() == null || track.getAlbum().getImages() == null || track.getAlbum().getImages().length == 0 ? null : track.getAlbum().getImages()[0].getUrl();
-
-        return new PlayableTrack(
-                TrackSource.SPOTIFY,
-                track.getId(),
-                track.getName() == null ? "Unknown title" : track.getName(),
-                url == null || url.isBlank() ? track.getUri() : url,
-                thumbnail,
-                author,
-                album,
-                track.getDurationMs(),
-                track
-        );
     }
 }
