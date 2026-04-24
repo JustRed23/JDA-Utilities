@@ -109,6 +109,7 @@ public class LavaplayerGuildMusicManager implements GuildMusicManager {
     public void disconnect() {
         stop();
         guild.getAudioManager().closeAudioConnection();
+        this.boundChannel = null;
     }
 
     @Override
