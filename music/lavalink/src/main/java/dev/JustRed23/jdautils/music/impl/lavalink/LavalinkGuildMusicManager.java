@@ -9,6 +9,7 @@ import dev.arbjerg.lavalink.client.Link;
 import dev.arbjerg.lavalink.client.player.Track;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -32,6 +33,7 @@ public final class LavalinkGuildMusicManager implements GuildMusicManager {
     private volatile PlaybackState currentState = PlaybackState.IDLE;
     private volatile long currentPosition = 0;
     private volatile int consecutiveFailures = 0;
+    private volatile TextChannel boundChannel;
 
     public LavalinkGuildMusicManager(@NotNull Guild guild, @NotNull LavalinkClient client, @NotNull EventBus eventBus) {
         this.guild = guild;
@@ -51,9 +53,17 @@ public final class LavalinkGuildMusicManager implements GuildMusicManager {
         }
     }
 
+    public void bind(@NotNull TextChannel channel) {
+        this.boundChannel = channel;
+    }
+
     public @Nullable AudioChannel getCurrentChannel() {
         var state = guild.getSelfMember().getVoiceState();
         return state != null ? state.getChannel() : null;
+    }
+
+    public TextChannel getBoundChannel() {
+        return boundChannel;
     }
 
     public void play(@NotNull String url, @NotNull AudioChannel channel, @NotNull Member member) {

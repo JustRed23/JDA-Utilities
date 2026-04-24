@@ -8,6 +8,7 @@ import dev.JustRed23.jdautils.music.event.*;
 import dev.JustRed23.jdautils.music.exception.PlayerException;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -33,6 +34,7 @@ public class LavaplayerGuildMusicManager implements GuildMusicManager {
     private volatile PlayableTrack currentTrack;
     private volatile PlaybackState currentState = PlaybackState.IDLE;
     private volatile int consecutiveFailures = 0;
+    private volatile TextChannel boundChannel;
 
     public LavaplayerGuildMusicManager(@NotNull Guild guild, @NotNull AudioPlayerManager client, @NotNull EventBus eventBus) {
         this.guild = guild;
@@ -70,9 +72,17 @@ public class LavaplayerGuildMusicManager implements GuildMusicManager {
         }
     }
 
+    public void bind(@NotNull TextChannel channel) {
+        this.boundChannel = channel;
+    }
+
     public @Nullable AudioChannel getCurrentChannel() {
         var state = guild.getSelfMember().getVoiceState();
         return state != null ? state.getChannel() : null;
+    }
+
+    public TextChannel getBoundChannel() {
+        return boundChannel;
     }
 
     public void play(@NotNull String url, @NotNull AudioChannel channel, @NotNull Member member) {

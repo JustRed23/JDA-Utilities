@@ -2,6 +2,7 @@ package dev.JustRed23.jdautils.music;
 
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -53,6 +54,11 @@ public interface GuildMusicManager {
     void join(@NotNull AudioChannel channel);
 
     /**
+     * Binds the music manager to the specified text channel for sending playback-related messages. This does not affect audio playback and is optional.
+     */
+    void bind(@NotNull TextChannel channel);
+
+    /**
      * Stops playback and disconnects from the audio channel.
      */
     void disconnect();
@@ -63,6 +69,13 @@ public interface GuildMusicManager {
      * @return The current audio channel, or null if not connected to any channel.
      */
     @Nullable AudioChannel getCurrentChannel();
+
+    /**
+     * Gets the text channel that the music manager is currently bound to for sending playback-related messages.
+     *
+     * @return The bound text channel, or null if not bound to any channel.
+     */
+    @Nullable TextChannel getBoundChannel();
 
     /**
      * Destroys the music manager and releases all resources. The music manager should not be used after calling this method.
