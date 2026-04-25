@@ -4,6 +4,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import dev.JustRed23.jdautils.message.MessageFilter;
 import dev.JustRed23.jdautils.music.MusicManager;
+import dev.JustRed23.jdautils.music.event.MusicEventListener;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.hooks.VoiceDispatchInterceptor;
@@ -14,6 +15,8 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public final class Builder {
 
@@ -180,6 +183,7 @@ public final class Builder {
     public static class MusicManagerBuilder {
 
         private final Builder builder;
+        private final List<MusicEventListener> listeners = new ArrayList<>();
         private MusicManager musicManager;
 
         public MusicManagerBuilder(Builder current) {
@@ -192,12 +196,19 @@ public final class Builder {
             return this;
         }
 
+        public MusicManagerBuilder addListener(MusicEventListener listener) {
+            listeners.add(listener);
+            return this;
+        }
+
         public Builder build() {
             if (builder.musicManager != null)
                 throw new IllegalStateException("Music Manager has already been set");
 
             if (musicManager == null)
                 throw new IllegalStateException("Music Manager has not been set");
+
+            listeners.forEach(musicManager::addEventListener);
 
             builder.musicManager = musicManager;
             return builder;
