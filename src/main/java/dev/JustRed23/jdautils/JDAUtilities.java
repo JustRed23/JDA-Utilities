@@ -53,7 +53,7 @@ public final class JDAUtilities {
             throw new IllegalStateException("JDAUtilities has not been initialized");
 
         if (!builder.ready)
-            throw new IllegalStateException("JDAUtilities has not been initialized, please add the listener to your JDA instance");
+            throw new IllegalStateException("JDAUtilities has not been initialized, please make sure to call buildConfiguration() and apply the configuration to your JDA builder before building your JDA instance");
     }
     /* INTERNAL */
 
