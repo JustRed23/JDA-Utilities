@@ -28,7 +28,7 @@ public class LavalinkInternalGuildEventListener implements MusicEventListener {
         if (event.mayStartNext()) {
             manager.getCurrentTrack().ifPresent(track -> ((LavalinkQueue) manager.queue()).addToHistory(track));
             manager.nextTrack();
-        } else {
+        } else if (!event.replaced()) {
             manager.setTrack(null);
             manager.setState(PlaybackState.IDLE);
         }
