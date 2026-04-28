@@ -1,6 +1,7 @@
 package dev.JustRed23.jdautils.music;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Range;
 
 /**
  * Manages player-specific options and settings.
@@ -12,14 +13,14 @@ public interface GuildPlayerOptions {
      *
      * @param volume The volume level.
      */
-    void setVolume(float volume);
+    void setVolume(@Range(from = 0, to = 100) int volume);
 
     /**
      * Gets the current playback volume.
      *
      * @return The current volume level.
      */
-    float getVolume();
+    @Range(from = 0, to = 100) int getVolume();
 
     /**
      * Sets whether the player should automatically disconnect when idle.

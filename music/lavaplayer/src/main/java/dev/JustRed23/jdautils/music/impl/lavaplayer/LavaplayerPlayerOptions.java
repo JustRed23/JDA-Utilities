@@ -10,7 +10,7 @@ public class LavaplayerPlayerOptions implements GuildPlayerOptions {
 
     private final LavaplayerGuildMusicManager manager;
 
-    private volatile float volume = 100F;
+    private volatile int volume = 100;
     private volatile boolean autoDisconnect;
     private volatile TrackDisplayMode trackDisplayMode = TrackDisplayMode.NONE;
     private volatile RepeatMode repeatMode;
@@ -19,17 +19,17 @@ public class LavaplayerPlayerOptions implements GuildPlayerOptions {
         this.manager = manager;
     }
 
-    public void setVolume(float volume) {
-        if (Float.isNaN(volume) || volume < 0F || volume > 100F) {
+    public void setVolume(int volume) {
+        if (volume < 0 || volume > 100) {
             throw new IllegalArgumentException("Volume must be between 0 and 100");
         }
 
         manager.postEvent(new VolumeChangeEvent(manager.guild().getJDA(), manager.guild(), this.volume, volume));
         this.volume = volume;
-        manager.getPlayer().setVolume(Math.round(volume));
+        manager.getPlayer().setVolume(volume);
     }
 
-    public float getVolume() {
+    public int getVolume() {
         return this.volume;
     }
 
