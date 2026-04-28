@@ -42,7 +42,7 @@ import java.util.function.Function;
  */
 public final class JDAUtilities {
 
-    private static final String version = "4.2.3";
+    private static final String version = "4.2.4";
     static Builder builder;
 
     private JDAUtilities() {}
