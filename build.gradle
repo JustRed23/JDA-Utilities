@@ -62,13 +62,8 @@ subprojects {
 
     dependencies {
         compileOnly libs.jda
-
         implementation libs.jetbrains.annotations
-
-        implementation libs.hikaricp
-        implementation libs.sqlite.jdbc
-
-        implementation libs.snakeyaml
+        api project(':')
     }
 
     publishing {
