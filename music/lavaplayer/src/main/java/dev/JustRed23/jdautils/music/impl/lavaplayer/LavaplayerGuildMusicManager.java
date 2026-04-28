@@ -3,6 +3,7 @@ package dev.JustRed23.jdautils.music.impl.lavaplayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import dev.JustRed23.jdautils.music.*;
 import dev.JustRed23.jdautils.music.event.*;
 import dev.JustRed23.jdautils.music.exception.PlayerException;
@@ -50,7 +51,7 @@ public class LavaplayerGuildMusicManager implements GuildMusicManager {
             if (audioEvent instanceof com.sedmelluq.discord.lavaplayer.player.event.TrackStartEvent event) {
                 eventBus.post(new TrackStartEvent(guild.getJDA(), guild, fromTrack(event.track, getTrackMember())));
             } else if (audioEvent instanceof com.sedmelluq.discord.lavaplayer.player.event.TrackEndEvent event) {
-                eventBus.post(new TrackEndEvent(guild.getJDA(), guild, fromTrack(event.track, getTrackMember()), event.endReason.mayStartNext));
+                eventBus.post(new TrackEndEvent(guild.getJDA(), guild, fromTrack(event.track, getTrackMember()), event.endReason.mayStartNext, event.endReason == AudioTrackEndReason.REPLACED));
             } else if (audioEvent instanceof com.sedmelluq.discord.lavaplayer.player.event.TrackStuckEvent event) {
                 eventBus.post(new TrackErrorEvent(guild.getJDA(), guild, fromTrack(event.track, getTrackMember()), new PlayerException("Track got stuck for more than " + event.thresholdMs + "ms")));
             } else if (audioEvent instanceof com.sedmelluq.discord.lavaplayer.player.event.TrackExceptionEvent event) {

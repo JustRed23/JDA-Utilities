@@ -12,11 +12,13 @@ import org.jetbrains.annotations.Nullable;
  * @param guild the guild where playback ended
  * @param track the track that ended, never null
  * @param mayStartNext whether the next track may start playing, false if the track ended due to an error or was stopped
+ * @param replaced indicates that the provided track was replaced with a new track
  * @see TrackStartEvent
  */
 public record TrackEndEvent(
         JDA client,
         Guild guild,
         @NotNull PlayableTrack track,
-        boolean mayStartNext
+        boolean mayStartNext,
+        boolean replaced
 ) implements MusicEvent {}

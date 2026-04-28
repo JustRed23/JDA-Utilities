@@ -6,6 +6,7 @@ import dev.JustRed23.jdautils.music.event.*;
 import dev.JustRed23.jdautils.music.exception.PlayerException;
 import dev.arbjerg.lavalink.client.LavalinkClient;
 import dev.arbjerg.lavalink.libraries.jda.JDAVoiceUpdateListener;
+import dev.arbjerg.lavalink.protocol.v4.Message;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.hooks.VoiceDispatchInterceptor;
@@ -69,7 +70,7 @@ public final class LavalinkMusicManager implements MusicManager {
             if (guildMusicManager == null) return;
             Guild guild = guildMusicManager.guild();
 
-            eventBus.post(new TrackEndEvent(guild.getJDA(), guild, fromTrack(event.getTrack(), getMember(guildMusicManager)), event.getEndReason().getMayStartNext()));
+            eventBus.post(new TrackEndEvent(guild.getJDA(), guild, fromTrack(event.getTrack(), getMember(guildMusicManager)), event.getEndReason().getMayStartNext(), event.getEndReason() == Message.EmittedEvent.TrackEndEvent.AudioTrackEndReason.REPLACED));
         });
 
         client.on(dev.arbjerg.lavalink.client.event.TrackStuckEvent.class).subscribe(event -> {
