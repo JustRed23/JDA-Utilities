@@ -95,6 +95,9 @@ public final class LavalinkGuildMusicManager implements GuildMusicManager {
         stop();
         guild.getJDA().getDirectAudioController().disconnect(guild);
         this.boundChannel = null;
+
+        Link link = client.getLinkIfCached(guild().getIdLong());
+        if (link != null) link.destroy();
     }
 
     @Override
