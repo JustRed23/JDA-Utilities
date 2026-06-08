@@ -11,7 +11,7 @@ public class LavaplayerPlayerOptions implements GuildPlayerOptions {
     private final LavaplayerGuildMusicManager manager;
 
     private volatile int volume = 100;
-    private volatile boolean autoDisconnect;
+    private volatile boolean autoDisconnect = true;
     private volatile TrackDisplayMode trackDisplayMode = TrackDisplayMode.NONE;
     private volatile RepeatMode repeatMode = RepeatMode.OFF;
 

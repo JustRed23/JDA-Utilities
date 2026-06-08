@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.StatusChangeEvent;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
@@ -87,6 +88,35 @@ final class InternalEventListener extends ListenerAdapter {
     public void onGuildJoin(@NotNull GuildJoinEvent event) {
         if (JDAUtilities.isDatabaseInitialized())
             DataStore.GUILD.createTable(event.getGuild().getIdLong());
+    }
+
+    public void onGuildVoiceUpdate(@NotNull GuildVoiceUpdateEvent event) {
+        if (builder.musicManager == null) return;
+        var guildMusicManager = builder.musicManager.forGuild(event.getGuild());
+
+        //check if bot was kicked
+        if (event.getMember().equals(event.getGuild().getSelfMember())) {
+            if (event.getChannelLeft() != null && event.getChannelJoined() == null)
+                guildMusicManager.disconnect();
+
+            return;
+        }
+
+        //check if bot is alone
+        if (!guildMusicManager.options().isAutoDisconnect()) return;
+
+        var botVoiceState = event.getGuild().getSelfMember().getVoiceState();
+        if (botVoiceState == null || !botVoiceState.inAudioChannel()) return;
+        var botChannel = botVoiceState.getChannel();
+        if (botChannel == null) return;
+
+        long nonBotMemberCount = botChannel.getMembers()
+                .stream()
+                .filter(member -> !member.getUser().isBot())
+                .count();
+
+        if (nonBotMemberCount == 0)
+            guildMusicManager.disconnect();
     }
     //GUILD EVENTS
 

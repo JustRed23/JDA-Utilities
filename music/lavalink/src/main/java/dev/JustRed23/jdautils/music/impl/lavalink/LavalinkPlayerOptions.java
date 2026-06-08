@@ -11,7 +11,7 @@ public class LavalinkPlayerOptions implements GuildPlayerOptions {
     private final LavalinkGuildMusicManager manager;
 
     private volatile int volume = 100;
-    private volatile boolean autoDisconnect;
+    private volatile boolean autoDisconnect = true;
     private volatile TrackDisplayMode trackDisplayMode = TrackDisplayMode.NONE;
     private volatile RepeatMode repeatMode = RepeatMode.OFF;
 
