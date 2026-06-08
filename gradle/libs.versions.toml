@@ -11,9 +11,7 @@ lavalink-youtube = "1.18.1"
 lavaplayer = "2.2.6"
 google-api-services-youtube = "v3-rev20260323-2.0.0"
 spotify-web-api-java = "10.0.0-RC3"
-junit-jupiter-api = "6.1.0-M1"
-junit-jupiter-engine = "6.1.0-M1"
-junit-platform-launcher = "6.1.0-M1"
+junit = "6.1.0-RC1"
 logback-classic = "1.5.32"
 
 [libraries]
@@ -32,9 +30,9 @@ lavalink-youtube = { module = "dev.lavalink.youtube:v2", version.ref = "lavalink
 lavaplayer = { module = "dev.arbjerg:lavaplayer", version.ref = "lavaplayer" }
 google-api-services-youtube = { module = "com.google.apis:google-api-services-youtube", version.ref = "google-api-services-youtube" }
 spotify-web-api-java = { module = "se.michaelthelin.spotify:spotify-web-api-java", version.ref = "spotify-web-api-java" }
-junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit-jupiter-api" }
-junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit-jupiter-engine" }
-junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit-platform-launcher" }
+junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
+junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit" }
 logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback-classic" }
 
 [bundles]
