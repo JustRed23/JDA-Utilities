@@ -1,5 +1,6 @@
 package dev.JustRed23.jdautils.music.impl.lavaplayer;
 
+import dev.JustRed23.jdautils.music.AutoDisconnectManager;
 import dev.JustRed23.jdautils.music.PlaybackState;
 import dev.JustRed23.jdautils.music.event.MusicEventListener;
 import dev.JustRed23.jdautils.music.event.TrackEndEvent;
@@ -20,6 +21,7 @@ public class LavaplayerInternalGuildEventListener implements MusicEventListener 
         manager.setTrack(event.track());
         manager.resetConsecutiveFailures();
         manager.setState(PlaybackState.PLAYING);
+        AutoDisconnectManager.cancel(manager);
     }
 
      public void onTrackEnd(@NotNull TrackEndEvent event) {
@@ -30,10 +32,12 @@ public class LavaplayerInternalGuildEventListener implements MusicEventListener 
         } else if (!event.replaced()) {
             manager.setTrack(null);
             manager.setState(PlaybackState.IDLE);
+            if (manager.options().isAutoDisconnect())
+                AutoDisconnectManager.schedule(manager, manager.options().getAutoDisconnectTimeoutSeconds());
         }
     }
 
-     public void onTrackError(@NotNull TrackErrorEvent event) {
+    public void onTrackError(@NotNull TrackErrorEvent event) {
         if (!event.guild().equals(manager.guild())) return;
         if (event.track() == null) return; //Track load exception, not a player exception
 
@@ -44,6 +48,11 @@ public class LavaplayerInternalGuildEventListener implements MusicEventListener 
             manager.setState(PlaybackState.ERROR);
         } else {
             manager.getPlayer().stopTrack();
+            manager.setTrack(null);
+            manager.setState(PlaybackState.IDLE);
         }
+
+        if (manager.options().isAutoDisconnect())
+            AutoDisconnectManager.schedule(manager, manager.options().getAutoDisconnectTimeoutSeconds());
     }
 }

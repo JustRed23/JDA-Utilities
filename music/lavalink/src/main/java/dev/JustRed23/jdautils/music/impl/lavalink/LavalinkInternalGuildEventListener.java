@@ -1,5 +1,6 @@
 package dev.JustRed23.jdautils.music.impl.lavalink;
 
+import dev.JustRed23.jdautils.music.AutoDisconnectManager;
 import dev.JustRed23.jdautils.music.PlaybackState;
 import dev.JustRed23.jdautils.music.event.MusicEventListener;
 import dev.JustRed23.jdautils.music.event.TrackEndEvent;
@@ -21,6 +22,7 @@ public class LavalinkInternalGuildEventListener implements MusicEventListener {
         manager.setPosition(0);
         manager.resetConsecutiveFailures();
         manager.setState(PlaybackState.PLAYING);
+        AutoDisconnectManager.cancel(manager);
     }
 
     public void onTrackEnd(@NotNull TrackEndEvent event) {
@@ -31,6 +33,8 @@ public class LavalinkInternalGuildEventListener implements MusicEventListener {
         } else if (!event.replaced()) {
             manager.setTrack(null);
             manager.setState(PlaybackState.IDLE);
+            if (manager.options().isAutoDisconnect())
+                AutoDisconnectManager.schedule(manager, manager.options().getAutoDisconnectTimeoutSeconds());
         }
     }
 
@@ -47,6 +51,11 @@ public class LavalinkInternalGuildEventListener implements MusicEventListener {
             manager.getLink().getPlayer().subscribe(player ->
                     player.stopTrack().subscribe()
             );
+            manager.setTrack(null);
+            manager.setState(PlaybackState.IDLE);
         }
+
+        if (manager.options().isAutoDisconnect())
+            AutoDisconnectManager.schedule(manager, manager.options().getAutoDisconnectTimeoutSeconds());
     }
 }

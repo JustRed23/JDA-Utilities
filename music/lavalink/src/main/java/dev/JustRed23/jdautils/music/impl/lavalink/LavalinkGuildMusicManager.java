@@ -51,6 +51,11 @@ public final class LavalinkGuildMusicManager implements GuildMusicManager {
         if (current == null || current.getIdLong() != channel.getIdLong()) {
             guild.getJDA().getDirectAudioController().connect(channel);
         }
+
+        //in case nothing ever gets played
+        if (options().isAutoDisconnect()) {
+            AutoDisconnectManager.schedule(this, options().getAutoDisconnectTimeoutSeconds());
+        }
     }
 
     public void bind(@NotNull TextChannel channel) {
@@ -89,6 +94,7 @@ public final class LavalinkGuildMusicManager implements GuildMusicManager {
         setState(PlaybackState.IDLE);
         setTrack(null);
         queue().clear();
+        AutoDisconnectManager.cancel(this);
     }
 
     public void disconnect() {

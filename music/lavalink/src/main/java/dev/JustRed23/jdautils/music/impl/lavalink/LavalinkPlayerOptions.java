@@ -12,6 +12,7 @@ public class LavalinkPlayerOptions implements GuildPlayerOptions {
 
     private volatile int volume = 100;
     private volatile boolean autoDisconnect = true;
+    private volatile long autoDisconnectTimeoutSeconds = 300;
     private volatile TrackDisplayMode trackDisplayMode = TrackDisplayMode.NONE;
     private volatile RepeatMode repeatMode = RepeatMode.OFF;
 
@@ -39,6 +40,15 @@ public class LavalinkPlayerOptions implements GuildPlayerOptions {
 
     public boolean isAutoDisconnect() {
         return this.autoDisconnect;
+    }
+
+    public void setAutoDisconnectTimeoutSeconds(long seconds) {
+        if (seconds < 0) throw new IllegalArgumentException("Timeout seconds must be >= 0");
+        this.autoDisconnectTimeoutSeconds = seconds;
+    }
+
+    public long getAutoDisconnectTimeoutSeconds() {
+        return this.autoDisconnectTimeoutSeconds;
     }
 
     public void setTrackDisplayMode(@NotNull TrackDisplayMode displayMode) {

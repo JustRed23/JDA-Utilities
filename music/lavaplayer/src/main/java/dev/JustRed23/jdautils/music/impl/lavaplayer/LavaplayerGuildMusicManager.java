@@ -71,6 +71,11 @@ public class LavaplayerGuildMusicManager implements GuildMusicManager {
         if (current == null || current.getIdLong() != channel.getIdLong()) {
             guild.getAudioManager().openAudioConnection(channel);
         }
+
+        //in case nothing ever gets played
+        if (options().isAutoDisconnect()) {
+            AutoDisconnectManager.schedule(this, options().getAutoDisconnectTimeoutSeconds());
+        }
     }
 
     public void bind(@NotNull TextChannel channel) {
@@ -105,6 +110,7 @@ public class LavaplayerGuildMusicManager implements GuildMusicManager {
         setState(PlaybackState.IDLE);
         setTrack(null);
         queue().clear();
+        AutoDisconnectManager.cancel(this);
     }
 
     public void disconnect() {

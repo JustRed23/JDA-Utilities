@@ -37,6 +37,20 @@ public interface GuildPlayerOptions {
     boolean isAutoDisconnect();
 
     /**
+     * Sets the inactivity timeout (in seconds) after which the player will disconnect when idle.
+     *
+     * @param seconds timeout in seconds, must be >= 0. A value of 0 disables automatic disconnect scheduling
+     */
+    void setAutoDisconnectTimeoutSeconds(long seconds);
+
+    /**
+     * Gets the configured inactivity timeout in seconds.
+     *
+     * @return timeout in seconds
+     */
+    long getAutoDisconnectTimeoutSeconds();
+
+    /**
      * Sets the track display mode.
      * <p>
      * Controls how track information is displayed:
